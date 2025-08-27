@@ -1,0 +1,935 @@
+<html lang="zh-CN"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#6B7280">
+    <title>家庭太阳能潜力探索 | 原型</title>
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+    <!-- Safe area and app container -->
+    <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
+      <!-- Top bar -->
+      <div class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/90 bg-white/90 border-b border-gray-200">
+        <div class="pt-[10px]"></div>
+        <div class="px-3 pb-2">
+          <div class="w-full flex items-center gap-2 rounded-2xl px-2 py-1.5 bg-white border border-gray-200">
+            <div class="flex items-center gap-1.5 pl-0.5">
+              <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <div class="flex-1 flex items-center gap-2 px-2">
+              <i data-lucide="lock" class="w-4 h-4 text-gray-500"></i>
+              <span class="text-[13px] text-gray-600 truncate">https://solar.example.com/explore</span>
+            </div>
+            <div class="flex items-center gap-1.5 pr-0.5">
+              <i data-lucide="rotate-ccw" class="w-4 h-4 text-gray-600"></i>
+              <i data-lucide="share" class="w-4 h-4 text-gray-600"></i>
+            </div>
+          </div>
+        </div>
+        <!-- Brand + page title -->
+        <div class="px-4 pb-3">
+          <div class="flex items-center gap-3">
+            <div class="h-9 w-9 rounded-xl bg-gray-100 border border-gray-300 flex items-center justify-center">
+              <span class="text-[15px] tracking-tight font-semibold text-gray-600">S</span>
+            </div>
+            <div class="flex-1">
+              <div class="text-[20px] md:text-[22px] tracking-tight font-semibold text-gray-800">家庭太阳能潜力探索</div>
+              <div class="text-[12px] text-gray-600">AI 顾问 · 60 秒获取个性化方案</div>
+            </div>
+            <a href="tel:+8618000000000" class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:border-gray-400 transition">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+              <span>拨打</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <main class="flex-1 px-3 pb-24">
+        <!-- Chat timeline -->
+        <div id="chat" class="space-y-3 pt-3"></div>
+
+        <!-- Cards container -->
+        <div id="cards" class="space-y-4 mt-4">
+          <!-- Step 1: 欢迎与地址输入 -->
+          <div data-step="1" class="rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+                <span>开始探索</span>
+              </div>
+              <h2 class="mt-1 text-[22px] tracking-tight font-semibold text-gray-800">60 秒探索您家的太阳能潜力</h2>
+              <p class="mt-2 text-[13px] leading-5 text-gray-600">
+                输入您的家庭住址，我们将自动定位屋顶并为您生成 3D 方案与节省预测。
+              </p>
+              <div class="mt-3 space-y-2">
+                <div class="relative">
+                  <i data-lucide="map-pin" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="addressInput" placeholder="请输入详细住址，例如：杭州市西湖区..." class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-[12px] text-gray-500">示例：上海市浦东新区花木XX路XX号</div>
+                  <button id="useLocationBtn" class="inline-flex items-center gap-1.5 text-[12px] px-2 py-1 rounded-lg bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100">
+                    <i data-lucide="crosshair" class="w-4 h-4"></i> 使用当前位置
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <button id="startExploreBtn" class="col-span-2 inline-flex gap-2 hover:bg-gray-700 transition active:scale-[0.99] text-white bg-gray-600 border-gray-600 border rounded-xl pt-2.5 pr-4 pb-2.5 pl-4 items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed" disabled="">
+                    <i data-lucide="compass" class="w-4.5 h-4.5"></i>
+                    <span class="text-[14px] font-medium">开启探索</span>
+                  </button>
+                </div>
+                <div id="addrError" class="hidden text-[12px] text-red-500">请输入 6 个字符以上的有效地址</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: 屋顶确认（互动地图） -->
+          <div data-step="2" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-3">
+              <div class="mb-2 flex items-center justify-between">
+                <button id="backTo1" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i> 返回
+                </button>
+                <div id="addrLabel" class="text-[12px] text-gray-600 truncate max-w-[65%]"></div>
+              </div>
+              <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 56vh;">
+                <!-- Map viewport -->
+                <div id="mapViewport" class="absolute inset-0 touch-pan-y touch-pan-x cursor-grab active:cursor-grabbing">
+                  <img id="mapImage" src="https://images.unsplash.com/photo-1551275362-6e44c9837e00?q=80&amp;w=2400&amp;auto=format&amp;fit=crop" class="select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="transform: translate(-50%, -50%) scale(1); transform-origin: center center; width: 160%; height: auto;">
+                  <!-- Roof highlight -->
+                  <svg id="roofOverlay" class="absolute inset-0 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+                  <!-- Map HUD -->
+                  <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">拖动/缩放地图，点击屋顶</div>
+                  <div class="absolute top-2 right-2 flex items-center gap-1">
+                    <button id="zoomOut" class="h-8 w-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                    <button id="zoomIn" class="h-8 w-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                  </div>
+                </div>
+                <!-- Confirm bar -->
+                <div class="absolute bottom-0 inset-x-0 p-2 bg-gradient-to-t from-gray-100 to-transparent">
+                  <div class="flex items-center gap-2">
+                    <div id="roofHint" class="flex-1 text-[12px] text-gray-600">在地图上点击您的屋顶</div>
+                    <button id="confirmRoofBtn" class="shrink-0 inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled="">
+                      <i data-lucide="check" class="w-4 h-4"></i> 确认屋顶
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: AI 分析（加载状态） -->
+          <div data-step="3" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+                <span>AI 分析中</span>
+              </div>
+              <h3 class="mt-1 text-[18px] tracking-tight font-semibold text-gray-800">为您的屋顶进行智能分析</h3>
+              <p class="text-[12px] text-gray-600 mt-1">
+                这就像魔法一样！
+              </p>
+              <div class="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                <div class="flex items-center gap-2 text-[14px]">
+                  <i data-lucide="loader-2" class="w-4.5 h-4.5 animate-spin"></i>
+                  <span>正在准备...</span>
+                </div>
+                <div class="mt-3 space-y-2 text-[13px]">
+                  <div id="task1" class="flex items-center gap-2 text-gray-600">
+                    <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                    ✔ 正在分析屋顶面积
+                  </div>
+                  <div id="task2" class="flex items-center gap-2 text-gray-600">
+                    <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                    ✔ 正在评估日照数据
+                  </div>
+                  <div id="task3" class="flex items-center gap-2 text-gray-600">
+                    <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                    ✔ 正在扫描高耗能设施
+                  </div>
+                </div>
+              </div>
+              <div class="mt-3 text-[12px] text-gray-500">通常耗时 3-5 秒，请稍候...</div>
+            </div>
+          </div>
+
+          <!-- Step 4: 3D 模型呈现 -->
+          <div data-step="4" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+                  <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+                  <span>分析完成</span>
+                </div>
+                <button id="backTo2" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i> 返回
+                </button>
+              </div>
+              <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">为您生成的 3D 屋顶模型</h3>
+              <div class="mt-2 relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 50vh;">
+                <!-- 3D Viewer (mock) -->
+                <div id="viewer3d" class="absolute inset-0">
+                  <div id="houseStage" class="w-full h-full relative perspective" style="perspective: 900px;">
+                    <div id="house3d" class="absolute left-1/2 top-1/2 origin-center -translate-x-1/2 -translate-y-1/2 transition-transform duration-75" style="transform: rotateX(55deg) rotateY(0deg) scale(1);">
+                      <!-- Base house body -->
+                      <div class="relative mx-auto" style="width: 260px; height: 160px;">
+                        <div class="absolute inset-x-0 bottom-0 h-[70%] bg-white/[0.06] border border-gray-300 rounded-lg backdrop-blur"></div>
+                        <!-- Roof plane -->
+                        <div id="roofPlane" class="absolute left-1/2 -translate-x-1/2 -top-4 w-[260px] h-[120px] bg-white/[0.08] border border-gray-300 rounded-lg" style="transform: skewX(-12deg) rotateX(12deg);">
+                          <!-- PV panels container -->
+                          <div id="pvPanels" class="relative w-full h-full"></div>
+                        </div>
+                        <!-- Battery wall (hidden by default) -->
+                        <div id="batteryWall" class="absolute right-3 bottom-3 w-[28px] h-[46px] rounded-md bg-emerald-400/25 border border-emerald-300/30 hidden flex items-center justify-center">
+                          <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Drag hint -->
+                  <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">拖动模型可旋转查看</div>
+                </div>
+              </div>
+              <div class="mt-3 flex items-center justify-end">
+                <button id="toSchemesBtn" class="inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i> 查看定制方案
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: 方案互动 -->
+          <div data-step="5" class="hidden rounded-2xl bg-white/[0.04] border border-white/10 shadow-xl shadow-black/40 overflow-hidden transition-all duration-500">
+            <div class="p-3">
+              <div class="mb-2 flex items-center justify-between">
+                <div class="text-[12px] text-white/60">根据分析，以下是为您定制的 4 个方案</div>
+                <button id="backTo4" class="inline-flex items-center gap-1.5 text-[12px] text-white/70 px-2 py-1 rounded-lg hover:bg-white/[0.06] border border-white/10">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i> 返回
+                </button>
+              </div>
+              <div class="relative rounded-xl overflow-hidden border border-white/10 bg-black/30" style="height: 40vh;">
+                <!-- Reuse same viewer -->
+                <div id="viewer5" class="absolute inset-0">
+                  <div class="absolute inset-0">
+                    <div class="w-full h-full relative" style="perspective: 900px;">
+                      <div id="house3dStep5" class="absolute left-1/2 top-1/2 origin-center -translate-x-1/2 -translate-y-1/2 transition-transform duration-75" style="transform: rotateX(55deg) rotateY(0deg) scale(1);">
+                        <div class="relative mx-auto" style="width: 260px; height: 160px;">
+                          <div class="absolute inset-x-0 bottom-0 h-[70%] bg-white/[0.06] border border-white/10 rounded-lg"></div>
+                          <div id="roofPlane5" class="absolute left-1/2 -translate-x-1/2 -top-4 w-[260px] h-[120px] bg-white/[0.08] border border-white/10 rounded-lg" style="transform: skewX(-12deg) rotateX(12deg);">
+                            <div id="pvPanels5" class="relative w-full h-full"></div>
+                          </div>
+                          <div id="batteryWall5" class="absolute right-3 bottom-3 w-[28px] h-[46px] rounded-md bg-emerald-400/25 border border-emerald-300/30 hidden flex items-center justify-center">
+                            <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-black/40 border border-white/10">点击下方方案，模型将实时变化</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Schemes -->
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="smart">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium">智慧节省</div>
+                    <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-300/85 group-hover:text-amber-300"></i>
+                  </div>
+                  <div class="text-[12px] text-white/60 mt-1">轻量面板，快速回本</div>
+                </button>
+                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="efficient">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium">高效能源</div>
+                    <i data-lucide="gauge" class="w-4.5 h-4.5 text-white/70"></i>
+                  </div>
+                  <div class="text-[12px] text-white/60 mt-1">更高发电量与自用率</div>
+                </button>
+                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="independence">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium">能源独立</div>
+                    <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-300/85"></i>
+                  </div>
+                  <div class="text-[12px] text-white/60 mt-1">电池加持，停电也不慌</div>
+                </button>
+                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="ultimate">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium">终极能源</div>
+                    <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-300/85"></i>
+                  </div>
+                  <div class="text-[12px] text-white/60 mt-1">面板拉满，收益最大化</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6: 价值呈现 -->
+          <div data-step="6" class="hidden rounded-2xl bg-white/[0.04] border border-white/10 shadow-xl shadow-black/40 overflow-hidden transition-all duration-500">
+            <div class="p-3">
+              <div class="mb-2 flex items-center justify-between">
+                <div class="text-[12px] text-white/60">方案价值预估</div>
+                <button id="backTo5" class="inline-flex items-center gap-1.5 text-[12px] text-white/70 px-2 py-1 rounded-lg hover:bg-white/[0.06] border border-white/10">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i> 查看其它方案
+                </button>
+              </div>
+
+              <!-- Saving number -->
+              <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
+                <div class="text-[12px] text-white/60">预计年节省金额</div>
+                <div id="savingNumber" class="mt-1 text-[28px] tracking-tight font-semibold text-white">¥0</div>
+                <div id="schemeTag" class="mt-1 inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-white/[0.05] border border-white/10 text-white/70"></div>
+              </div>
+
+              <!-- Economic breakdown -->
+              <div class="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-[12px] text-white/60">预计系统规模</div>
+                  <div id="sizeText" class="text-[14px] font-medium"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-white/60">预计回本周期</div>
+                  <div id="roiText" class="text-[14px] font-medium"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-white/60">自发自用比例</div>
+                  <div id="selfUseText" class="text-[14px] font-medium"></div>
+                </div>
+              </div>
+
+              <div class="mt-3 flex items-center justify-end">
+                <button id="openLeadBtn" class="inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-white text-black border border-white/10 hover:bg-white/90 transition">
+                  <i data-lucide="mail" class="w-4 h-4"></i> 获取补贴报价
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 7: 留资（以弹窗形式呈现） -->
+          <!-- Modal overlay -->
+          <div id="leadModal" class="hidden fixed inset-0 z-[60]">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            <div class="absolute inset-x-3 bottom-3 rounded-2xl bg-white/[0.06] border border-white/10 p-4 shadow-2xl">
+              <div class="flex items-start gap-2">
+                <div class="flex-1">
+                  <div class="text-[12px] text-white/70">立即锁定补贴资格</div>
+                  <h4 class="text-[18px] tracking-tight font-semibold">获取包含补贴的最终价格</h4>
+                  <p id="subsidyHint" class="text-[12px] text-white/70 mt-1"></p>
+                </div>
+                <button id="closeLeadBtn" class="h-8 w-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="mt-3 space-y-2">
+                <div class="relative">
+                  <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
+                  <input id="leadName" placeholder="姓名" class="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[14px] placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition">
+                </div>
+                <div class="relative">
+                  <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
+                  <input id="leadEmail" type="email" placeholder="邮箱" class="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[14px] placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition">
+                </div>
+                <div class="relative">
+                  <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
+                  <input id="leadPhone" inputmode="tel" placeholder="电话" class="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[14px] placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition">
+                </div>
+                <div id="leadError" class="hidden text-[12px] text-rose-300">请完整填写姓名、有效邮箱与电话</div>
+              </div>
+              <div class="mt-3 flex gap-2">
+                <button id="submitLeadBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-black border border-white/10 hover:bg-white/90 transition">
+                  <i data-lucide="send" class="w-4.5 h-4.5"></i>
+                  <span class="text-[13px]">提交并接收完整报告</span>
+                </button>
+                <a href="tel:+8618000000000" class="px-4 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-400/20 hover:bg-emerald-500/20 transition inline-flex items-center gap-1.5">
+                  <i data-lucide="phone-call" class="w-4.5 h-4.5"></i>
+                  电话
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 7: 提交成功（保持现有成功卡片样式以减少改动） -->
+          <div data-step="7" class="hidden rounded-2xl bg-white/[0.04] border border-white/10 shadow-xl shadow-black/40 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <div class="flex items-center gap-2 text-[12px] text-emerald-300">
+                <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+                <span>已提交</span>
+              </div>
+              <h3 class="mt-1 text-[20px] tracking-tight font-semibold text-white">感谢！我们已收到你的信息</h3>
+              <p class="text-[13px] text-white/70 mt-1">
+                完整报告已发送至你的邮箱，工程顾问将尽快联系你。如需加急，可直接电话联系。
+              </p>
+              <div class="mt-3 flex gap-2">
+                <a href="tel:+8618000000000" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-400/20 hover:bg-emerald-500/20 transition">
+                  <i data-lucide="phone" class="w-4.5 h-4.5"></i>
+                  立即联系
+                </a>
+                <button id="restartBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.04] text-white/85 border border-white/10 hover:bg-white/[0.06] transition">
+                  <i data-lucide="rotate-ccw" class="w-4.5 h-4.5"></i>
+                  重新开始
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom shadow gradient -->
+      <div class="pointer-events-none fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-100 to-transparent z-40"></div>
+    </div>
+
+    <!-- Fixed bottom chat input bar -->
+    <div class="fixed inset-x-0 bottom-0 z-50">
+      <div class="mx-auto max-w-md px-3 pb-[env(safe-area-inset-bottom)]">
+        <div class="mb-2 flex items-center gap-2 rounded-2xl border border-gray-200 bg-white backdrop-blur px-2.5 py-2 shadow-lg">
+          <button id="freeChatAttachBtn" class="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-xl hover:bg-gray-100 border border-gray-200 transition text-gray-600" title="附加">
+            <i data-lucide="plus" class="w-4.5 h-4.5"></i>
+          </button>
+          <input id="freeChatInput" placeholder="输入消息，按回车发送..." class="flex-1 h-9 bg-transparent outline-none text-[14px] placeholder:text-gray-400 px-1">
+          <button id="freeChatSendBtn" class="shrink-0 inline-flex items-center justify-center h-9 px-3 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled="">
+            <i data-lucide="send" class="w-4.5 h-4.5"></i>
+            <span class="sr-only">发送</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons with stroke width 1.5
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+        boot();
+      });
+
+      function refreshIcons() {
+        if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+
+      // Chat helpers (kept structure)
+      const chat = document.getElementById('chat');
+      function addBotMsg(text) {
+        const node = document.createElement('div');
+        node.className = 'flex items-start gap-2.5';
+        node.innerHTML = `
+          <div class="shrink-0 h-8 w-8 rounded-full overflow-hidden ring-1 ring-white/10">
+            <img src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="bot" class="h-full w-full object-cover" />
+          </div>
+          <div class="flex-1">
+            <div class="inline-flex items-center gap-1.5 text-[11px] text-white/50 mb-1">
+              <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+              <span>顾问</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 bg-white/[0.05] border border-white/10 shadow-sm">
+              <p class="text-[14px] leading-5">${text}</p>
+            </div>
+          </div>
+        `;
+        chat.appendChild(node);
+        refreshIcons();
+        node.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+      function addUserMsg(text) {
+        const node = document.createElement('div');
+        node.className = 'flex items-start gap-2.5 justify-end';
+        node.innerHTML = `
+          <div class="flex-1"></div>
+          <div class="text-right">
+            <div class="inline-flex items-center gap-1.5 text-[11px] text-white/50 mb-1 justify-end">
+              <span>你</span>
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="inline-block rounded-2xl px-3.5 py-2.5 bg-white text-black border border-white/10 shadow">
+              <p class="text-[14px] leading-5">${text}</p>
+            </div>
+          </div>
+        `;
+        chat.appendChild(node);
+        refreshIcons();
+        node.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      // Toast
+      function showToast(message, duration = 1400) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-16 left-1/2 -translate-x-1/2 z-[70] px-3 py-2 rounded-lg bg-white/10 border border-white/15 backdrop-blur text-[12px] text-white/90 shadow-lg';
+        toast.innerHTML = `<div class="flex items-center gap-1.5">
+          <i data-lucide="info" class="w-4 h-4 text-white/80"></i><span>${message}</span>
+        </div>`;
+        document.body.appendChild(toast);
+        refreshIcons();
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-y-1', 'transition');
+          setTimeout(() => toast.remove(), 280);
+        }, duration);
+      }
+
+      // Cards/steps
+      const cards = document.getElementById('cards');
+      const stepEls = Array.from(cards.querySelectorAll('[data-step]'));
+      function showStep(n) {
+        stepEls.forEach((el) => {
+          const idx = el.getAttribute('data-step');
+          if (idx === String(n)) {
+            el.classList.remove('hidden');
+            el.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'end' }), 50);
+          } else {
+            el.classList.add('hidden');
+          }
+        });
+        refreshIcons();
+      }
+
+      // Global state
+      const state = {
+        address: '',
+        roofSelected: false,
+        roofPoint: null,
+        scheme: null, // smart | efficient | independence | ultimate
+        saving: 0,
+        subsidy: 0,
+        rotationY: 0
+      };
+
+      function boot() {
+        // Initial chatbot line
+        addBotMsg('你好！我是您的AI太阳能顾问。请输入您的家庭住址，开启探索。');
+        showStep(1);
+        bindStep1();
+        bindStep2();
+        bindStep3();
+        bindStep4();
+        bindStep5();
+        bindStep6();
+        bindLead();
+        bindBottomChat();
+      }
+
+      // Step 1
+      function bindStep1() {
+        const addressInput = document.getElementById('addressInput');
+        const startBtn = document.getElementById('startExploreBtn');
+        const useLocationBtn = document.getElementById('useLocationBtn');
+        const addrError = document.getElementById('addrError');
+        addressInput?.addEventListener('input', () => {
+          const ok = (addressInput.value || '').trim().length >= 6;
+          startBtn.disabled = !ok;
+          addrError.classList.toggle('hidden', ok || (addressInput.value || '').length === 0);
+        });
+        startBtn?.addEventListener('click', () => {
+          const addr = (addressInput.value || '').trim();
+          if (addr.length < 6) {
+            addrError.classList.remove('hidden');
+            return;
+          }
+          state.address = addr;
+          addUserMsg(`地址：${addr}`);
+          addBotMsg('我找到了您的地址，请在地图上点击确认您的屋顶。');
+          // Pass label to step2
+          const addrLabel = document.getElementById('addrLabel');
+          if (addrLabel) addrLabel.textContent = addr;
+          showStep(2);
+          // mimic geolocate zoom center
+          centerMap();
+        });
+        useLocationBtn?.addEventListener('click', () => {
+          showToast('正在定位...');
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                showToast('定位成功');
+                // In demo, just hint to fill address
+                if (!addressInput.value) {
+                  addressInput.value = `经纬度 ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+                  startBtn.disabled = false;
+                }
+              },
+              () => showToast('定位失败，请手动输入地址')
+            );
+          } else {
+            showToast('浏览器不支持定位，请手动输入地址');
+          }
+        });
+      }
+
+      // Step 2 - simple image-based map with click highlight
+      let mapState = { scale: 1, tx: 0, ty: 0, dragging: false, lastX: 0, lastY: 0 };
+      function bindStep2() {
+        const backTo1 = document.getElementById('backTo1');
+        const mapViewport = document.getElementById('mapViewport');
+        const mapImage = document.getElementById('mapImage');
+        const roofOverlay = document.getElementById('roofOverlay');
+        const confirmBtn = document.getElementById('confirmRoofBtn');
+        const hint = document.getElementById('roofHint');
+        const zoomIn = document.getElementById('zoomIn');
+        const zoomOut = document.getElementById('zoomOut');
+
+        function applyTransform() {
+          mapImage.style.transform = `translate(-50%, -50%) translate(${mapState.tx}px, ${mapState.ty}px) scale(${mapState.scale})`;
+        }
+        function onDown(e) {
+          mapState.dragging = true;
+          const p = pointer(e);
+          mapState.lastX = p.x;
+          mapState.lastY = p.y;
+        }
+        function onMove(e) {
+          if (!mapState.dragging) return;
+          const p = pointer(e);
+          mapState.tx += (p.x - mapState.lastX);
+          mapState.ty += (p.y - mapState.lastY);
+          mapState.lastX = p.x; mapState.lastY = p.y;
+          applyTransform();
+        }
+        function onUp() { mapState.dragging = false; }
+        function onWheel(e) {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 1.1 : 0.9;
+          mapState.scale = Math.min(4, Math.max(0.6, mapState.scale * delta));
+          applyTransform();
+        }
+        function pointer(e) {
+          if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          return { x: e.clientX, y: e.clientY };
+        }
+        function drawRoofAt(clientX, clientY) {
+          const rect = mapViewport.getBoundingClientRect();
+          const x = ((clientX - rect.left) / rect.width) * 100;
+          const y = ((clientY - rect.top) / rect.height) * 100;
+          // simple diamond around clicked point
+          const size = 8;
+          const p1 = `${x}% ${Math.max(0, y - size)}%`;
+          const p2 = `${Math.min(100, x + size)}% ${y}%`;
+          const p3 = `${x}% ${Math.min(100, y + size)}%`;
+          const p4 = `${Math.max(0, x - size)}% ${y}%`;
+          roofOverlay.innerHTML = `<polygon points="${p1}, ${p2}, ${p3}, ${p4}" fill="rgba(16,185,129,0.35)" stroke="rgba(110,231,183,0.8)" stroke-width="1"/>`;
+          state.roofSelected = true;
+          state.roofPoint = { x, y };
+          confirmBtn.disabled = false;
+          hint.textContent = '已选中屋顶位置';
+        }
+
+        mapViewport?.addEventListener('mousedown', onDown);
+        mapViewport?.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        mapViewport?.addEventListener('touchstart', onDown, { passive: true });
+        mapViewport?.addEventListener('touchmove', onMove, { passive: true });
+        window.addEventListener('touchend', onUp);
+        mapViewport?.addEventListener('wheel', onWheel, { passive: false });
+        mapViewport?.addEventListener('click', (e) => drawRoofAt(e.clientX, e.clientY));
+        zoomIn?.addEventListener('click', () => { mapState.scale = Math.min(4, mapState.scale * 1.15); applyTransform(); });
+        zoomOut?.addEventListener('click', () => { mapState.scale = Math.max(0.6, mapState.scale * 0.85); applyTransform(); });
+
+        backTo1?.addEventListener('click', () => {
+          addUserMsg('返回修改地址');
+          showStep(1);
+        });
+
+        confirmBtn?.addEventListener('click', () => {
+          addUserMsg('已在地图上确认屋顶');
+          addBotMsg('好的，正在为您分析...这就像魔法一样！');
+          showStep(3);
+          runAnalysis();
+        });
+
+        function centerMap() {
+          mapState = { scale: 1.2, tx: 0, ty: 0, dragging: false, lastX: 0, lastY: 0 };
+          applyTransform();
+        }
+        window.centerMap = centerMap;
+      }
+      function centerMap() { /* replaced by bindStep2 */ }
+
+      // Step 3 - analysis sequence
+      function bindStep3() {
+        // nothing to bind; we'll handle in runAnalysis()
+      }
+      function runAnalysis() {
+        const t1 = document.getElementById('task1');
+        const t2 = document.getElementById('task2');
+        const t3 = document.getElementById('task3');
+        const done = (el) => {
+          el.classList.remove('text-white/70');
+          el.classList.add('text-emerald-300');
+          el.querySelector('i')?.setAttribute('data-lucide', 'check');
+          refreshIcons();
+        };
+        setTimeout(() => done(t1), 600);
+        setTimeout(() => done(t2), 1200);
+        setTimeout(() => done(t3), 1800);
+        setTimeout(() => {
+          addBotMsg('分析完成！好消息是，您的屋顶条件非常优越。这是为您家生成的3D模型。');
+          showStep(4);
+        }, 2200);
+      }
+
+      // Step 4 - 3D mock rotation
+      function bindStep4() {
+        const backTo2 = document.getElementById('backTo2');
+        const toSchemesBtn = document.getElementById('toSchemesBtn');
+        const house3d = document.getElementById('house3d');
+        const batteryWall = document.getElementById('batteryWall');
+        const pvPanels = document.getElementById('pvPanels');
+        // initial small set
+        renderPanels(pvPanels, 12);
+        batteryWall.classList.add('hidden');
+
+        // drag rotate
+        let dragging = false, lastX = 0;
+        house3d?.parentElement?.addEventListener('mousedown', (e) => { dragging = true; lastX = e.clientX; });
+        window.addEventListener('mouseup', () => dragging = false);
+        window.addEventListener('mousemove', (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - lastX;
+          lastX = e.clientX;
+          state.rotationY += dx * 0.3;
+          house3d.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+        });
+        // touch
+        house3d?.parentElement?.addEventListener('touchstart', (e) => { if (e.touches[0]) { dragging = true; lastX = e.touches[0].clientX; } }, { passive: true });
+        window.addEventListener('touchend', () => dragging = false);
+        window.addEventListener('touchmove', (e) => {
+          if (!dragging || !e.touches[0]) return;
+          const dx = e.touches[0].clientX - lastX;
+          lastX = e.touches[0].clientX;
+          state.rotationY += dx * 0.3;
+          house3d.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+        }, { passive: true });
+
+        backTo2?.addEventListener('click', () => {
+          addUserMsg('返回屋顶确认');
+          showStep(2);
+        });
+        toSchemesBtn?.addEventListener('click', () => {
+          addUserMsg('查看定制方案');
+          addBotMsg('根据分析，我们为您准备了4个定制方案，请选择查看。');
+          showStep(5);
+        });
+      }
+
+      // Panel rendering utility
+      function renderPanels(container, count) {
+        container.innerHTML = '';
+        const cols = 6;
+        const gap = 6; // px
+        const w = (260 - (cols - 1) * gap) / cols; // match roof width
+        let placed = 0;
+        for (let r = 0; r < 5 && placed < count; r++) {
+          for (let c = 0; c < cols && placed < count; c++) {
+            const x = c * (w + gap) + 8;
+            const y = r * (w * 0.55 + gap) + 8;
+            const panel = document.createElement('div');
+            panel.className = 'absolute bg-sky-300/20 border border-sky-200/30 rounded-[6px] shadow-sm';
+            panel.style.left = `${x}px`;
+            panel.style.top = `${y}px`;
+            panel.style.width = `${w}px`;
+            panel.style.height = `${w * 0.55}px`;
+            container.appendChild(panel);
+            placed++;
+          }
+        }
+      }
+
+      // Step 5 - schemes
+      function bindStep5() {
+        const backTo4 = document.getElementById('backTo4');
+        const house3d5 = document.getElementById('house3dStep5');
+        const pvPanels5 = document.getElementById('pvPanels5');
+        const batteryWall5 = document.getElementById('batteryWall5');
+        const schemeCards = Array.from(document.querySelectorAll('.scheme-card'));
+
+        // sync rotation
+        house3d5.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+        renderPanels(pvPanels5, 12);
+        batteryWall5.classList.add('hidden');
+
+        // rotate drag
+        let dragging = false, lastX = 0;
+        house3d5?.parentElement?.addEventListener('mousedown', (e) => { dragging = true; lastX = e.clientX; });
+        window.addEventListener('mouseup', () => dragging = false);
+        window.addEventListener('mousemove', (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - lastX;
+          lastX = e.clientX;
+          state.rotationY += dx * 0.3;
+          house3d5.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+        });
+        house3d5?.parentElement?.addEventListener('touchstart', (e) => { if (e.touches[0]) { dragging = true; lastX = e.touches[0].clientX; } }, { passive: true });
+        window.addEventListener('touchend', () => dragging = false);
+        window.addEventListener('touchmove', (e) => {
+          if (!dragging || !e.touches[0]) return;
+          const dx = e.touches[0].clientX - lastX;
+          lastX = e.touches[0].clientX;
+          state.rotationY += dx * 0.3;
+          house3d5.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+        }, { passive: true });
+
+        backTo4?.addEventListener('click', () => {
+          addUserMsg('返回 3D 模型');
+          showStep(4);
+        });
+
+        schemeCards.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-scheme');
+            const conf = getSchemeConfig(key);
+            state.scheme = key;
+            renderPanels(pvPanels5, conf.panels);
+            batteryWall5.classList.toggle('hidden', !conf.battery);
+            // small pulse
+            pvPanels5.classList.add('animate-pulse');
+            setTimeout(() => pvPanels5.classList.remove('animate-pulse'), 400);
+            // to Step 6
+            setTimeout(() => {
+              if (key === 'independence') {
+                addBotMsg('选择“能源独立”，您不仅电费全免，还能赚钱！');
+              }
+              applyValuePresentation(conf);
+              showStep(6);
+            }, 300);
+          });
+        });
+      }
+
+      function getSchemeConfig(key) {
+        // mock numbers
+        const base = {
+          smart: { name: '智慧节省', panels: 10, battery: false, sizeKW: 4.0, selfUse: 0.55, saving: 4200, roi: '4-5 年', subsidy: 2200 },
+          efficient: { name: '高效能源', panels: 16, battery: false, sizeKW: 6.5, selfUse: 0.6, saving: 6200, roi: '4 年', subsidy: 2800 },
+          independence: { name: '能源独立', panels: 20, battery: true, sizeKW: 8.0, selfUse: 0.78, saving: 9600, roi: '5-6 年', subsidy: 3600 },
+          ultimate: { name: '终极能源', panels: 26, battery: true, sizeKW: 10.0, selfUse: 0.82, saving: 11800, roi: '5 年', subsidy: 4200 }
+        };
+        return base[key] || base.smart;
+      }
+
+      // Step 6 - value presentation
+      function bindStep6() {
+        const backTo5 = document.getElementById('backTo5');
+        const openLeadBtn = document.getElementById('openLeadBtn');
+        backTo5?.addEventListener('click', () => {
+          addUserMsg('查看其它方案');
+          showStep(5);
+        });
+        openLeadBtn?.addEventListener('click', () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          state.subsidy = conf.subsidy;
+          openLeadModal(conf.subsidy);
+          addBotMsg(`这个数字已经很吸引人了，对吗？但您还有资格申请一笔约 $${(conf.subsidy || 3000).toLocaleString()} 的政府补贴！想知道包含补贴的最终价格吗？留下信息，我将立即发送完整报告给您。`);
+        });
+      }
+      function applyValuePresentation(conf) {
+        // update tags and numbers
+        const savingNumber = document.getElementById('savingNumber');
+        const schemeTag = document.getElementById('schemeTag');
+        const sizeText = document.getElementById('sizeText');
+        const roiText = document.getElementById('roiText');
+        const selfUseText = document.getElementById('selfUseText');
+        schemeTag.innerHTML = `<span>${conf.name}</span>`;
+        sizeText.textContent = `${conf.sizeKW.toFixed(1)} kW（面板约 ${conf.panels} 块${conf.battery ? ' + 电池' : ''}）`;
+        roiText.textContent = conf.roi;
+        selfUseText.textContent = `${Math.round(conf.selfUse * 100)}%`;
+        animateNumber(savingNumber, conf.saving, '¥');
+        state.saving = conf.saving;
+      }
+      function animateNumber(el, target, prefix = '') {
+        const duration = 900;
+        const start = performance.now();
+        function frame(now) {
+          const t = Math.min(1, (now - start) / duration);
+          const val = Math.floor(target * (0.15 + 0.85 * t * (2 - t))); // ease-out-ish
+          el.textContent = `${prefix}${val.toLocaleString()}`;
+          if (t < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      // Lead modal (Step 7 trigger)
+      function bindLead() {
+        const modal = document.getElementById('leadModal');
+        const closeBtn = document.getElementById('closeLeadBtn');
+        const submitBtn = document.getElementById('submitLeadBtn');
+        const leadName = document.getElementById('leadName');
+        const leadEmail = document.getElementById('leadEmail');
+        const leadPhone = document.getElementById('leadPhone');
+        const leadError = document.getElementById('leadError');
+
+        closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
+
+        submitBtn?.addEventListener('click', () => {
+          const name = (leadName.value || '').trim();
+          const email = (leadEmail.value || '').trim();
+          const phone = (leadPhone.value || '').trim();
+          const ok = name && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && /^[\d\-\+\s]{6,}$/.test(phone);
+          if (ok) {
+            leadError.classList.add('hidden');
+            modal.classList.add('hidden');
+            addUserMsg('提交信息：' + name + ' / ' + email + ' / ' + phone);
+            addBotMsg('已收到，我们会立即发送完整报告到您的邮箱。');
+            showStep(7);
+          } else {
+            leadError.classList.remove('hidden');
+            showToast('请检查并完善联系方式');
+          }
+        });
+      }
+      function openLeadModal(subsidy) {
+        const modal = document.getElementById('leadModal');
+        const hint = document.getElementById('subsidyHint');
+        hint.textContent = `根据您的方案，预计可申请约 $${(subsidy || 3000).toLocaleString()} 的政府补贴！填写以下信息，立即查看包含补贴的最终价格。`;
+        modal.classList.remove('hidden');
+        refreshIcons();
+      }
+
+      // Restart
+      document.getElementById('restartBtn')?.addEventListener('click', () => {
+        // reset state
+        state.address = '';
+        state.roofSelected = false;
+        state.roofPoint = null;
+        state.scheme = null;
+        state.saving = 0;
+        state.subsidy = 0;
+        state.rotationY = 0;
+        // reset inputs
+        const addressInput = document.getElementById('addressInput');
+        addressInput && (addressInput.value = '');
+        document.getElementById('startExploreBtn')?.setAttribute('disabled', 'true');
+        chat.innerHTML = '';
+        addBotMsg('你好！我是您的AI太阳能顾问。请输入您的家庭住址，开启探索。');
+        showStep(1);
+        showToast('已重置');
+      });
+
+      // Bottom free chat
+      function bindBottomChat() {
+        const freeChatInput = document.getElementById('freeChatInput');
+        const freeChatSendBtn = document.getElementById('freeChatSendBtn');
+        function updateFreeChatSendState() {
+          const hasText = (freeChatInput.value || '').trim().length > 0;
+          freeChatSendBtn.disabled = !hasText;
+        }
+        function sendFreeChat() {
+          const text = (freeChatInput.value || '').trim();
+          if (!text) return;
+          addUserMsg(text);
+          freeChatInput.value = '';
+          updateFreeChatSendState();
+          setTimeout(() => addBotMsg('已收到你的消息，我们会在分析中考虑。'), 350);
+        }
+        freeChatInput?.addEventListener('input', updateFreeChatSendState);
+        freeChatInput?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendFreeChat();
+          }
+        });
+        freeChatSendBtn?.addEventListener('click', sendFreeChat);
+      }
+    </script>
+  
+</body></html>
