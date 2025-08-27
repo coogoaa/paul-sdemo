@@ -6,6 +6,7 @@
     <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   </head>
   <body class="bg-gray-100 text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
     <!-- Safe area and app container -->
@@ -174,25 +175,16 @@
               <div class="mt-2 relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 35vh;">
                 <!-- 3D Viewer (mock) -->
                 <div id="viewer3d" class="absolute inset-0">
-                  <div id="houseStage" class="w-full h-full relative perspective" style="perspective: 900px;">
-                    <div id="house3d" class="absolute left-1/2 top-1/2 origin-center -translate-x-1/2 -translate-y-1/2 transition-transform duration-75" style="transform: rotateX(55deg) rotateY(0deg) scale(1);">
-                      <!-- Base house body -->
-                      <div class="relative mx-auto" style="width: 260px; height: 160px;">
-                        <div class="absolute inset-x-0 bottom-0 h-[70%] bg-white/[0.06] border border-gray-300 rounded-lg backdrop-blur"></div>
-                        <!-- Roof plane -->
-                        <div id="roofPlane" class="absolute left-1/2 -translate-x-1/2 -top-4 w-[260px] h-[120px] bg-white/[0.08] border border-gray-300 rounded-lg" style="transform: skewX(-12deg) rotateX(12deg);">
-                          <!-- PV panels container -->
-                          <div id="pvPanels" class="relative w-full h-full"></div>
-                        </div>
-                        <!-- Battery wall (hidden by default) -->
-                        <div id="batteryWall" class="absolute right-3 bottom-3 w-[28px] h-[46px] rounded-md bg-emerald-400/25 border border-emerald-300/30 hidden flex items-center justify-center">
-                          <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-300"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Drag hint -->
-                  <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">拖动模型可旋转查看</div>
+                  <model-viewer
+                    src="3d/ImageToStl.com_Lark20250822-161239/Lark20250822-161239.glb"
+                    camera-controls
+                    auto-rotate
+                    disable-zoom
+                    ar
+                    style="width:100%;height:100%;background:transparent"
+                    class="absolute inset-0"
+                  ></model-viewer>
+                  <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">可拖动旋转查看</div>
                 </div>
               </div>
               <div class="mt-3 flex items-center justify-end">
@@ -675,31 +667,37 @@
         const house3d = document.getElementById('house3d');
         const batteryWall = document.getElementById('batteryWall');
         const pvPanels = document.getElementById('pvPanels');
-        // initial small set
-        renderPanels(pvPanels, 12);
-        batteryWall.classList.add('hidden');
+        const modelViewer = document.querySelector('#viewer3d model-viewer');
+        // 兼容：当仍为旧的 CSS 模拟 3D 时，渲染面板与电池；若已替换为 <model-viewer>，则跳过
+        if (pvPanels) {
+          renderPanels(pvPanels, 12);
+        }
+        if (batteryWall) {
+          batteryWall.classList.add('hidden');
+        }
 
-        // drag rotate
-        let dragging = false, lastX = 0;
-        house3d?.parentElement?.addEventListener('mousedown', (e) => { dragging = true; lastX = e.clientX; });
-        window.addEventListener('mouseup', () => dragging = false);
-        window.addEventListener('mousemove', (e) => {
-          if (!dragging) return;
-          const dx = e.clientX - lastX;
-          lastX = e.clientX;
-          state.rotationY += dx * 0.3;
-          house3d.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
-        });
-        // touch
-        house3d?.parentElement?.addEventListener('touchstart', (e) => { if (e.touches[0]) { dragging = true; lastX = e.touches[0].clientX; } }, { passive: true });
-        window.addEventListener('touchend', () => dragging = false);
-        window.addEventListener('touchmove', (e) => {
-          if (!dragging || !e.touches[0]) return;
-          const dx = e.touches[0].clientX - lastX;
-          lastX = e.touches[0].clientX;
-          state.rotationY += dx * 0.3;
-          house3d.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
-        }, { passive: true });
+        // 旧实现的拖拽仅在 house3d 存在时启用；<model-viewer> 自带旋转，无需手动绑定
+        if (house3d?.parentElement) {
+          let dragging = false, lastX = 0;
+          house3d.parentElement.addEventListener('mousedown', (e) => { dragging = true; lastX = e.clientX; });
+          window.addEventListener('mouseup', () => dragging = false);
+          window.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            const dx = e.clientX - lastX;
+            lastX = e.clientX;
+            state.rotationY += dx * 0.3;
+            house3d.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+          });
+          house3d.parentElement.addEventListener('touchstart', (e) => { if (e.touches[0]) { dragging = true; lastX = e.touches[0].clientX; } }, { passive: true });
+          window.addEventListener('touchend', () => dragging = false);
+          window.addEventListener('touchmove', (e) => {
+            if (!dragging || !e.touches[0]) return;
+            const dx = e.touches[0].clientX - lastX;
+            lastX = e.touches[0].clientX;
+            state.rotationY += dx * 0.3;
+            house3d.style.transform = `rotateX(55deg) rotateY(${state.rotationY}deg) scale(1)`;
+          }, { passive: true });
+        }
 
         backTo2?.addEventListener('click', () => {
           addUserMsg('返回屋顶确认');
