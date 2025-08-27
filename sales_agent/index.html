@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 太阳能顾问 - 60秒探索您家的太阳能潜力</title>
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    
+    <!-- 外部依赖 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">AI 太阳能顾问</h1>
+            <div class="progress-bar">
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">1</div>
+                    <div class="step" data-step="2">2</div>
+                    <div class="step" data-step="3">3</div>
+                    <div class="step" data-step="4">4</div>
+                    <div class="step" data-step="5">5</div>
+                    <div class="step" data-step="6">6</div>
+                    <div class="step" data-step="7">7</div>
+                </div>
+                <div class="progress-line">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 左侧聊天区 -->
+        <section class="chat-section">
+            <div class="chat-header">
+                <h2>您的专属 AI 顾问</h2>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- 消息将通过 JS 动态添加 -->
+            </div>
+            <div class="chat-input-area" id="chatInputArea">
+                <!-- 输入区域将根据步骤动态变化 -->
+            </div>
+        </section>
+
+        <!-- 右侧可视化区 -->
+        <section class="visual-section">
+            <div class="visual-container" id="visualContainer">
+                <!-- 欢迎页面 -->
+                <div class="visual-content welcome-content active" id="welcomeContent">
+                    <div class="welcome-hero">
+                        <h2>60秒探索您家的太阳能潜力</h2>
+                        <p>AI 智能分析，个性化方案，可视化收益预估</p>
+                        <div class="welcome-features">
+                            <div class="feature">
+                                <span class="feature-icon">🏠</span>
+                                <span>智能屋顶分析</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">☀️</span>
+                                <span>精准发电预估</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">💰</span>
+                                <span>收益可视化</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 地图容器 -->
+                <div class="visual-content map-content" id="mapContent">
+                    <div class="map-container">
+                        <div id="map"></div>
+                        <div class="map-controls">
+                            <button class="btn btn-secondary" id="mapZoomIn">放大</button>
+                            <button class="btn btn-secondary" id="mapZoomOut">缩小</button>
+                            <button class="btn btn-primary" id="confirmRoof" disabled>确认屋顶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分析动画容器 -->
+                <div class="visual-content analysis-content" id="analysisContent">
+                    <div class="analysis-animation">
+                        <h3>AI 正在分析中...</h3>
+                        <div class="analysis-steps">
+                            <div class="analysis-step" id="step1">
+                                <span class="step-icon">⏳</span>
+                                <span class="step-text">正在分析屋顶面积</span>
+                            </div>
+                            <div class="analysis-step" id="step2">
+                                <span class="step-icon">⏳</span>
+                                <span class="step-text">正在评估日照数据</span>
+                            </div>
+                            <div class="analysis-step" id="step3">
+                                <span class="step-icon">⏳</span>
+                                <span class="step-text">正在扫描高耗能设施</span>
+                            </div>
+                        </div>
+                        <div class="analysis-progress">
+                            <div class="progress-bar-fill" id="analysisProgress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D 模型容器 -->
+                <div class="visual-content model-content" id="modelContent">
+                    <div class="model-container">
+                        <div id="threejsContainer"></div>
+                        <div class="model-controls">
+                            <button class="btn btn-secondary" id="resetView">重置视角</button>
+                            <div class="model-info">
+                                <span>拖拽旋转 | 滚轮缩放</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 方案对比容器 -->
+                <div class="visual-content plans-content" id="plansContent">
+                    <div class="plans-container">
+                        <div class="plans-grid" id="plansGrid">
+                            <!-- 方案卡片将通过 JS 动态生成 -->
+                        </div>
+                        <div class="value-display" id="valueDisplay">
+                            <div class="value-main">
+                                <span class="value-label">预计年节省</span>
+                                <span class="value-amount" id="valueAmount">$0</span>
+                            </div>
+                            <div class="value-details" id="valueDetails">
+                                <!-- 详细计算将通过 JS 动态显示 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 留资表单抽屉 -->
+    <div class="drawer-overlay" id="drawerOverlay">
+        <div class="drawer-content">
+            <div class="drawer-header">
+                <h3>获取完整报告</h3>
+                <button class="drawer-close" id="drawerClose">&times;</button>
+            </div>
+            <div class="drawer-body">
+                <p class="drawer-subtitle">您还可能有资格申请约 <strong id="subsidyAmount">$3,500</strong> 的政府补贴！</p>
+                <form class="lead-form" id="leadForm">
+                    <div class="form-group">
+                        <label for="customerName">姓名 *</label>
+                        <input type="text" id="customerName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerContact">联系方式 *</label>
+                        <input type="text" id="customerContact" name="contact" placeholder="手机号或邮箱" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferredTime">首选联系时间</label>
+                        <select id="preferredTime" name="preferredTime">
+                            <option value="">请选择</option>
+                            <option value="morning">上午 (9:00-12:00)</option>
+                            <option value="afternoon">下午 (13:00-17:00)</option>
+                            <option value="evening">晚上 (18:00-20:00)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">立即获取完整报告</button>
+                </form>
+                <p class="disclaimer">* 以上数据为演示用，非最终报价</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 文件 -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/state.js"></script>
+    <script src="assets/js/calc.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/flows.js"></script>
+    <script src="assets/js/mock_map.js"></script>
+    <script src="assets/js/mock_3d.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
