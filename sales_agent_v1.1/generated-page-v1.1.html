@@ -40,7 +40,7 @@
               <div class="text-[20px] md:text-[22px] tracking-tight font-semibold text-gray-800">家庭太阳能潜力探索</div>
               <div class="text-[12px] text-gray-600">AI 顾问 · 60 秒获取个性化方案</div>
             </div>
-            <a href="tel:+8618000000000" class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:border-gray-400 transition">
+            <a href="tel:+8618000000000" class="inline-flex items-center gap-1.5 text-[12px] px-2 py-1 rounded-lg bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:border-gray-400 transition">
               <i data-lucide="phone" class="w-3.5 h-3.5"></i>
               <span>拨打</span>
             </a>
@@ -100,7 +100,7 @@
               <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 45vh;">
                 <!-- Map viewport -->
                 <div id="mapViewport" class="absolute inset-0 touch-pan-y touch-pan-x cursor-grab active:cursor-grabbing">
-                  <img id="mapImage" src="https://images.unsplash.com/photo-1551275362-6e44c9837e00?q=80&amp;w=2400&amp;auto=format&amp;fit=crop" class="select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="transform: translate(-50%, -50%) scale(1); transform-origin: center center; width: 160%; height: auto;">
+                  <img id="mapImage" src="Pic/point_523_high.jpg" class="select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="transform: translate(-50%, -50%) scale(1); transform-origin: center center; width: 160%; height: auto;">
                   <!-- Roof highlight -->
                   <svg id="roofOverlay" class="absolute inset-0 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
                   <!-- Map HUD -->
@@ -171,7 +171,7 @@
                 </button>
               </div>
               <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">为您生成的 3D 屋顶模型</h3>
-              <div class="mt-2 relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 50vh;">
+              <div class="mt-2 relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 35vh;">
                 <!-- 3D Viewer (mock) -->
                 <div id="viewer3d" class="absolute inset-0">
                   <div id="houseStage" class="w-full h-full relative perspective" style="perspective: 900px;">
@@ -204,104 +204,104 @@
           </div>
 
           <!-- Step 5: 方案互动 -->
-          <div data-step="5" class="hidden rounded-2xl bg-white/[0.04] border border-white/10 shadow-xl shadow-black/40 overflow-hidden transition-all duration-500">
+          <div data-step="5" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
             <div class="p-3">
               <div class="mb-2 flex items-center justify-between">
-                <div class="text-[12px] text-white/60">根据分析，以下是为您定制的 4 个方案</div>
-                <button id="backTo4" class="inline-flex items-center gap-1.5 text-[12px] text-white/70 px-2 py-1 rounded-lg hover:bg-white/[0.06] border border-white/10">
+                <div class="text-[12px] text-gray-600">根据分析，以下是为您定制的 4 个方案</div>
+                <button id="backTo4" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
                   <i data-lucide="chevron-left" class="w-4 h-4"></i> 返回
                 </button>
               </div>
-              <div class="relative rounded-xl overflow-hidden border border-white/10 bg-black/30" style="height: 40vh;">
+              <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50" style="height: 40vh;">
                 <!-- Reuse same viewer -->
                 <div id="viewer5" class="absolute inset-0">
                   <div class="absolute inset-0">
                     <div class="w-full h-full relative" style="perspective: 900px;">
                       <div id="house3dStep5" class="absolute left-1/2 top-1/2 origin-center -translate-x-1/2 -translate-y-1/2 transition-transform duration-75" style="transform: rotateX(55deg) rotateY(0deg) scale(1);">
                         <div class="relative mx-auto" style="width: 260px; height: 160px;">
-                          <div class="absolute inset-x-0 bottom-0 h-[70%] bg-white/[0.06] border border-white/10 rounded-lg"></div>
-                          <div id="roofPlane5" class="absolute left-1/2 -translate-x-1/2 -top-4 w-[260px] h-[120px] bg-white/[0.08] border border-white/10 rounded-lg" style="transform: skewX(-12deg) rotateX(12deg);">
+                          <div class="absolute inset-x-0 bottom-0 h-[70%] bg-gray-100 border border-gray-200 rounded-lg"></div>
+                          <div id="roofPlane5" class="absolute left-1/2 -translate-x-1/2 -top-4 w-[260px] h-[120px] bg-gray-200 border border-gray-300 rounded-lg" style="transform: skewX(-12deg) rotateX(12deg);">
                             <div id="pvPanels5" class="relative w-full h-full"></div>
                           </div>
-                          <div id="batteryWall5" class="absolute right-3 bottom-3 w-[28px] h-[46px] rounded-md bg-emerald-400/25 border border-emerald-300/30 hidden flex items-center justify-center">
-                            <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-300"></i>
+                          <div id="batteryWall5" class="absolute right-3 bottom-3 w-[28px] h-[46px] rounded-md bg-emerald-100 border border-emerald-200 hidden flex items-center justify-center">
+                            <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-600"></i>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-black/40 border border-white/10">点击下方方案，模型将实时变化</div>
+                    <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">点击下方方案，模型将实时变化</div>
                   </div>
                 </div>
               </div>
               <!-- Schemes -->
               <div class="mt-3 grid grid-cols-2 gap-2">
-                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="smart">
+                <button class="scheme-card group rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition p-3 text-left" data-scheme="smart">
                   <div class="flex items-center justify-between">
-                    <div class="text-[14px] font-medium">智慧节省</div>
-                    <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-300/85 group-hover:text-amber-300"></i>
+                    <div class="text-[14px] font-medium text-gray-800">智慧节省</div>
+                    <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500 group-hover:text-amber-600"></i>
                   </div>
-                  <div class="text-[12px] text-white/60 mt-1">轻量面板，快速回本</div>
+                  <div class="text-[12px] text-gray-600 mt-1">轻量面板，快速回本</div>
                 </button>
-                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="efficient">
+                <button class="scheme-card group rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition p-3 text-left" data-scheme="efficient">
                   <div class="flex items-center justify-between">
-                    <div class="text-[14px] font-medium">高效能源</div>
-                    <i data-lucide="gauge" class="w-4.5 h-4.5 text-white/70"></i>
+                    <div class="text-[14px] font-medium text-gray-800">高效能源</div>
+                    <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
                   </div>
-                  <div class="text-[12px] text-white/60 mt-1">更高发电量与自用率</div>
+                  <div class="text-[12px] text-gray-600 mt-1">更高发电量与自用率</div>
                 </button>
-                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="independence">
+                <button class="scheme-card group rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition p-3 text-left" data-scheme="independence">
                   <div class="flex items-center justify-between">
-                    <div class="text-[14px] font-medium">能源独立</div>
-                    <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-300/85"></i>
+                    <div class="text-[14px] font-medium text-gray-800">能源独立</div>
+                    <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
                   </div>
-                  <div class="text-[12px] text-white/60 mt-1">电池加持，停电也不慌</div>
+                  <div class="text-[12px] text-gray-600 mt-1">电池加持，停电也不慌</div>
                 </button>
-                <button class="scheme-card group rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition p-3 text-left" data-scheme="ultimate">
+                <button class="scheme-card group rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition p-3 text-left" data-scheme="ultimate">
                   <div class="flex items-center justify-between">
-                    <div class="text-[14px] font-medium">终极能源</div>
-                    <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-300/85"></i>
+                    <div class="text-[14px] font-medium text-gray-800">终极能源</div>
+                    <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-500"></i>
                   </div>
-                  <div class="text-[12px] text-white/60 mt-1">面板拉满，收益最大化</div>
+                  <div class="text-[12px] text-gray-600 mt-1">面板拉满，收益最大化</div>
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Step 6: 价值呈现 -->
-          <div data-step="6" class="hidden rounded-2xl bg-white/[0.04] border border-white/10 shadow-xl shadow-black/40 overflow-hidden transition-all duration-500">
+          <div data-step="6" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
             <div class="p-3">
               <div class="mb-2 flex items-center justify-between">
-                <div class="text-[12px] text-white/60">方案价值预估</div>
-                <button id="backTo5" class="inline-flex items-center gap-1.5 text-[12px] text-white/70 px-2 py-1 rounded-lg hover:bg-white/[0.06] border border-white/10">
+                <div class="text-[12px] text-gray-600">方案价值预估</div>
+                <button id="backTo5" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
                   <i data-lucide="chevron-left" class="w-4 h-4"></i> 查看其它方案
                 </button>
               </div>
 
               <!-- Saving number -->
-              <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
-                <div class="text-[12px] text-white/60">预计年节省金额</div>
-                <div id="savingNumber" class="mt-1 text-[28px] tracking-tight font-semibold text-white">¥0</div>
-                <div id="schemeTag" class="mt-1 inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-white/[0.05] border border-white/10 text-white/70"></div>
+              <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center">
+                <div class="text-[12px] text-gray-600">预计年节省金额</div>
+                <div id="savingNumber" class="mt-1 text-[28px] tracking-tight font-semibold text-gray-800">¥0</div>
+                <div id="schemeTag" class="mt-1 inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200 text-gray-600"></div>
               </div>
 
               <!-- Economic breakdown -->
-              <div class="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <div class="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
                 <div class="flex items-center justify-between">
-                  <div class="text-[12px] text-white/60">预计系统规模</div>
-                  <div id="sizeText" class="text-[14px] font-medium"></div>
+                  <div class="text-[12px] text-gray-600">预计系统规模</div>
+                  <div id="sizeText" class="text-[14px] font-medium text-gray-800"></div>
                 </div>
                 <div class="mt-2 flex items-center justify-between">
-                  <div class="text-[12px] text-white/60">预计回本周期</div>
-                  <div id="roiText" class="text-[14px] font-medium"></div>
+                  <div class="text-[12px] text-gray-600">预计回本周期</div>
+                  <div id="roiText" class="text-[14px] font-medium text-gray-800"></div>
                 </div>
                 <div class="mt-2 flex items-center justify-between">
-                  <div class="text-[12px] text-white/60">自发自用比例</div>
-                  <div id="selfUseText" class="text-[14px] font-medium"></div>
+                  <div class="text-[12px] text-gray-600">自发自用比例</div>
+                  <div id="selfUseText" class="text-[14px] font-medium text-gray-800"></div>
                 </div>
               </div>
 
               <div class="mt-3 flex items-center justify-end">
-                <button id="openLeadBtn" class="inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-white text-black border border-white/10 hover:bg-white/90 transition">
+                <button id="openLeadBtn" class="inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
                   <i data-lucide="mail" class="w-4 h-4"></i> 获取补贴报价
                 </button>
               </div>
@@ -312,38 +312,38 @@
           <!-- Modal overlay -->
           <div id="leadModal" class="hidden fixed inset-0 z-[60]">
             <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-            <div class="absolute inset-x-3 bottom-3 rounded-2xl bg-white/[0.06] border border-white/10 p-4 shadow-2xl">
+            <div class="absolute inset-x-3 bottom-3 max-w-md mx-auto rounded-2xl bg-white border border-gray-200 p-4 shadow-2xl">
               <div class="flex items-start gap-2">
                 <div class="flex-1">
-                  <div class="text-[12px] text-white/70">立即锁定补贴资格</div>
-                  <h4 class="text-[18px] tracking-tight font-semibold">获取包含补贴的最终价格</h4>
-                  <p id="subsidyHint" class="text-[12px] text-white/70 mt-1"></p>
+                  <div class="text-[12px] text-gray-600">立即锁定补贴资格</div>
+                  <h4 class="text-[18px] tracking-tight font-semibold text-gray-800">获取包含补贴的最终价格</h4>
+                  <p id="subsidyHint" class="text-[12px] text-gray-600 mt-1"></p>
                 </div>
-                <button id="closeLeadBtn" class="h-8 w-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center">
-                  <i data-lucide="x" class="w-4 h-4"></i>
+                <button id="closeLeadBtn" class="h-8 w-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                  <i data-lucide="x" class="w-4 h-4 text-gray-600"></i>
                 </button>
               </div>
               <div class="mt-3 space-y-2">
                 <div class="relative">
-                  <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
-                  <input id="leadName" placeholder="姓名" class="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[14px] placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition">
+                  <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="leadName" placeholder="姓名" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
                 </div>
                 <div class="relative">
-                  <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
-                  <input id="leadEmail" type="email" placeholder="邮箱" class="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[14px] placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition">
+                  <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="leadEmail" type="email" placeholder="邮箱" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
                 </div>
                 <div class="relative">
-                  <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
-                  <input id="leadPhone" inputmode="tel" placeholder="电话" class="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[14px] placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 transition">
+                  <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="leadPhone" inputmode="tel" placeholder="电话" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
                 </div>
-                <div id="leadError" class="hidden text-[12px] text-rose-300">请完整填写姓名、有效邮箱与电话</div>
+                <div id="leadError" class="hidden text-[12px] text-red-500">请完整填写姓名、有效邮箱与电话</div>
               </div>
               <div class="mt-3 flex gap-2">
-                <button id="submitLeadBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-black border border-white/10 hover:bg-white/90 transition">
+                <button id="submitLeadBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
                   <i data-lucide="send" class="w-4.5 h-4.5"></i>
                   <span class="text-[13px]">提交并接收完整报告</span>
                 </button>
-                <a href="tel:+8618000000000" class="px-4 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-400/20 hover:bg-emerald-500/20 transition inline-flex items-center gap-1.5">
+                <a href="tel:+8618000000000" class="px-4 py-2.5 rounded-xl bg-emerald-100 text-emerald-600 border border-emerald-200 hover:bg-emerald-200 transition inline-flex items-center gap-1.5">
                   <i data-lucide="phone-call" class="w-4.5 h-4.5"></i>
                   电话
                 </a>
@@ -352,22 +352,22 @@
           </div>
 
           <!-- Step 7: 提交成功（保持现有成功卡片样式以减少改动） -->
-          <div data-step="7" class="hidden rounded-2xl bg-white/[0.04] border border-white/10 shadow-xl shadow-black/40 overflow-hidden transition-all duration-500">
+          <div data-step="7" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
             <div class="p-4">
-              <div class="flex items-center gap-2 text-[12px] text-emerald-300">
+              <div class="flex items-center gap-2 text-[12px] text-emerald-600">
                 <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
                 <span>已提交</span>
               </div>
-              <h3 class="mt-1 text-[20px] tracking-tight font-semibold text-white">感谢！我们已收到你的信息</h3>
-              <p class="text-[13px] text-white/70 mt-1">
+              <h3 class="mt-1 text-[20px] tracking-tight font-semibold text-gray-800">感谢！我们已收到你的信息</h3>
+              <p class="text-[13px] text-gray-600 mt-1">
                 完整报告已发送至你的邮箱，工程顾问将尽快联系你。如需加急，可直接电话联系。
               </p>
               <div class="mt-3 flex gap-2">
-                <a href="tel:+8618000000000" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-400/20 hover:bg-emerald-500/20 transition">
+                <a href="tel:+8618000000000" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-100 text-emerald-600 border border-emerald-200 hover:bg-emerald-200 transition">
                   <i data-lucide="phone" class="w-4.5 h-4.5"></i>
                   立即联系
                 </a>
-                <button id="restartBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.04] text-white/85 border border-white/10 hover:bg-white/[0.06] transition">
+                <button id="restartBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200 transition">
                   <i data-lucide="rotate-ccw" class="w-4.5 h-4.5"></i>
                   重新开始
                 </button>
@@ -417,7 +417,7 @@
         node.className = 'flex items-start gap-2.5';
         node.innerHTML = `
           <div class="shrink-0 h-8 w-8 rounded-full overflow-hidden ring-1 ring-white/10">
-            <img src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="bot" class="h-full w-full object-cover" />
+            <img src="Pic/TechBot_small.jpeg" alt="bot" class="h-full w-full object-cover" />
           </div>
           <div class="flex-1">
             <div class="inline-flex items-center gap-1.5 text-[11px] text-white/50 mb-1">
