@@ -1,0 +1,1178 @@
+<html lang="en-AU"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#6B7280">
+    <title>Home Solar Installation Assessment | Prototype</title>
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+    <!-- Safe area and app container -->
+    <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
+      <!-- Fake mobile browser with URL -->
+      <div class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/90 bg-white/90 border-b border-gray-200">
+        <div class="pt-[10px]"></div>
+        <div class="px-3 pb-2">
+          <div class="w-full flex items-center gap-2 rounded-2xl px-2 py-1.5 bg-white border border-gray-200">
+            <div class="flex items-center gap-1.5 pl-0.5">
+              <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <div class="flex-1 flex items-center gap-2 px-2">
+              <i data-lucide="lock" class="w-4 h-4 text-gray-500"></i>
+              <span class="text-[13px] text-gray-600 truncate">https://solar.example.com/assessment</span>
+            </div>
+            <div class="flex items-center gap-1.5 pr-0.5">
+              <i data-lucide="rotate-ccw" class="w-4 h-4 text-gray-600"></i>
+              <i data-lucide="share" class="w-4 h-4 text-gray-600"></i>
+            </div>
+          </div>
+        </div>
+        <!-- Brand + page title -->
+        <div class="px-4 pb-3">
+          <div class="flex items-center gap-3">
+            <div class="h-9 w-9 rounded-xl bg-gray-100 border border-gray-300 flex items-center justify-center">
+              <span class="text-[15px] tracking-tight font-semibold text-gray-600">S</span>
+            </div>
+            <div class="flex-1">
+              <div class="text-[20px] md:text-[22px] tracking-tight font-semibold text-gray-800">Home Solar Assessment</div>
+              <div class="text-[12px] text-gray-600">Smart Advisor · Get Your Custom Installation Proposal</div>
+            </div>
+            <a href="tel:+8618000000000" class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:border-gray-400 transition">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+              <span>Call</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <main class="flex-1 px-3 pb-24">
+        <div id="chat" class="space-y-3 pt-3">
+  <!-- Initial assistant message -->
+  <div class="flex items-start gap-2.5">
+    <div class="shrink-0 h-8 w-8 rounded-full overflow-hidden ring-1 ring-gray-200">
+      <img src="https://images.unsplash.com/photo-1696505523865-84c7c9372901?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="bot" class="h-full w-full object-cover">
+    </div>
+    <div class="flex-1">
+      <div class="inline-flex items-center gap-1.5 text-[11px] text-gray-600 mb-1">
+        <i data-lucide="bot" class="w-3.5 h-3.5 text-gray-600"></i>
+        <span>Consultant</span>
+      </div>
+      <div class="rounded-2xl px-3.5 py-2.5 bg-gray-100 border border-gray-200 shadow-sm">
+        <p class="text-[14px] leading-5 text-gray-800">
+          Hello, I'm your energy assistant. We'll generate a preliminary home solar installation plan and budget recommendation through 5 simple questions.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <!-- Cards container -->
+        <div id="cards" class="space-y-4 mt-4">
+          <!-- Welcome Card -->
+          <div data-step="0" class="rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden opacity-100 translate-y-0 transition-all duration-500">
+            <div class="p-4">
+              <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="lucide lucide-sparkles w-4 h-4 text-gray-500"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
+                <span>Getting Started</span>
+              </div>
+              <h2 class="mt-1 text-[22px] tracking-tight font-semibold text-gray-800">Welcome to Your Installation Proposal</h2>
+              <p class="mt-2 text-[13px] leading-5 text-gray-600">
+                The entire process takes only 1 minute: Enter postcode → Electricity usage → Battery option → Battery plan → Preliminary quote. You can also contact an engineering consultant directly.
+              </p>
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <button id="startBtn" class="col-span-2 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-600 text-white hover:bg-gray-700 border border-gray-600 transition active:scale-[0.99]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="message-circle" class="lucide lucide-message-circle w-4.5 h-4.5"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path></svg>
+                  <span class="text-[14px] font-medium">Start Assessment</span>
+                </button>
+                <a href="tel:+8618000000000" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" class="lucide lucide-phone w-4.5 h-4.5"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+                  <span class="text-[13px]">Call Manufacturer</span>
+                </a>
+                <button id="askLaterBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="clock" class="lucide lucide-clock w-4.5 h-4.5"><path d="M12 6v6l4 2"></path><circle cx="12" cy="12" r="10"></circle></svg>
+                  <span class="text-[13px]">Ask Later</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Postal Code -->
+          <div data-step="1" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back -->
+              <div class="mb-2">
+                <button id="backTo0" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" class="lucide lucide-chevron-left w-4 h-4"><path d="m15 18-6-6 6-6"></path></svg>
+                  Back
+                </button>
+              </div>
+              <!-- Progress -->
+              <div class="mb-3">
+                <div class="flex items-center justify-between text-[12px] text-gray-600">
+                  <span>Step 1/5</span>
+                  <span id="progressLabel1" class="text-gray-700">20%</span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                  <div id="progressBar1" class="h-full bg-gray-500 rounded-full" style="width:20%"></div>
+                </div>
+              </div>
+
+              <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Your Installation Area Postcode</h3>
+              <p class="text-[12px] text-gray-600 mt-1">Used to estimate solar resources and local grid connection policies.</p>
+
+              <div class="mt-3 space-y-3">
+                <div class="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="lucide lucide-map-pin w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <input id="zipInput" inputmode="numeric" pattern="[0-9]*" placeholder="Enter postcode (e.g. 3000)" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
+                </div>
+                <div id="zipError" class="hidden text-[12px] text-red-500">Please enter 4-8 digit postcode</div>
+                <button id="zipNextBtn" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gray-600 text-white hover:bg-gray-700 border border-gray-600 transition active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                  <span class="text-[14px] font-medium">Next Step</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="lucide lucide-arrow-right w-4.5 h-4.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Monthly Usage -->
+          <div data-step="2" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back Button -->
+              <div class="mb-2">
+                <button id="backTo1" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" class="lucide lucide-chevron-left w-4 h-4"><path d="m15 18-6-6 6-6"></path></svg>
+                  Previous Step
+                </button>
+              </div>
+              <!-- Progress with back -->
+              <div class="mb-3">
+                <div class="flex items-center justify-between text-[12px] text-gray-600">
+                  <span>Step 2/5</span>
+                  <span id="progressLabel2" class="text-gray-700">40%</span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                  <div id="progressBar2" class="h-full bg-gray-500 rounded-full" style="width:40%"></div>
+                </div>
+              </div>
+
+              <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Monthly Electricity Usage</h3>
+              <p class="text-[12px] text-gray-600 mt-1">Choose an approximate range or enter actual value.</p>
+
+              <!-- Tabs -->
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <button data-usage="low" class="usage-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Low</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" class="lucide lucide-zap w-4.5 h-4.5 text-amber-500 group-hover:text-amber-600"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">Less than 300 kWh/month</div>
+                </button>
+                <button data-usage="med" class="usage-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Medium</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" class="lucide lucide-zap w-4.5 h-4.5 text-amber-500 group-hover:text-amber-600"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">300-500 kWh/month</div>
+                </button>
+                <button data-usage="high" class="usage-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">High</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" class="lucide lucide-zap w-4.5 h-4.5 text-amber-500 group-hover:text-amber-600"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">&gt; 500 kWh/month</div>
+                </button>
+                <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                  <div class="flex justify-between items-center mb-2">
+                    <div class="text-[14px] font-medium text-gray-800">Actual</div>
+                    <div class="text-[11px] text-gray-600">10 - 5000 kWh/month</div>
+                  </div>
+                  <div class="relative">
+                    <input id="usageActualInput" inputmode="decimal" placeholder="Enter usage/kWh" class="w-full pr-10 pl-3 py-2.5 rounded-lg bg-white border border-gray-200 placeholder:text-gray-400 text-[13px] focus:outline-none focus:border-gray-400 transition">
+                    <button id="confirmActualBtn" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-gray-200 text-gray-600 border border-gray-300 hover:bg-gray-300 transition flex items-center justify-center" title="Confirm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
+                        <path d="M20 6 9 17l-5-5"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div id="usageActualError" class="hidden text-[11px] text-red-500 mt-1">Please enter a value between 10 - 5000</div>
+                </div>
+              </div>
+
+              <!-- 电费账单上传 -->
+              <div class="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-[14px] font-medium text-gray-800">Electricity Bill</div>
+                  <div class="text-[11px] text-gray-600">Optional Upload</div>
+                </div>
+                
+                <!-- 上传按钮 -->
+                <div id="uploadSection" class="relative">
+                  <input type="file" id="billUpload" accept="image/*,.pdf" class="hidden">
+                  <button id="uploadBtn" onclick="handleFileUpload()" class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 transition text-[13px] text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7,10 12,15 17,10"></polyline>
+                      <line x1="12" x2="12" y1="15" y2="3"></line>
+                    </svg>
+                    <span>Upload Bill Image or PDF</span>
+                  </button>
+                </div>
+
+                <!-- 上传中状态 -->
+                <div id="uploadingStatus" class="hidden">
+                  <div class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-gray-100 border border-gray-200 text-[13px] text-gray-700">
+                    <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Uploading and recognizing...</span>
+                  </div>
+                </div>
+
+                <!-- 上传失败状态 -->
+                <div id="uploadFailedStatus" class="hidden">
+                  <div class="flex items-center justify-between py-2.5 px-3 rounded-lg bg-red-100 border border-red-200 text-[13px] text-red-700">
+                    <div class="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" x2="9" y1="9" y2="15"></line>
+                        <line x1="9" x2="15" y1="9" y2="15"></line>
+                      </svg>
+                      <span>Upload failed, please retry</span>
+                    </div>
+                    <button onclick="retryUpload()" class="text-[11px] px-2 py-1 rounded bg-red-200 hover:bg-red-300 transition">
+                      Retry
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 识别成功状态 -->
+                <div id="uploadSuccessStatus" class="hidden">
+                  <div class="space-y-2">
+                    <!-- 成功提示 -->
+                    <div class="flex items-center gap-2 py-2 px-3 rounded-lg bg-gray-100 border border-gray-200 text-[13px] text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <path d="M20 6 9 17l-5-5"></path>
+                      </svg>
+                      <span>Bill recognition successful</span>
+                    </div>
+                    
+                    <!-- 识别结果 -->
+                    <div class="bg-white rounded-lg p-3 border border-gray-200">
+                      <div class="text-[12px] text-gray-600 mb-2">Recognized electricity usage information:</div>
+                      <div class="flex justify-between items-center text-[14px]">
+                        <span class="text-gray-700">Monthly electricity usage:</span>
+                        <span class="text-gray-800 font-medium" id="recognizedUsage">425 kWh</span>
+                      </div>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="flex gap-2 pt-1">
+                      <button onclick="useRecognizedData()" class="flex-1 py-2 px-3 rounded-lg bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition text-[13px] font-medium">
+                        Use this data
+                      </button>
+                      <button onclick="retryUpload()" class="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 transition text-[13px]">
+                        Re-upload
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Battery Yes/No -->
+          <div data-step="3" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back -->
+              <div class="mb-2">
+                <button id="backTo2" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                Previous Step
+              </button>
+              </div>
+              <!-- Progress -->
+              <div class="mb-3">
+                <div class="flex items-center justify-between text-[12px] text-gray-600">
+                  <span>Step 3/5</span>
+                  <span id="progressLabel3" class="text-gray-700">60%</span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                  <div id="progressBar3" class="h-full bg-gray-500 rounded-full" style="width:60%"></div>
+                </div>
+              </div>
+
+              <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Do you want to add energy storage battery?</h3>
+              <p class="text-[12px] text-gray-600 mt-1">Battery provides protection during peak-valley price differences and power outages, improving self-consumption ratio.</p>
+
+              <div class="mt-3 grid grid-cols-1 gap-2">
+                <button data-battery="yes" class="battery-yn rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-gray-600"></i>
+                    <div>
+                      <div class="text-[14px] font-medium text-gray-800">Yes, Include Battery</div>
+                      <div class="text-[12px] text-gray-600">Improve self-consumption rate and backup power capability</div>
+                    </div>
+                  </div>
+                </button>
+                <button data-battery="no" class="battery-yn rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="battery" class="lucide lucide-battery w-4.5 h-4.5 text-gray-500"><path d="M 22 14 L 22 10"></path><rect x="2" y="6" width="16" height="12" rx="2"></rect><line x1="4" y1="16" x2="16" y2="8"></line></svg>
+                    <div>
+                      <div class="text-[14px] font-medium text-gray-800">No, Not Needed</div>
+                      <div class="text-[12px] text-gray-600">Lower budget, prioritize grid feed-in benefits</div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Battery Tier -->
+          <div data-step="4" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back Button -->
+              <div class="mb-2">
+                <button id="backTo3" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                  Previous Step
+                </button>
+              </div>
+              <!-- Progress -->
+              <div class="mb-3">
+                <div class="flex items-center justify-between text-[12px] text-gray-600">
+                  <span>Step 4/5</span>
+                  <span id="progressLabel4" class="text-gray-700">80%</span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                  <div id="progressBar4" class="h-full bg-gray-500 rounded-full" style="width:80%"></div>
+                </div>
+              </div>
+
+              <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Battery Capacity Options</h3>
+              <p class="text-[12px] text-gray-600 mt-1">If you choose not to install a battery, you can directly select "None".</p>
+
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <button data-tier="none" class="tier-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">None</div>
+                    <i data-lucide="slash" class="w-4.5 h-4.5 text-gray-500"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">No battery selected</div>
+                </button>
+
+                <button data-tier="basic" class="tier-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Basic</div>
+                    <i data-lucide="battery-medium" class="w-4.5 h-4.5 text-gray-600"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">~5 kWh, meets basic evening load</div>
+                </button>
+
+                <button data-tier="mid" class="tier-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Standard</div>
+                    <i data-lucide="battery-medium" class="w-4.5 h-4.5 text-gray-600"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">~10 kWh, main household configuration</div>
+                </button>
+
+                <button data-tier="pro" class="tier-tab group rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition p-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Premium</div>
+                    <i data-lucide="battery-full" class="w-4.5 h-4.5 text-gray-600"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">≥ 15 kWh, multiple appliances and backup power</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Quote -->
+          <div data-step="5" class="hidden rounded-2xl bg-white border border-gray-200 shadow-lg shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back -->
+              <div class="mb-2">
+                <button id="backTo4" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" class="lucide lucide-chevron-left w-4 h-4"><path d="m15 18-6-6 6-6"></path></svg>
+                  Previous Step
+                </button>
+              </div>
+              <!-- Progress -->
+              <div class="mb-3">
+                <div class="flex items-center justify-between text-[12px] text-gray-600">
+                  <span>Step 5/5</span>
+                  <span id="progressLabel5" class="text-gray-700">100%</span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                  <div id="progressBar5" class="h-full bg-gray-500 rounded-full" style="width:100%"></div>
+                </div>
+              </div>
+
+              <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Preliminary Quote Results</h3>
+              <p class="text-[12px] text-gray-600 mt-1">Based on your location, electricity usage and battery preferences, here's a rough assessment:</p>
+
+              <div class="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">Estimated System Size</div>
+                  <div id="estSize" class="text-[14px] font-medium text-gray-800"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">Budget Range</div>
+                  <div id="estBudget" class="text-[16px] tracking-tight font-semibold text-gray-800"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">Estimated Annual Savings</div>
+                  <div id="estSaving" class="text-[14px] font-medium text-gray-600"></div>
+                </div>
+              </div>
+
+              <!-- 新增：复制报价和分享 -->
+              <div class="mt-2 flex items-center justify-end gap-2">
+                <button id="copyQuoteBtn" class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" class="lucide lucide-copy w-4 h-4"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+                  Copy Quote
+                </button>
+                <button id="shareQuoteBtn" class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="share-2" class="lucide lucide-share-2 w-4 h-4">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
+                    <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
+                  </svg>
+                  Share Quote
+                </button>
+              </div>
+
+              <div class="mt-2 text-[12px] text-gray-500">
+                Note: The above is a preliminary estimate and does not include roof configuration, grid connection process, and subsidy differences. For accurate survey and quotation, please proceed to the next step to leave your contact information.
+              </div>
+
+              <div class="mt-3 flex gap-2">
+                <button onclick="window.location.href='tel:+8618000000000'" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="phone" class="lucide lucide-phone w-4.5 h-4.5"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+                  <span class="text-[13px]">Phone Consultation</span>
+                </button>
+                <button id="toContactBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="lucide lucide-arrow-right w-4.5 h-4.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                  <span class="text-[13px]">Next Step</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6: Contact form -->
+          <div data-step="6" class="hidden rounded-2xl bg-white border border-gray-200 shadow-xl shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back -->
+              <div class="mb-2">
+                <button id="backTo5" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                Previous Step
+              </button>
+              </div>
+              <div class="flex items-center gap-2 text-[12px] text-gray-600">
+                <i data-lucide="id-card" class="w-4 h-4 text-gray-500"></i>
+                <span>Get Accurate Quote</span>
+              </div>
+              <h3 class="mt-1 text-[18px] tracking-tight font-semibold text-gray-800">Leave Your Contact Information</h3>
+              <p class="text-[12px] text-gray-600 mt-1">We will contact you within 1 business day to arrange site survey and detailed configuration.</p>
+
+              <div class="mt-3 space-y-2">
+                <div class="relative">
+                  <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="nameInput" placeholder="Name" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
+                </div>
+                <div class="relative">
+                  <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="emailInput" type="email" placeholder="Email" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
+                </div>
+                <div class="relative">
+                  <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="phoneInput" inputmode="tel" placeholder="Phone" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition">
+                </div>
+                <div id="contactError" class="hidden text-[12px] text-rose-500">Please fill in complete name, valid email and phone number</div>
+              </div>
+
+              <div class="mt-3 flex gap-2">
+                <button id="submitContactBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
+                  <i data-lucide="send" class="w-4.5 h-4.5"></i>
+                  <span class="text-[13px]">Submit and Get Quote</span>
+                </button>
+                <a href="tel:+8618000000000" class="px-4 py-2.5 rounded-xl bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 transition inline-flex items-center gap-1.5">
+                  <i data-lucide="phone" class="w-4.5 h-4.5"></i>
+                  Call
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 7: Success -->
+          <div data-step="7" class="hidden rounded-2xl bg-white border border-gray-200 shadow-xl shadow-gray-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-4">
+              <!-- Added Back -->
+              <div class="mb-2">
+                <button id="backTo6" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                Previous Step
+              </button>
+              </div>
+              <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+                <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+                <span>Submitted</span>
+              </div>
+              <h3 class="mt-1 text-[20px] tracking-tight font-semibold text-gray-800">Thank you! We have received your information</h3>
+              <p class="text-[13px] text-gray-600 mt-1">
+                A dedicated engineering consultant will contact you as soon as possible. Please check your email and phone. For urgent matters, you can contact us directly by phone.
+              </p>
+              <div class="mt-3 flex gap-2">
+                <button onclick="window.location.href='tel:+8618000000000'" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition">
+                  <i data-lucide="phone" class="w-4.5 h-4.5"></i>
+                  Contact Now
+                </button>
+                <button id="restartBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 transition">
+                  <i data-lucide="rotate-ccw" class="w-4.5 h-4.5"></i>
+                  Start Over
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom shadow gradient -->
+      <div class="pointer-events-none fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#FAFFFE] to-transparent z-40"></div>
+    </div>
+
+    <!-- Fixed bottom chat input bar -->
+    <div class="fixed inset-x-0 bottom-0 z-50">
+      <div class="mx-auto max-w-md px-3 pb-[env(safe-area-inset-bottom)]">
+        <div class="mb-2 flex items-center gap-2 rounded-2xl border border-gray-200 bg-white backdrop-blur px-2.5 py-2 shadow-lg">
+          <button id="freeChatAttachBtn" class="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-xl hover:bg-gray-100 border border-gray-200 transition text-gray-600" title="附加">
+            <i data-lucide="plus" class="w-4.5 h-4.5"></i>
+          </button>
+          <input id="freeChatInput" placeholder="Type message, press Enter to send..." class="flex-1 h-9 bg-transparent outline-none text-[14px] placeholder:text-gray-400 px-1">
+          <button id="freeChatSendBtn" class="shrink-0 inline-flex items-center justify-center h-9 px-3 rounded-xl bg-gray-600 text-white border border-gray-600 hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled="">
+            <i data-lucide="send" class="w-4.5 h-4.5"></i>
+            <span class="sr-only">Send</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons with stroke width 1.5
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+          window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+      });
+
+      // State
+      const state = {
+        zip: '',
+        usageType: '', // low | med | high | actual
+        usageActual: null,
+        batteryYes: null, // true | false
+        batteryTier: 'none', // none | basic | mid | pro
+      };
+
+      // Elements
+      const chat = document.getElementById('chat');
+      const cards = document.getElementById('cards');
+      const stepEls = Array.from(cards.querySelectorAll('[data-step]'));
+
+      const showStep = (n) => {
+        stepEls.forEach((el) => {
+          const idx = el.getAttribute('data-step');
+          if (idx === String(n)) {
+            el.classList.remove('hidden');
+            el.classList.add('opacity-100', 'translate-y-0');
+            // 增加延迟时间，让卡片完全显示后再缓慢滚动
+            setTimeout(() => {
+              window.scrollTo({ 
+                top: document.documentElement.scrollHeight, 
+                behavior: 'smooth' 
+              });
+            }, 300); // 从100ms增加到300ms
+          } else {
+            el.classList.add('hidden');
+          }
+        });
+        refreshIcons();
+      };
+
+      const refreshIcons = () => {
+        if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      };
+
+      const addBotMsg = (text) => {
+        const node = document.createElement('div');
+        node.className = 'flex items-start gap-2.5';
+        node.innerHTML = `
+          <div class="shrink-0 h-8 w-8 rounded-full overflow-hidden ring-1 ring-gray-200">
+            <img src="https://images.unsplash.com/photo-1696505523865-84c7c9372901?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="bot" class="h-full w-full object-cover">
+          </div>
+          <div class="flex-1">
+            <div class="inline-flex items-center gap-1.5 text-[11px] text-gray-600 mb-1">
+              <i data-lucide="bot" class="w-3.5 h-3.5 text-gray-600"></i>
+              <span>Consultant</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 bg-gray-100 border border-gray-200 shadow-sm">
+              <p class="text-[14px] leading-5 text-gray-800">${text}</p>
+            </div>
+          </div>
+        `;
+        chat.appendChild(node);
+        refreshIcons();
+        // 增加延迟，让消息渲染完成后再滚动
+        setTimeout(() => {
+          window.scrollTo({ 
+            top: document.documentElement.scrollHeight, 
+            behavior: 'smooth' 
+          });
+        }, 200); // 从50ms增加到200ms
+      };
+
+      const addUserMsg = (text) => {
+        const node = document.createElement('div');
+        node.className = 'flex items-start gap-2.5 justify-end';
+        node.innerHTML = `
+          <div class="flex-1"></div>
+          <div class="text-right">
+            <div class="inline-flex items-center gap-1.5 text-[11px] text-gray-600 mb-1 justify-end">
+              <span>You</span>
+              <i data-lucide="user" class="w-3.5 h-3.5 text-gray-600"></i>
+            </div>
+            <div class="inline-block rounded-2xl px-3.5 py-2.5 bg-gray-600 text-white border border-gray-600 shadow">
+              <p class="text-[14px] leading-5">${text}</p>
+            </div>
+          </div>
+        `;
+        chat.appendChild(node);
+        refreshIcons();
+        // 增加延迟，让消息渲染完成后再滚动
+        setTimeout(() => {
+          window.scrollTo({ 
+            top: document.documentElement.scrollHeight, 
+            behavior: 'smooth' 
+          });
+        }, 200); // 从50ms增加到200ms
+      };
+
+      // Toast (新增)
+      function showToast(message, duration = 1400) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-16 left-1/2 -translate-x-1/2 z-[60] px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-lg text-[12px] text-gray-700';
+        toast.innerHTML = `<div class="flex items-center gap-1.5">
+          <i data-lucide="info" class="w-4 h-4 text-gray-600"></i><span>${message}</span>
+        </div>`;
+        document.body.appendChild(toast);
+        refreshIcons();
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-y-1', 'transition');
+          setTimeout(() => toast.remove(), 280);
+        }, duration);
+      }
+
+      // Loading indicator for quote (新增)
+      function showLoadingQuote() {
+        return new Promise((resolve) => {
+          const wrap = document.createElement('div');
+          wrap.className = 'fixed bottom-16 left-1/2 -translate-x-1/2 z-[60] px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-lg text-[12px] text-gray-700';
+          wrap.innerHTML = `<div class="flex items-center gap-1.5">
+            <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-gray-600"></i>
+            <span>Calculating quote...</span>
+          </div>`;
+          document.body.appendChild(wrap);
+          refreshIcons();
+          setTimeout(() => {
+            wrap.classList.add('opacity-0', 'translate-y-1', 'transition');
+            setTimeout(() => wrap.remove(), 200);
+            resolve();
+          }, 700);
+        });
+      }
+
+      // Step handlers
+      const startBtn = document.getElementById('startBtn');
+      const askLaterBtn = document.getElementById('askLaterBtn');
+      startBtn?.addEventListener('click', () => {
+        addUserMsg('Start filling assessment form');
+        setTimeout(() => addBotMsg('Alright, please provide your installation area postcode first.'), 300);
+        showStep(1);
+      });
+      askLaterBtn?.addEventListener('click', () => {
+        addUserMsg('Contact me later');
+        setTimeout(() => addBotMsg('No problem, feel free to return anytime. You can also contact our engineering consultant directly by phone.'), 300);
+      });
+
+      // Step 1
+      const zipInput = document.getElementById('zipInput');
+      const zipError = document.getElementById('zipError');
+      const zipNextBtn = document.getElementById('zipNextBtn');
+
+      const validateZip = (z) => /^\d{4,8}$/.test(z.trim());
+      
+      zipInput?.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/[^\d]/g, '');
+        e.target.value = val;
+        const isValid = validateZip(val);
+        
+        if (isValid) {
+          zipError.classList.add('hidden');
+          zipNextBtn.disabled = false;
+          state.zip = val;
+        } else {
+          zipError.classList.toggle('hidden', val.length === 0);
+          zipNextBtn.disabled = true;
+        }
+      });
+      
+      zipNextBtn?.addEventListener('click', () => {
+        if (validateZip(zipInput.value)) {
+          addUserMsg(`Postcode: ${state.zip}`);
+          setTimeout(() => addBotMsg('Received. Please let me know your monthly electricity usage.'), 300);
+          showStep(2);
+        }
+      });
+
+      // Back buttons
+      document.getElementById('backTo0')?.addEventListener('click', () => {
+        addUserMsg('Return to Start');
+        showStep(0);
+      });
+
+      // Step 2
+      const usageTabs = Array.from(document.querySelectorAll('.usage-tab'));
+      const usageActualInput = document.getElementById('usageActualInput');
+      const usageActualError = document.getElementById('usageActualError');
+      const confirmActualBtn = document.getElementById('confirmActualBtn');
+      document.getElementById('backTo1')?.addEventListener('click', () => {
+        addUserMsg('Return to Modify Postcode');
+        showStep(1);
+      });
+
+      usageTabs.forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const type = btn.getAttribute('data-usage');
+          state.usageType = type;
+          state.usageActual = null;
+          const textMap = {
+            low: 'Less than 300 kWh/month',
+            med: '300-500 kWh/month',
+            high: 'More than 500 kWh/month'
+          };
+          addUserMsg(`Monthly Usage: ${textMap[type]}`);
+          setTimeout(() => addBotMsg('Would you like to include a battery storage system?'), 300);
+          showStep(3);
+        });
+      });
+
+      confirmActualBtn?.addEventListener('click', () => {
+        const v = parseFloat((usageActualInput.value || '').replace(/[^\d.]/g, ''));
+        if (isFinite(v) && v >= 10 && v <= 5000) {
+          usageActualError.classList.add('hidden');
+          state.usageType = 'actual';
+          state.usageActual = v;
+          addUserMsg(`Monthly Usage (Actual): ${v} kWh/month`);
+          setTimeout(() => addBotMsg('Would you like to include a battery storage system?'), 300);
+          showStep(3);
+        } else {
+          usageActualError.classList.remove('hidden');
+        }
+      });
+
+      // Step 3
+      const batteryYNBtns = Array.from(document.querySelectorAll('.battery-yn'));
+      batteryYNBtns.forEach((b) => {
+        b.addEventListener('click', async () => {
+          const yn = b.getAttribute('data-battery') === 'yes';
+          state.batteryYes = yn;
+          addUserMsg(`Battery Selection: ${yn ? 'Yes' : 'No'}`);
+          if (!yn) {
+            state.batteryTier = 'none';
+            setTimeout(() => addBotMsg('Noted no battery needed, generating quote directly.'), 300);
+            // 选择"否"直接跳到第五步
+            await showLoadingQuote();
+            computeQuote();
+            setTimeout(() => addBotMsg('Based on current information, here is your preliminary quote:'), 600);
+            setTimeout(() => showStep(5), 900);
+          } else {
+            setTimeout(() => addBotMsg('Alright, please select your preferred battery capacity plan.'), 300);
+            // 选择"是"跳到第四步
+            setTimeout(() => showStep(4), 600);
+          }
+        });
+      });
+
+      document.getElementById('backTo2')?.addEventListener('click', () => {
+        addUserMsg('Return to Modify Usage');
+        showStep(2);
+      });
+
+      // Step 4
+      document.getElementById('backTo3')?.addEventListener('click', () => {
+        addUserMsg('Return to Modify Battery Option');
+        showStep(3);
+      });
+
+      const tierTabs = Array.from(document.querySelectorAll('.tier-tab'));
+      tierTabs.forEach((t) => {
+        t.addEventListener('click', async () => {
+          const tier = t.getAttribute('data-tier');
+          state.batteryTier = tier;
+          const map = { none: 'No Battery', basic: 'Basic (~5 kWh)', mid: 'Medium (~10 kWh)', pro: 'Premium (≥15 kWh)' };
+          addUserMsg(`Battery Plan: ${map[tier]}`);
+          await showLoadingQuote(); // 新增：轻量计算提示
+          computeQuote();
+          addBotMsg('Based on current information, here is your preliminary quote:');
+          showStep(5);
+        });
+      });
+
+      // Step 5 -> Step 6
+      const toContactBtn = document.getElementById('toContactBtn');
+      toContactBtn?.addEventListener('click', () => {
+        addUserMsg('Proceed to next step, leave contact information');
+        setTimeout(() => addBotMsg('Please provide your name, email and phone number so we can give you an accurate quote.'), 300);
+        showStep(6);
+      });
+
+      document.getElementById('backTo4')?.addEventListener('click', () => {
+        addUserMsg('Return to Modify Battery Plan');
+        showStep(4);
+      });
+
+      // Add event listener for backTo5 button
+      document.getElementById('backTo5')?.addEventListener('click', () => {
+        addUserMsg('Return to view quote');
+        showStep(5);
+      });
+
+      // Step 6 submit + 实时校验（新增）
+      const nameInput = document.getElementById('nameInput');
+      const emailInput = document.getElementById('emailInput');
+      const phoneInput = document.getElementById('phoneInput');
+      const contactError = document.getElementById('contactError');
+      const submitContactBtn = document.getElementById('submitContactBtn');
+
+      const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || '');
+      const validPhone = (v) => /^[\d\-\+\s]{6,}$/.test(v || '');
+
+      function setValidStyle(el, ok) {
+        // 移除ring效果，只保留边框颜色变化
+        // el.classList.toggle('ring-2', ok);
+        // el.classList.toggle('ring-emerald-400/40', ok);
+        el.classList.toggle('border-gray-400/30', ok);
+      }
+
+      nameInput?.addEventListener('input', () => setValidStyle(nameInput, (nameInput.value || '').trim().length > 0));
+      emailInput?.addEventListener('input', () => setValidStyle(emailInput, validEmail(emailInput.value)));
+      phoneInput?.addEventListener('input', () => setValidStyle(phoneInput, validPhone(phoneInput.value)));
+
+      submitContactBtn?.addEventListener('click', () => {
+        const name = (nameInput.value || '').trim();
+        const email = (emailInput.value || '').trim();
+        const phone = (phoneInput.value || '').trim();
+        if (name && validEmail(email) && validPhone(phone)) {
+          contactError.classList.add('hidden');
+          addUserMsg(`Submitted Info: ${name} / ${email} / ${phone}`);
+          setTimeout(() => addBotMsg('Received. We will contact you soon.'), 300);
+          showStep(7);
+        } else {
+          contactError.classList.remove('hidden');
+          showToast('Please check and complete contact information');
+        }
+      });
+
+      // Restart and Step 7 back
+      document.getElementById('restartBtn')?.addEventListener('click', () => {
+        // reset state
+        state.zip = '';
+        state.usageType = '';
+        state.usageActual = null;
+        state.batteryYes = null;
+        state.batteryTier = 'none';
+        if (zipInput) zipInput.value = '';
+        if (usageActualInput) usageActualInput.value = '';
+        if (nameInput) nameInput.value = '';
+        if (emailInput) emailInput.value = '';
+        if (phoneInput) phoneInput.value = '';
+        addUserMsg('Restart evaluation');
+        showStep(0);
+        showToast('Reset completed');
+      });
+
+      document.getElementById('backTo6')?.addEventListener('click', () => {
+        addUserMsg('Return to fill contact information');
+        showStep(6);
+      });
+
+      // Compute quote
+      function computeQuote() {
+        // Estimate system size (kW) from usage
+        let monthly = 0;
+        if (state.usageType === 'low') monthly = 250;
+        else if (state.usageType === 'med') monthly = 400;
+        else if (state.usageType === 'high') monthly = 650;
+        else if (state.usageType === 'actual') monthly = state.usageActual || 400;
+
+        // Rough rule of thumb: 1 kW ~ 110 kWh/month production (varies by region)
+        const sizeKW = Math.max(2.5, Math.round((monthly / 110) * 10) / 10);
+        const basePerKW = 6000; // RMB/kW
+        const solarCost = sizeKW * basePerKW;
+
+        let batteryCost = 0;
+        if (state.batteryTier === 'basic') batteryCost = 12000;
+        if (state.batteryTier === 'mid') batteryCost = 20000;
+        if (state.batteryTier === 'pro') batteryCost = 36000;
+        if (state.batteryTier === 'none') batteryCost = 0;
+
+        const subtotal = solarCost + batteryCost;
+        const low = Math.round(subtotal * 0.9);
+        const high = Math.round(subtotal * 1.1);
+
+        const estSize = document.getElementById('estSize');
+        const estBudget = document.getElementById('estBudget');
+        const estSaving = document.getElementById('estSaving');
+
+        estSize.textContent = `${sizeKW.toFixed(1)} kW System${batteryCost > 0 ? ' + Storage' : ''}`;
+        estBudget.textContent = `AUD$${formatNumber(low)} - AUD$${formatNumber(high)}`;
+
+        // Estimate annual savings
+        const pricePerKWh = 0.8;
+        const annualProd = sizeKW * 110 * 12;
+        const selfUseRatio = batteryCost > 0 ? 0.75 : 0.55;
+        const annualSaving = Math.round(annualProd * pricePerKWh * selfUseRatio);
+        estSaving.textContent = `Approx AUD$${formatNumber(annualSaving)}/year`;
+      }
+
+      function formatNumber(n) {
+        return (n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      // Free chat (bottom bar)
+      const freeChatInput = document.getElementById('freeChatInput');
+      const freeChatSendBtn = document.getElementById('freeChatSendBtn');
+
+      function updateFreeChatSendState() {
+        const hasText = (freeChatInput.value || '').trim().length > 0;
+        freeChatSendBtn.disabled = !hasText;
+      }
+
+      function sendFreeChat() {
+        const text = (freeChatInput.value || '').trim();
+        if (!text) return;
+        addUserMsg(text);
+        freeChatInput.value = '';
+        updateFreeChatSendState();
+        setTimeout(() => addBotMsg('Received. We will get back to you soon.'), 350);
+      }
+
+      freeChatInput?.addEventListener('input', updateFreeChatSendState);
+      freeChatInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendFreeChat();
+        }
+      });
+      freeChatSendBtn?.addEventListener('click', sendFreeChat);
+
+      // Copy quote (新增)
+      const copyQuoteBtn = document.getElementById('copyQuoteBtn');
+      copyQuoteBtn?.addEventListener('click', async () => {
+        const text = buildQuoteText();
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Quote copied to clipboard');
+        } catch (e) {
+          // Fallback
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          textarea.remove();
+          showToast('Quote copied');
+        }
+      });
+
+      // Share quote (新增)
+      const shareQuoteBtn = document.getElementById('shareQuoteBtn');
+      shareQuoteBtn?.addEventListener('click', async () => {
+        const text = buildQuoteText();
+        const shareUrl = `${window.location.origin}${window.location.pathname}?share=${encodeURIComponent(text)}`;
+        
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast('Share link copied to clipboard');
+        } catch (e) {
+          // Fallback
+          const textarea = document.createElement('textarea');
+          textarea.value = shareUrl;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          textarea.remove();
+          showToast('Share link copied');
+        }
+      });
+
+      function fallbackShare(text, url) {
+        const shareText = text + '\n\nGenerated from: ' + url;
+        try {
+          navigator.clipboard.writeText(shareText);
+          showToast('Quote copied to clipboard for sharing');
+        } catch (e) {
+          const textarea = document.createElement('textarea');
+          textarea.value = shareText;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          textarea.remove();
+          showToast('Quote copied for sharing');
+        }
+      }
+
+      function buildQuoteText() {
+        const usageMap = {
+          low: 'Less than 300 kWh/month',
+          med: '300-500 kWh/month', 
+          high: 'More than 500 kWh/month',
+          actual: `${state.usageActual || ''} kWh/month`
+        };
+        const batteryMap = {
+          none: 'No Battery',
+          basic: 'Basic (~5 kWh)',
+          mid: 'Medium (~10 kWh)',
+          pro: 'Premium (≥15 kWh)'
+        };
+        const estSize = document.getElementById('estSize')?.textContent || '';
+        const estBudget = document.getElementById('estBudget')?.textContent || '';
+        const estSaving = document.getElementById('estSaving')?.textContent || '';
+        return [
+          'Home Solar Installation · Preliminary Quote',
+          `Postal Code: ${state.zip || '-'}`,
+          `Monthly Usage: ${usageMap[state.usageType] || '-'}`,
+          `Battery Plan: ${batteryMap[state.batteryTier] || '-'}`,
+          `System Size: ${estSize}`,
+          `Budget Range: ${estBudget}`,
+          `Annual Savings: ${estSaving}`
+        ].join('\n');
+      }
+
+      // Auto-highlight preselected tier when no battery chosen (kept for completeness)
+      const observer = new MutationObserver(() => {
+        const step4 = document.querySelector('[data-step="4"]');
+        if (!step4.classList.contains('hidden')) {
+          // placeholder for any visual sync if needed
+        }
+      });
+      observer.observe(cards, { childList: true, subtree: true });
+
+      // 检查分享链接
+      if (new URLSearchParams(window.location.search).get('share')) {
+        const shareText = decodeURIComponent(new URLSearchParams(window.location.search).get('share'));
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
+        overlay.innerHTML = `
+          <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-6 max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-white">Shared Quote</h3>
+              <button onclick="this.closest('.fixed').remove(); history.replaceState({}, '', location.pathname)" class="text-white/60 hover:text-white">×</button>
+            </div>
+            <pre class="text-sm text-white/80 whitespace-pre-wrap">${shareText}</pre>
+            <button onclick="location.href = location.pathname" class="w-full mt-4 bg-white text-black py-2 px-4 rounded-lg hover:bg-white/90 transition">
+              Start Your Own Quote
+            </button>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+      }
+      // Electricity bill upload functionality
+      function handleFileUpload() {
+        document.getElementById('billUpload').click();
+      }
+
+      // 等待DOM加载完成后绑定事件
+      document.addEventListener('DOMContentLoaded', function() {
+        // 文件选择处理
+        const billUploadInput = document.getElementById('billUpload');
+        if (billUploadInput) {
+          billUploadInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+              simulateUploadProcess();
+            }
+          });
+        }
+      });
+
+      // 模拟上传过程
+      function simulateUploadProcess() {
+        // 隐藏上传按钮，显示上传中状态
+        document.getElementById('uploadSection').classList.add('hidden');
+        document.getElementById('uploadingStatus').classList.remove('hidden');
+        
+        // 随机决定结果（70%成功，30%失败）
+        const isSuccess = Math.random() > 0.3;
+        
+        setTimeout(() => {
+          document.getElementById('uploadingStatus').classList.add('hidden');
+          
+          if (isSuccess) {
+            showSuccessResult();
+          } else {
+            showFailureResult();
+          }
+        }, 2000 + Math.random() * 2000); // 2-4秒随机延迟
+      }
+
+      // 显示成功结果
+      function showSuccessResult() {
+        // 生成随机用电量 (200-800 kWh)
+        const randomUsage = Math.floor(Math.random() * 600) + 200;
+        document.getElementById('recognizedUsage').textContent = randomUsage + ' kWh';
+        
+        document.getElementById('uploadSuccessStatus').classList.remove('hidden');
+      }
+
+      // 显示失败结果
+      function showFailureResult() {
+        document.getElementById('uploadFailedStatus').classList.remove('hidden');
+      }
+
+      // Retry upload
+      function retryUpload() {
+        // 重置所有状态
+        document.getElementById('uploadSection').classList.remove('hidden');
+        document.getElementById('uploadingStatus').classList.add('hidden');
+        document.getElementById('uploadFailedStatus').classList.add('hidden');
+        document.getElementById('uploadSuccessStatus').classList.add('hidden');
+        
+        // 清空文件选择
+        document.getElementById('billUpload').value = '';
+      }
+
+      // Use recognized data
+      function useRecognizedData() {
+        const recognizedUsage = document.getElementById('recognizedUsage').textContent;
+        const usageValue = parseInt(recognizedUsage);
+        
+        // 将识别的用电量填入实际用电量输入框
+        document.getElementById('usageActualInput').value = usageValue;
+        
+        // Trigger confirm button click
+        document.getElementById('confirmActualBtn').click();
+        
+        // 显示提示消息
+        showToast('Recognized electricity usage from bill: ' + recognizedUsage);
+      }
+    </script>
+  
+</body></html>
