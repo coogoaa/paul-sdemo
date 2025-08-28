@@ -45,7 +45,7 @@
               <div class="text-[20px] md:text-[22px] tracking-tight font-semibold text-gray-800">Home Solar Potential Explorer</div>
               <div class="text-[12px] text-gray-600">AI Advisor · Get a tailored plan in 60 seconds</div>
             </div>
-            <a href="tel:+8618000000000" class="inline-flex items-center gap-1.5 text-[12px] px-2 py-1 rounded-lg bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 hover:bg-[#22C55E]/15 hover:border-[#22C55E]/30 transition">
+            <a href="tel:+8618000000000" class="inline-flex items-center gap-1 text-[12px] px-2 py-1 rounded-lg bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 hover:bg-[#22C55E]/15 hover:border-[#22C55E]/30 transition">
               <i data-lucide="phone" class="w-3.5 h-3.5"></i>
               <span>Call</span>
             </a>
@@ -637,6 +637,12 @@
         bindStep6A();
         bindLead();
         bindBottomChat();
+
+        // Pre-populate Step 4 budget panel with default plan so values are never empty
+        try {
+          const conf = getSchemeConfig('smart');
+          updateS4BudgetPanel(conf);
+        } catch {}
       }
 
       // Step 1
