@@ -6,15 +6,16 @@
     <!-- Fonts: Inter (local first, CDN fallback). If vendor/inter/inter.css is missing, uses CDN. -->
     <link id="interCss" href="vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
 
-    <!-- TailwindCSS: Currently using CDN. For fully-offline, provide vendor/tailwind/tailwind.min.css and remove the CDN script. -->
+    <!-- TailwindCSS: Prefer local CSS for file:// usage, add CDN fallback below -->
+    <link rel="stylesheet" href="vendor/tailwind/tailwind.min.css">
+    <script>/* Tailwind CDN fallback for when local CSS missing */</script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- <link rel="stylesheet" href="vendor/tailwind/tailwind.min.css"> -->
 
     <!-- Lucide icons: local first, CDN fallback -->
     <script src="vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
 
-    <!-- Model Viewer: local first, CDN fallback -->
-    <script type="module" src="vendor/model-viewer/model-viewer.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js'"></script>
+    <!-- Model Viewer (Legacy, non-module): local first, CDN fallback. Works better over file:// -->
+    <script src="vendor/model-viewer/model-viewer-legacy.js" onerror="this.onerror=null; this.src='https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js'"></script>
     <style>
       @keyframes roofPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16,185,129,0.0)); } 50% { transform: scale(1.015); filter: drop-shadow(0 0 6px rgba(16,185,129,0.25)); } 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16,185,129,0.0)); } }
       #roofOverlay .roof-pulse { animation: roofPulse 2.6s ease-in-out infinite; transition: opacity .2s ease; }
