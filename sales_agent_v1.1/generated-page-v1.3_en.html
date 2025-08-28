@@ -69,7 +69,7 @@
                 <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
                 <span>Get Started</span>
               </div>
-              <h2 class="mt-1 text-[22px] tracking-tight font-semibold text-gray-800">Explore your home's solar potential in 60 seconds</h2>
+              <h2 class="mt-1 text-[17px] tracking-tight font-semibold text-gray-800">Explore your home's solar potential in 60 seconds</h2>
               <p class="mt-2 text-[13px] leading-5 text-gray-600">
                 Enter your address and we'll locate your roof to generate a 3D plan and savings estimate.
               </p>
@@ -752,8 +752,8 @@
           const x = ((clientX - rect.left) / rect.width) * 100; // numeric coords, match viewBox 0..100
           const y = ((clientY - rect.top) / rect.height) * 100;
           // rectangle around clicked point（改为矩形高亮，单位与 viewBox 一致）
-          const w = 16; // 宽度（原先菱形对角约 16）
-          const h = 10; // 高度
+          const w = 40; // 宽度（原先菱形对角约 16）
+          const h = 35; // 高度
           const rx = Math.max(0, Math.min(100 - w, x - w / 2));
           const ry = Math.max(0, Math.min(100 - h, y - h / 2));
           roofOverlay.innerHTML = `<rect x="${rx}" y="${ry}" width="${w}" height="${h}" rx="2" ry="2" fill="rgba(16,185,129,0.30)" stroke="rgba(110,231,183,0.9)" stroke-width="1.2"/>`;
@@ -1218,7 +1218,6 @@
             modelViewer.style.transform = 'scale(1)';
           }, 180);
         }
-        try { showToast(`Switched: ${conf.name}`, 'info'); } catch {}
       };
 
       // Lead modal (Step 7 trigger)

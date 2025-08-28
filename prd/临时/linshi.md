@@ -56,6 +56,16 @@ Budget quote (range) 的内容，内容包括System budget (incl. tax) 、Estima
 在最底层 统一给出 tips 提示These are preliminary estimates incl. tax, excluding grid connection & subsidy differences. Provide details to receive an accurate quote.
 然后是Copy、Share、Refine info 的按钮
 
+---
+- Home Solar Potential Explorer 标题 字体变小一点
+- 默认地址 改为 澳洲的地址：
+    - Enter full address, e.g.221B Baker St, London
+    - Example: 1600 Amphitheatre Pkwy,Mountain View
+- 地图卡片，点击房屋的菱形，改为矩形
+- 地图选中提交后，点击房屋的菱形，不要默认展示，要用户点击后在重新展示
+- 点击不同的计划是，3D 地图应该重新加载，有切换效果。
+- System budget (incl. tax)的卡片，下方的Estimated system size 、Payback period、Self-consumption、Annual bill savings 具体的数值字体调小一点，整体紧凑一些。
+
 
 
 
