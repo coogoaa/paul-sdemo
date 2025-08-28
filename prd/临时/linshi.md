@@ -30,3 +30,7 @@
 
 - 如果我要替换 glb 文件，实现起来方便么，如果我把文件放到目录里。
 
+
+- <!-- Step 5: Plan interaction --> 中的
+<!-- Step 6: Value presentation -->
+
