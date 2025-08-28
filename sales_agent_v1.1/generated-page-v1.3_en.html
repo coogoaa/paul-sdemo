@@ -10,6 +10,8 @@
     <style>
       @keyframes roofPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16,185,129,0.0)); } 50% { transform: scale(1.015); filter: drop-shadow(0 0 6px rgba(16,185,129,0.25)); } 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16,185,129,0.0)); } }
       #roofOverlay .roof-pulse { animation: roofPulse 2.6s ease-in-out infinite; transition: opacity .2s ease; }
+      /* Step4 3D 切换过渡效果 */
+      #viewer3d model-viewer { transition: opacity .22s ease, transform .22s ease; }
     </style>
   </head>
   <body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
@@ -42,7 +44,7 @@
               <span class="text-[15px] tracking-tight font-semibold text-[#22C55E]">S</span>
             </div>
             <div class="flex-1">
-              <div class="text-[20px] md:text-[22px] tracking-tight font-semibold text-gray-800">Home Solar Potential Explorer</div>
+              <div class="text-[18px] md:text-[20px] tracking-tight font-semibold text-gray-800">Home Solar Potential Explorer</div>
               <div class="text-[12px] text-gray-600">AI Advisor · Get a tailored plan in 60 seconds</div>
             </div>
             <a href="tel:+8618000000000" class="inline-flex items-center gap-1 text-[12px] px-2 py-1 rounded-lg bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 hover:bg-[#22C55E]/15 hover:border-[#22C55E]/30 transition">
@@ -74,10 +76,10 @@
               <div class="mt-3 space-y-2">
                 <div class="relative">
                   <i data-lucide="map-pin" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                  <input id="addressInput" placeholder="Enter full address, e.g. 221B Baker St, London" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
+                  <input id="addressInput" placeholder="Enter full address, e.g. 221B George St, Sydney NSW" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
                 </div>
                 <div class="flex items-center justify-between">
-                  <div class="text-[12px] text-gray-500">Example: 1600 Amphitheatre Pkwy, Mountain View</div>
+                  <div class="text-[12px] text-gray-500">Example: 120 Collins St, Melbourne VIC</div>
                   <button id="useLocationBtn" class="inline-flex items-center gap-1.5 text-[12px] px-2 py-1 rounded-lg bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100">
                     <i data-lucide="crosshair" class="w-4 h-4"></i> Use current location
                   </button>
@@ -227,36 +229,36 @@
               </div>
 
               <!-- Budget quote (range) panel in Step 4 -->
-              <section id="s4BudgetPanel" class="mt-3 p-3 rounded-2xl bg-white border border-green-200 shadow-sm">
-                <div class="flex items-center justify-between mb-1.5">
-                  <h3 class="text-[14px] font-semibold text-gray-900">System budget (incl. tax)</h3>
-                  <span id="s4BudgetRange" class="text-[18px] font-bold text-[#22C55E]">$0 – $0</span>
+              <section id="s4BudgetPanel" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+                <div class="flex items-center justify-between mb-1">
+                  <h3 class="text-[13px] font-semibold text-gray-900">System budget (incl. tax)</h3>
+                  <span id="s4BudgetRange" class="text-[16px] font-bold text-[#22C55E]">$0 – $0</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                  <div class="rounded-xl border border-gray-100 p-2.5">
-                    <div class="text-[11px] text-gray-500">Estimated system size</div>
-                    <div id="s4SizeRange" class="text-[13px] font-semibold text-gray-900">–</div>
+                <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                  <div class="rounded-xl border border-gray-100 p-2">
+                    <div class="text-[10px] text-gray-500">Estimated system size</div>
+                    <div id="s4SizeRange" class="text-[12px] font-semibold text-gray-900">–</div>
                   </div>
-                  <div class="rounded-xl border border-gray-100 p-2.5">
-                    <div class="text-[11px] text-gray-500">Payback period</div>
-                    <div id="s4PaybackRange" class="text-[13px] font-semibold text-gray-900">–</div>
+                  <div class="rounded-xl border border-gray-100 p-2">
+                    <div class="text-[10px] text-gray-500">Payback period</div>
+                    <div id="s4PaybackRange" class="text-[12px] font-semibold text-gray-900">–</div>
                   </div>
-                  <div class="rounded-xl border border-gray-100 p-2.5">
-                    <div class="text-[11px] text-gray-500">Self-consumption</div>
-                    <div id="s4SelfUseRange" class="text-[13px] font-semibold text-gray-900">–</div>
+                  <div class="rounded-xl border border-gray-100 p-2">
+                    <div class="text-[10px] text-gray-500">Self-consumption</div>
+                    <div id="s4SelfUseRange" class="text-[12px] font-semibold text-gray-900">–</div>
                   </div>
-                  <div class="rounded-xl border border-gray-100 p-2.5">
-                    <div class="text-[11px] text-gray-500">Annual bill savings</div>
-                    <div id="s4AnnualSaveRange" class="text-[13px] font-semibold text-gray-900">–</div>
+                  <div class="rounded-xl border border-gray-100 p-2">
+                    <div class="text-[10px] text-gray-500">Annual bill savings</div>
+                    <div id="s4AnnualSaveRange" class="text-[12px] font-semibold text-gray-900">–</div>
                   </div>
                 </div>
-                <p class="text-[11px] text-gray-500 leading-snug mb-2">
+                <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
                   These are preliminary estimates incl. tax, excluding grid connection & subsidy differences. Provide details to receive an accurate quote.
                 </p>
-                <div class="flex items-center gap-2">
-                  <button id="s4CopyBtn" class="px-3 py-2 text-[12px] rounded-xl border border-gray-200 bg-white">Copy</button>
-                  <button id="s4ShareBtn" class="px-3 py-2 text-[12px] rounded-xl border border-gray-200 bg-white">Share</button>
-                  <button id="s4RefineBtn" class="ml-auto px-3 py-2 text-[12px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
+                <div class="flex items-center gap-1.5">
+                  <button id="s4CopyBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+                  <button id="s4ShareBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+                  <button id="s4RefineBtn" class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
                 </div>
               </section>
             </div>
@@ -749,14 +751,12 @@
           const rect = mapViewport.getBoundingClientRect();
           const x = ((clientX - rect.left) / rect.width) * 100; // numeric coords, match viewBox 0..100
           const y = ((clientY - rect.top) / rect.height) * 100;
-          // simple diamond around clicked point (same unit as viewBox)
-          const size = 8;
-          const p1 = `${x},${Math.max(0, y - size)}`;
-          const p2 = `${Math.min(100, x + size)},${y}`;
-          const p3 = `${x},${Math.min(100, y + size)}`;
-          const p4 = `${Math.max(0, x - size)},${y}`;
-          const points = `${p1} ${p2} ${p3} ${p4}`;
-          roofOverlay.innerHTML = `<polygon class="roof-pulse" points="${points}" fill="rgba(16,185,129,0.35)" stroke="rgba(110,231,183,0.9)" stroke-width="1.2"/>`;
+          // rectangle around clicked point（改为矩形高亮，单位与 viewBox 一致）
+          const w = 16; // 宽度（原先菱形对角约 16）
+          const h = 10; // 高度
+          const rx = Math.max(0, Math.min(100 - w, x - w / 2));
+          const ry = Math.max(0, Math.min(100 - h, y - h / 2));
+          roofOverlay.innerHTML = `<rect x="${rx}" y="${ry}" width="${w}" height="${h}" rx="2" ry="2" fill="rgba(16,185,129,0.30)" stroke="rgba(110,231,183,0.9)" stroke-width="1.2"/>`;
           state.roofSelected = true;
           state.roofPoint = { x, y };
           confirmBtn.disabled = false;
@@ -785,6 +785,9 @@
         confirmBtn?.addEventListener('click', () => {
           addUserMsg('Roof confirmed on the map');
           addBotMsg('Great. Running analysis... It\'s like magic!');
+          // 提交后清空高亮，返回 Step 2 时需要用户再次点击
+          if (roofOverlay) roofOverlay.innerHTML = '';
+          state.roofSelected = false;
           showStep(3);
           runAnalysis();
         });
@@ -839,15 +842,35 @@
           const selectScheme = (key) => {
             const conf = getSchemeConfig(key);
             state.scheme = key;
-            // Update KPI (Step 4 only + Step 6 reuse, so it's still usable after jumping)
+            // 3D 轻量过渡（淡入/缩放）
+            if (modelViewer) {
+              modelViewer.style.opacity = '0.6';
+              modelViewer.style.transform = 'scale(0.985)';
+            }
+            // 更新 KPI & 预算面板
             applyValuePresentation(conf);
-            // Visual feedback: highlight selected
+            try { updateS4BudgetPanel(conf); } catch {}
+            // 选中态高亮
             buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
             buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
-            // If needed in the future: adjust <model-viewer> environment/exposure parameters based on the plan
+            // 恢复 3D 过渡
+            if (modelViewer) {
+              setTimeout(() => {
+                modelViewer.style.opacity = '1';
+                modelViewer.style.transform = 'scale(1)';
+              }, 180);
+            }
           };
+          // click 绑定 + 容器委托兜底
           buttons.forEach(btn => btn.addEventListener('click', () => selectScheme(btn.dataset.scheme)));
-          // Default to "Smart Saver"
+          strip.addEventListener('click', (e) => {
+            const btn = e.target.closest('.scheme-card-mini');
+            if (!btn || !strip.contains(btn)) return;
+            const key = btn.getAttribute('data-scheme');
+            if (!key) return;
+            selectScheme(key);
+          });
+          // 默认方案
           selectScheme('smart');
         }
 
@@ -1172,8 +1195,29 @@
       window.selectScheme4 = (key) => {
         const conf = getSchemeConfig(key || 'smart');
         state.scheme = key || 'smart';
+        const modelViewer = document.querySelector('#viewer3d model-viewer');
+        // 3D 轻量过渡
+        if (modelViewer) {
+          modelViewer.style.opacity = '0.6';
+          modelViewer.style.transform = 'scale(0.985)';
+        }
+        // 更新 KPI & 预算面板
         applyValuePresentation(conf);
-        updateS4BudgetPanel(conf);
+        try { updateS4BudgetPanel(conf); } catch {}
+        // 选中态高亮（若条带存在）
+        const strip = document.getElementById('schemesStrip4');
+        if (strip) {
+          const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+          buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === state.scheme));
+          buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === state.scheme));
+        }
+        // 恢复 3D 过渡
+        if (modelViewer) {
+          setTimeout(() => {
+            modelViewer.style.opacity = '1';
+            modelViewer.style.transform = 'scale(1)';
+          }, 180);
+        }
         try { showToast(`Switched: ${conf.name}`, 'info'); } catch {}
       };
 
