@@ -332,8 +332,8 @@
 
               <!-- Saving number -->
               <div class="rounded-xl border border-green-200 bg-gray-50 p-4 text-center">
-                <div class="text-[12px] text-gray-600">Estimated annual savings</div>
-                <div id="savingNumber" class="mt-1 text-[28px] tracking-tight font-semibold text-[#22C55E]">$0</div>
+                <div class="text-[12px] text-gray-600">System budget (incl. tax)</div>
+                <div id="savingNumber" class="mt-1 text-[28px] tracking-tight font-semibold text-[#22C55E]">$0 – $0</div>
                 <div id="schemeTag" class="mt-1 inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200 text-gray-600"></div>
               </div>
 
@@ -356,6 +356,53 @@
               <div class="mt-3 flex items-center justify-end">
                 <button id="openLeadBtn" class="inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">
                   <i data-lucide="mail" class="w-4 h-4"></i> Get subsidy-inclusive quote
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6A: Quote action card (independent) -->
+          <div id="card6A" class="hidden rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden transition-all duration-500">
+            <div class="p-3">
+              <div class="mb-2 flex items-center justify-between">
+                <div class="text-[12px] text-gray-600">Budget quote (range)</div>
+                <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>
+                  <span>Preliminary</span>
+                </div>
+              </div>
+
+              <div class="rounded-xl border border-green-200 bg-gray-50 p-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">System budget (incl. tax)</div>
+                  <div id="s6a_budget" class="text-[14px] font-semibold text-gray-800"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">Payback period</div>
+                  <div id="s6a_roi" class="text-[14px] font-medium text-gray-800"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">Self-consumption</div>
+                  <div id="s6a_selfuse" class="text-[14px] font-medium text-gray-800"></div>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="text-[12px] text-gray-600">Annual bill savings</div>
+                  <div id="s6a_saving" class="text-[14px] font-medium text-[#22C55E]"></div>
+                </div>
+                <div class="mt-2 text-[11px] text-gray-500 leading-4">
+                  These are preliminary estimates incl. tax, excluding grid connection & subsidy differences. Provide details to receive an accurate quote.
+                </div>
+              </div>
+
+              <div class="mt-3 grid grid-cols-3 gap-2">
+                <button id="copyQuoteBtn" class="inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 transition">
+                  <i data-lucide="copy" class="w-4 h-4"></i> Copy quote
+                </button>
+                <button id="shareQuoteBtn" class="inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200 transition">
+                  <i data-lucide="share-2" class="w-4 h-4"></i> Share
+                </button>
+                <button id="refineInfoBtn" class="inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i> Refine info
                 </button>
               </div>
             </div>
@@ -535,6 +582,13 @@
             el.classList.add('hidden');
           }
         });
+        // Toggle 6A visibility with Step 6
+        const card6A = document.getElementById('card6A');
+        if (card6A) card6A.classList.toggle('hidden', String(n) !== '6');
+        if (String(n) === '6') {
+          // exposure track once per session
+          if (!state._s6a_exposed) { track('s6a_expose', { scheme: state.scheme || 'smart' }); state._s6a_exposed = true; }
+        }
         refreshIcons();
       }
 
@@ -549,6 +603,21 @@
         rotationY: 0
       };
 
+      // Pricing / range config for Step 6A
+      const pricingConfig = {
+        kwMin: 1400, // $/kW lower bound
+        kwMax: 1900, // $/kW upper bound
+        batteryAdderMin: 3500,
+        batteryAdderMax: 6500,
+        savingVarPct: 0.12, // ±12%
+        selfUseVarPct: 0.05 // ±5%
+      };
+
+      // Simple analytics stub
+      function track(event, payload = {}) {
+        console.log('[track]', event, payload);
+      }
+
       function boot() {
         // Initial chatbot line
         addBotMsg('Hi! I\'m your AI solar advisor. Enter your address to get started.');
@@ -559,6 +628,7 @@
         bindStep4();
         bindStep5();
         bindStep6();
+        bindStep6A();
         bindLead();
         bindBottomChat();
       }
@@ -879,6 +949,110 @@
           addBotMsg(`Looks compelling, right? You may also qualify for about $${(conf.subsidy || 3000).toLocaleString()} in government subsidies. Want the final price including subsidies? Leave your details and I'll send the full report.`);
         });
       }
+
+      // Step 6A - actions & range presentation
+      function bindStep6A() {
+        const copyBtn = document.getElementById('copyQuoteBtn');
+        const shareBtn = document.getElementById('shareQuoteBtn');
+        const refineBtn = document.getElementById('refineInfoBtn');
+
+        copyBtn?.addEventListener('click', async () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          const txt = buildShareText(conf);
+          try {
+            await navigator.clipboard.writeText(txt);
+            showToast('Quote copied');
+            track('s6a_copy', { scheme: state.scheme || 'smart' });
+          } catch (e) {
+            console.warn('Copy failed', e);
+            showToast('Copy failed');
+          }
+        });
+
+        shareBtn?.addEventListener('click', async () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          const txt = buildShareText(conf);
+          const shareData = { title: 'Solar Quote', text: txt, url: location.href };
+          try {
+            if (navigator.share) {
+              await navigator.share(shareData);
+              track('s6a_share_native', { scheme: state.scheme || 'smart' });
+            } else {
+              await navigator.clipboard.writeText(txt + '\n' + location.href);
+              showToast('Copied (share not supported)');
+              track('s6a_share_copy', { scheme: state.scheme || 'smart' });
+            }
+          } catch (e) {
+            console.warn('Share failed', e);
+            showToast('Share canceled');
+          }
+        });
+
+        refineBtn?.addEventListener('click', () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          state.subsidy = conf.subsidy;
+          openLeadModal(conf.subsidy);
+          track('s6a_refine', { scheme: state.scheme || 'smart' });
+        });
+      }
+
+      function computeRangesFromConf(conf) {
+        // Budget range based on kW and optional battery
+        const baseLow = conf.sizeKW * pricingConfig.kwMin;
+        const baseHigh = conf.sizeKW * pricingConfig.kwMax;
+        const battLow = conf.battery ? pricingConfig.batteryAdderMin : 0;
+        const battHigh = conf.battery ? pricingConfig.batteryAdderMax : 0;
+        const budget = { low: Math.round(baseLow + battLow), high: Math.round(baseHigh + battHigh) };
+
+        // Savings range around conf.saving
+        const sv = pricingConfig.savingVarPct;
+        const saving = { low: Math.round(conf.saving * (1 - sv)), high: Math.round(conf.saving * (1 + sv)) };
+
+        // Self-use range
+        const su = pricingConfig.selfUseVarPct;
+        const selfUse = { low: Math.max(0, conf.selfUse - su), high: Math.min(0.98, conf.selfUse + su) };
+
+        // Payback rough = budget / saving (years)
+        const roiLow = Math.max(1.5, budget.low / Math.max(1, saving.high));
+        const roiHigh = Math.max(roiLow + 0.2, budget.high / Math.max(1, saving.low));
+        const roi = { low: roiLow, high: roiHigh };
+
+        return { budget, saving, selfUse, roi };
+      }
+
+      function formatCurrency(n) { return `$${n.toLocaleString()}`; }
+      function formatPct(p) { return `${Math.round(p * 100)}%`; }
+      function formatYears(a, b) { return `${a.toFixed(1)}–${b.toFixed(1)} years`; }
+
+      function update6ACard(conf) {
+        const els = {
+          budget: document.getElementById('s6a_budget'),
+          roi: document.getElementById('s6a_roi'),
+          self: document.getElementById('s6a_selfuse'),
+          saving: document.getElementById('s6a_saving')
+        };
+        const r = computeRangesFromConf(conf);
+        if (els.budget) els.budget.textContent = `${formatCurrency(r.budget.low)} – ${formatCurrency(r.budget.high)}`;
+        if (els.roi) els.roi.textContent = formatYears(r.roi.low, r.roi.high);
+        if (els.self) els.self.textContent = `${formatPct(r.selfUse.low)} – ${formatPct(r.selfUse.high)}`;
+        if (els.saving) els.saving.textContent = `${formatCurrency(r.saving.low)} – ${formatCurrency(r.saving.high)}`;
+      }
+
+      function buildShareText(conf) {
+        const r = computeRangesFromConf(conf);
+        const lines = [
+          `Plan: ${conf.name}`,
+          `System size: ${conf.sizeKW.toFixed(1)} kW${conf.battery ? ' + battery' : ''}`,
+          `Budget (incl. tax): ${formatCurrency(r.budget.low)} – ${formatCurrency(r.budget.high)}`,
+          `Payback: ${formatYears(r.roi.low, r.roi.high)}`,
+          `Self-consumption: ${formatPct(r.selfUse.low)} – ${formatPct(r.selfUse.high)}`,
+          `Annual savings: ${formatCurrency(r.saving.low)} – ${formatCurrency(r.saving.high)}`,
+          `Note: Preliminary estimate (incl. tax), excluding grid connection & subsidy differences.`,
+          `Link: ${location.href}`
+        ];
+        return lines.join('\n');
+      }
+
       function applyValuePresentation(conf) {
         // Step 6 original elements
         const savingNumber = document.getElementById('savingNumber');
@@ -886,11 +1060,13 @@
         const sizeText = document.getElementById('sizeText');
         const roiText = document.getElementById('roiText');
         const selfUseText = document.getElementById('selfUseText');
+        // compute ranges for unified display (Step 6)
+        const r = computeRangesFromConf(conf);
         if (schemeTag) schemeTag.innerHTML = `<span>${conf.name}</span>`;
         if (sizeText) sizeText.textContent = `${conf.sizeKW.toFixed(1)} kW (≈ ${conf.panels} panels${conf.battery ? ' + battery' : ''})`;
-        if (roiText) roiText.textContent = conf.roi;
-        if (selfUseText) selfUseText.textContent = `${Math.round(conf.selfUse * 100)}%`;
-        if (savingNumber) animateNumber(savingNumber, conf.saving, '$');
+        if (roiText) roiText.textContent = formatYears(r.roi.low, r.roi.high);
+        if (selfUseText) selfUseText.textContent = `${Math.round(r.selfUse.low * 100)}% – ${Math.round(r.selfUse.high * 100)}%`;
+        if (savingNumber) savingNumber.textContent = `${formatCurrency(r.budget.low)} – ${formatCurrency(r.budget.high)}`;
 
         // Step 4 elements (s4_ prefix)
         const s4_savingNumber = document.getElementById('s4_savingNumber');
@@ -901,11 +1077,15 @@
         if (s4_schemeTag) s4_schemeTag.innerHTML = `<span>${conf.name}</span>`;
         if (s4_sizeText) s4_sizeText.textContent = `${conf.sizeKW.toFixed(1)} kW / ${conf.panels} panels${conf.battery ? ' + battery' : ''}`;
         if (s4_roiText) s4_roiText.textContent = conf.roi;
-        if (s4_selfUseText) s4_selfUseText.textContent = `${Math.round(conf.selfUse * 100)}%`;
-        if (s4_savingNumber) animateNumber(s4_savingNumber, conf.saving, '$');
+        if (s4_selfUseText) s4_selfUseText.textContent = `${Math.round(r.selfUse.low * 100)}% – ${Math.round(r.selfUse.high * 100)}%`;
+        if (s4_savingNumber) s4_savingNumber.textContent = `$${conf.saving.toLocaleString()}`;
 
         state.saving = conf.saving;
+
+        // Update Step 6A card content as well
+        update6ACard(conf);
       }
+
       function animateNumber(el, target, prefix = '') {
         const duration = 900;
         const start = performance.now();
