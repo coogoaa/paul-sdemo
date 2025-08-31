@@ -1,0 +1,78 @@
+/* cards.css - standalone card styles for v1.2 dialog flow components */
+:root{
+  --bg:#0b1020;            /* dark page bg to match demo tone */
+  --card:#0f172a;          /* slate-900 */
+  --card-2:#111827;        /* near */
+  --muted:#94a3b8;         /* slate-400 */
+  --text:#e5e7eb;          /* gray-200 */
+  --primary:#22c55e;       /* green-500 */
+  --primary-2:#16a34a;     /* green-600 */
+  --warn:#f59e0b;          /* amber-500 */
+  --danger:#ef4444;        /* red-500 */
+  --surface:#0b122a;       /* subtle surface */
+  --border:rgba(148,163,184,.18);
+  --shadow:0 10px 25px rgba(0,0,0,.35);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.container{max-width:1200px;margin:24px auto;padding:0 16px}
+.section{margin:24px 0}
+.hstack{display:flex;gap:12px;align-items:center}
+.vstack{display:flex;flex-direction:column;gap:10px}
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+
+.card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.00)),var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-weight:600;letter-spacing:.2px}
+.card-sub{color:var(--muted);font-size:12px}
+.card-body{display:flex;flex-direction:column;gap:12px}
+.card-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:999px;background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.35);font-size:12px}
+.pill{padding:2px 8px;border-radius:999px;background:rgba(148,163,184,.12);color:var(--muted);font-size:12px;border:1px solid var(--border)}
+.hr{height:1px;background:linear-gradient(90deg,transparent,rgba(148,163,184,.25),transparent);border:0}
+
+.btn{appearance:none;cursor:pointer;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:10px 14px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);transition:.18s}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-primary{background:linear-gradient(180deg,#22c55e,#169f4a);border-color:rgba(34,197,94,.55)}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-secondary{background:#0f1a34}
+.btn-ghost{background:transparent}
+.btn-danger{background:linear-gradient(180deg,#ef4444,#b91c1c);border-color:rgba(239,68,68,.55)}
+
+/* Composite card layout */
+.composite{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+@media (max-width: 980px){.composite{grid-template-columns:1fr}}
+.model-box{background:radial-gradient(1200px 500px at 20% -20%, rgba(34,197,94,.12), transparent),var(--card-2);border:1px dashed var(--border);border-radius:12px;min-height:260px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width: 980px){.plan-grid{grid-template-columns:repeat(2,1fr)}}
+.plan{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.00)),#0c132a;border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:.18s}
+.plan:hover{transform:translateY(-2px)}
+.plan.active{outline:2px solid rgba(34,197,94,.6);box-shadow:0 0 0 4px rgba(34,197,94,.08)}
+.plan .kw{font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{background:#0b122a;border:1px solid var(--border);border-radius:10px;padding:10px}
+
+/* Lead form */
+.form{display:flex;flex-direction:column;gap:10px}
+.input{background:#0b122a;border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;outline:none}
+.input:focus{border-color:rgba(34,197,94,.55);box-shadow:0 0 0 4px rgba(34,197,94,.08)}
+.label{font-size:12px;color:var(--muted)}
+
+/* Info bars */
+.infobar{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(148,163,184,.08);color:var(--muted);font-size:13px}
+.infobar.warn{background:rgba(245,158,11,.10);color:#fcd34d;border-color:rgba(245,158,11,.35)}
+.infobar.danger{background:rgba(239,68,68,.08);color:#fecaca;border-color:rgba(239,68,68,.35)}
+
+/* Large area lead card */
+.large-area .highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.large-area .hl{background:#0b122a;border:1px dashed var(--border);border-radius:10px;padding:10px;color:var(--muted)}
+
+/* Address fallback */
+.addr-fb .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Small area fallback */
+.small-area .actions{display:flex;gap:8px}

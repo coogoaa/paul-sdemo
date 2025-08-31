@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Cards Demo (Tailwind, H5) - v1.2</title>
+  <!-- Use same resources as generated-page-v1.4_en.html -->
+  <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+  <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
+    <div class="px-3 pt-4 pb-2">
+      <div class="text-[18px] font-semibold tracking-tight">Cards Demo · Tailwind (H5)</div>
+      <div class="text-[12px] text-gray-600">Strictly aligned to generated-page-v1.4_en.html styles</div>
+    </div>
+
+    <main class="flex-1 px-3 pb-20 space-y-4">
+
+      <!-- S5_COMPOSITE_CARD: 3D/2D + Plans + Value + CTA -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>Analysis complete</span>
+              </div>
+              <div class="hidden sm:block text-[12px] text-gray-600">Usable area 82 m² · Max ~ 10.8 kW</div>
+            </div>
+            <div class="text-[11px] text-gray-500">Source: Satellite + Estimation</div>
+          </div>
+
+          <!-- Model placeholder (match Step4 aesthetics) -->
+          <div class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0 flex items-center justify-center text-[12px] text-gray-500">3D/2D viewer placeholder</div>
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+          </div>
+
+          <!-- Horizontal mini plan strip -->
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">Tailored plans</div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Smart Saver</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">6.6 kW · ¥X1–Y1</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">High Efficiency</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">8.2 kW · ¥X2–Y2</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">10.0 kW · ¥X3–Y3</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Ultimate Energy</div>
+                  <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">12.0 kW · ¥X4–Y4</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Budget/value panel -->
+          <section class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-[13px] font-semibold text-gray-900">System budget (incl. tax)</h3>
+              <span class="text-[16px] font-bold text-[#22C55E]">$0 – $0</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Estimated system size</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Payback period</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Self-consumption</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Annual bill savings</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+              <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Get subsidy-inclusive quote</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- L1 Large area lead card -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[13px] font-semibold text-gray-900">Large roof – custom design</div>
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">Area &gt; 450 m²</div>
+          </div>
+          <ul class="list-disc pl-5 text-[12px] text-gray-600 space-y-1">
+            <li>Dedicated engineer assessment</li>
+            <li>Grid & export strategy</li>
+            <li>Subsidy & policy review</li>
+          </ul>
+          <div class="mt-3 grid grid-cols-1 gap-2">
+            <input placeholder="Name" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            <input placeholder="Phone or Email" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            <input placeholder="Best time to reach" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+          </div>
+          <div class="mt-3 flex items-center justify-end">
+            <button class="px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Submit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- F1 Address fallback -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3 space-y-2">
+          <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            <span>Address not found or low quality</span>
+          </div>
+          <div class="text-[12px] text-gray-600">Try a different spelling or a nearby landmark, or drag the map manually.</div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Retry locate</button>
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Manual drag</button>
+            <button class="ml-auto px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Contact human assessment</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- F3 Small area (no upload) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3 space-y-2">
+          <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+            <i data-lucide="triangle-alert" class="w-4 h-4"></i>
+            <span>Installable area may be too small</span>
+          </div>
+          <div class="text-[12px] text-gray-600">Zoom in and reselect your roof, or leave contact for free manual check.</div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Reselect roof</button>
+            <button class="ml-auto px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Free manual assessment</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- F4 Analysis timeout -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3 space-y-2">
+          <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+            <i data-lucide="timer" class="w-4 h-4"></i>
+            <span>Analysis timeout</span>
+          </div>
+          <div class="text-[12px] text-gray-600">Proceeding with conservative parameters. Will auto-refresh when ready.</div>
+          <div class="flex items-center justify-end">
+            <button class="px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Continue</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- S8 Lead form (generic) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="text-[12px] text-gray-600">Get the final price including subsidies</div>
+          <div class="mt-2 grid grid-cols-1 gap-2">
+            <input placeholder="Name" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            <input placeholder="Phone or Email" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            <input placeholder="Best time to reach" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+          </div>
+          <div class="mt-3 flex items-center justify-end gap-2">
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Cancel</button>
+            <button class="px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Submit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MAP_CARD: Pan/Zoom/Tap/Rect-Select/Reset/Undo (Tailwind aligned) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="text-[13px] font-semibold text-gray-900 mb-2">Interactive map</div>
+          <div class="flex items-center gap-2 mb-2">
+            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="zoom-in">＋</button>
+            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="zoom-out">－</button>
+            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="select-rect">Rect</button>
+            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="reset">Reset</button>
+            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="undo">Undo</button>
+          </div>
+          <div id="mapTailStage" class="relative w-full overflow-hidden rounded-xl border border-green-200 bg-gray-50" style="height: 52vw; max-height: 360px; touch-action: none;">
+            <img id="mapTailImg" src="../Pic/point_523_high.jpg" alt="map" class="absolute top-1/2 left-1/2 select-none pointer-events-none" style="transform-origin: 50% 50%;">
+            <div id="mapTailOverlay" class="absolute inset-0 pointer-events-none"></div>
+          </div>
+          <div class="mt-2 text-[12px] text-gray-600">Tips: Drag to move · Pinch to zoom · Tap to mark · Click Rect to draw rectangle</div>
+        </div>
+      </section>
+
+      <!-- 4_AI_ANALYSIS: top animation placeholder (Tailwind aligned) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="w-full rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="aspect-ratio: 16/9;">
+            <img src="../Pic/ How the System Works.png" alt="analysis" class="w-full h-full object-contain"/>
+          </div>
+          <div class="mt-2">
+            <div class="text-[13px] font-semibold text-gray-900">Analyzing rooftop and solar potential…</div>
+            <div class="text-[12px] text-gray-600">This typically takes 5–15 seconds depending on imagery quality.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>lucide.createIcons();</script>
+  <script>
+  (function(){
+    const stage = document.getElementById('mapTailStage');
+    const img = document.getElementById('mapTailImg');
+    const overlay = document.getElementById('mapTailOverlay');
+    if(!stage || !img || !overlay) return;
+
+    const toolbar = stage.previousElementSibling?.previousElementSibling?.querySelector?.('[data-map-act]') ? stage.previousElementSibling.previousElementSibling.parentElement.querySelectorAll('[data-map-act]') : null;
+    const btn = (act)=> Array.from(stage.parentElement.querySelectorAll('[data-map-act]')).find(b=>b.dataset.mapAct===act);
+
+    const state = { scale: 1.6, tx: 0, ty: 0, selecting: false, selectingRect: null, start: null, pointers: new Map(), history: [] };
+
+    function apply(){ img.style.transform = `translate(${state.tx}px, ${state.ty}px) translate(-50%, -50%) scale(${state.scale})`; }
+    function pushHistory(){ state.history.push({ scale: state.scale, tx: state.tx, ty: state.ty, overlayHTML: overlay.innerHTML }); if(state.history.length>50) state.history.shift(); }
+    function undo(){ const last = state.history.pop(); if(!last) return; state.scale=last.scale; state.tx=last.tx; state.ty=last.ty; overlay.innerHTML=last.overlayHTML; apply(); }
+    function reset(){ pushHistory(); state.scale=1.6; state.tx=0; state.ty=0; state.selecting=false; state.selectingRect=null; overlay.innerHTML=''; apply(); const r=btn('select-rect'); if(r) r.classList.remove('bg-[#22C55E]','text-white','border-[#22C55E]'); }
+    function zoomAt(factor, cx, cy){ pushHistory(); const before=state.scale; const after=Math.min(4, Math.max(0.6, before*factor)); const dx=cx - state.tx; const dy=cy - state.ty; const k=after/before; state.tx = cx - dx*k; state.ty = cy - dy*k; state.scale = after; apply(); }
+    function stagePoint(evt){ const rect = stage.getBoundingClientRect(); return { x: evt.clientX - rect.left, y: evt.clientY - rect.top }; }
+
+    // toolbar
+    stage.parentElement.querySelectorAll('[data-map-act]').forEach(el=>{
+      el.addEventListener('click', (e)=>{
+        const act = e.currentTarget.dataset.mapAct;
+        if(act==='zoom-in') return zoomAt(1.2, stage.clientWidth/2, stage.clientHeight/2);
+        if(act==='zoom-out') return zoomAt(1/1.2, stage.clientWidth/2, stage.clientHeight/2);
+        if(act==='reset') return reset();
+        if(act==='undo') return undo();
+        if(act==='select-rect'){
+          state.selecting = !state.selecting;
+          e.currentTarget.classList.toggle('bg-[#22C55E]', state.selecting);
+          e.currentTarget.classList.toggle('text-white', state.selecting);
+          e.currentTarget.classList.toggle('border-[#22C55E]', state.selecting);
+          if(!state.selecting && state.selectingRect){ state.selectingRect=null; }
+        }
+      });
+    });
+
+    // pointer interactions
+    let dragging=false, moved=false, last=null, initialDist=0, initialScale=1;
+    function onPointerDown(evt){ stage.setPointerCapture(evt.pointerId); state.pointers.set(evt.pointerId, stagePoint(evt)); last=stagePoint(evt); dragging=true; moved=false;
+      if(state.selecting && state.pointers.size===1){ state.selectingRect=document.createElement('div'); state.selectingRect.className='absolute border-2 border-emerald-300 bg-emerald-200/25 rounded pointer-events-none'; overlay.appendChild(state.selectingRect); const p=stagePoint(evt); state.start=p; Object.assign(state.selectingRect.style,{left:p.x+'px',top:p.y+'px',width:'0px',height:'0px'}); }
+      if(state.pointers.size===2){ const [a,b]=Array.from(state.pointers.values()); initialDist=Math.hypot(a.x-b.x,a.y-b.y); initialScale=state.scale; pushHistory(); }
+    }
+    function onPointerMove(evt){ if(!dragging) return; const p=stagePoint(evt); state.pointers.set(evt.pointerId,p); moved=true;
+      if(state.pointers.size===2){ const [a,b]=Array.from(state.pointers.values()); const dist=Math.hypot(a.x-b.x,a.y-b.y); const factor=dist/initialDist; state.scale=Math.min(4,Math.max(0.6,initialScale*factor)); apply(); return; }
+      if(state.selecting && state.selectingRect && state.start){ const x=Math.min(state.start.x,p.x), y=Math.min(state.start.y,p.y); const w=Math.abs(p.x-state.start.x), h=Math.abs(p.y-state.start.y); Object.assign(state.selectingRect.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'}); return; }
+      pushHistory(); state.tx += (p.x - last.x); state.ty += (p.y - last.y); last=p; apply();
+    }
+    function onPointerUp(evt){ state.pointers.delete(evt.pointerId);
+      if(state.selecting && state.selectingRect && state.start){ state.selecting=false; const r=btn('select-rect'); if(r){ r.classList.remove('bg-[#22C55E]','text-white','border-[#22C55E]'); } state.start=null; }
+      if(!moved){ pushHistory(); const p=stagePoint(evt); const dot=document.createElement('div'); dot.className='absolute w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200 pointer-events-none'; dot.style.left=p.x+'px'; dot.style.top=p.y+'px'; dot.style.transform='translate(-50%, -50%)'; overlay.appendChild(dot); }
+      dragging=false; moved=false; last=null; stage.releasePointerCapture(evt.pointerId);
+    }
+
+    stage.addEventListener('pointerdown', onPointerDown);
+    stage.addEventListener('pointermove', onPointerMove);
+    stage.addEventListener('pointerup', onPointerUp);
+    stage.addEventListener('pointercancel', onPointerUp);
+
+    img.addEventListener('load', reset);
+    if(img.complete) reset();
+  })();
+  </script>
+</body>
+</html>

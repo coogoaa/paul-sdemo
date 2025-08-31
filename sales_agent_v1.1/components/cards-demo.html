@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cards Demo - v1.2 Dialog Flow</title>
+  <link rel="stylesheet" href="../assets/css/cards.css"/>
+  <style>
+    .title{font-size:18px;font-weight:700;margin:4px 0 10px;color:#cbd5e1}
+    .subtitle{color:#94a3b8;margin:0 0 16px;font-size:13px}
+    .section .card{margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Cards Demo（v1.2 对话流程组件样式）</h1>
+    <p class="subtitle">独立演示页，仅样式与静态结构，不改动现有 generated 页面。可直接复制卡片到业务页面。</p>
+
+    <!-- S5_COMPOSITE_CARD 合并展示卡：渲染 + 方案 + 价值 + CTA -->
+    <div class="section">
+      <div class="title">S5_COMPOSITE_CARD（默认 3D）</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="hstack">
+            <span class="card-title">Your Home Solar Preview</span>
+            <span class="badge">Est. usable area 82 m²</span>
+            <span class="pill">Max ~ 10.8 kW</span>
+          </div>
+          <span class="card-sub">Source: Satellite + Estimation</span>
+        </div>
+        <div class="card-body composite">
+          <div class="vstack">
+            <div class="model-box">3D Model Placeholder</div>
+            <div class="kpis">
+              <div class="kpi"><div class="label">Annual Saving</div><div style="font-weight:700">¥3,950</div></div>
+              <div class="kpi"><div class="label">Self-use Ratio</div><div style="font-weight:700">85%</div></div>
+              <div class="kpi"><div class="label">Feed-in</div><div style="font-weight:700">¥620</div></div>
+            </div>
+          </div>
+          <div class="vstack">
+            <div class="label">Plans</div>
+            <div class="plan-grid">
+              <div class="plan active"><div class="label">Smart Save</div><div class="kw">6.6 kW</div><div class="card-sub">¥X1–Y1</div></div>
+              <div class="plan"><div class="label">High Efficiency</div><div class="kw">8.2 kW</div><div class="card-sub">¥X2–Y2</div></div>
+              <div class="plan"><div class="label">Independence</div><div class="kw">10.0 kW</div><div class="card-sub">¥X3–Y3</div></div>
+              <div class="plan"><div class="label">Ultimate</div><div class="kw">12.0 kW</div><div class="card-sub">¥X4–Y4</div></div>
+            </div>
+            <hr class="hr"/>
+            <div class="vstack">
+              <div class="label">Details</div>
+              <div class="infobar">Tariff 0.30 / FIT 0.07 | Solar hours 4.18 | Complexity: simple</div>
+            </div>
+            <div class="card-footer">
+              <button class="btn">Copy Estimate</button>
+              <button class="btn btn-primary">Get subsidy & full quote</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 合并卡：渲染降级为 2D -->
+    <div class="section">
+      <div class="title">S5_COMPOSITE_CARD（降级为 2D）</div>
+      <div class="card">
+        <div class="infobar warn">Model generation failed – switched to 2D. Calculations unaffected.</div>
+        <div class="card-body composite">
+          <div class="vstack">
+            <div class="model-box">2D Layout Placeholder</div>
+            <div class="kpis">
+              <div class="kpi"><div class="label">Annual Saving</div><div style="font-weight:700">¥3,720</div></div>
+              <div class="kpi"><div class="label">Self-use Ratio</div><div style="font-weight:700">83%</div></div>
+              <div class="kpi"><div class="label">Feed-in</div><div style="font-weight:700">¥580</div></div>
+            </div>
+          </div>
+          <div class="vstack">
+            <div class="label">Plans</div>
+            <div class="plan-grid">
+              <div class="plan active"><div class="label">Smart Save</div><div class="kw">6.6 kW</div></div>
+              <div class="plan"><div class="label">High Efficiency</div><div class="kw">8.2 kW</div></div>
+              <div class="plan"><div class="label">Independence</div><div class="kw">10.0 kW</div></div>
+              <div class="plan"><div class="label">Ultimate</div><div class="kw">12.0 kW</div></div>
+            </div>
+            <div class="card-footer">
+              <button class="btn">Copy Estimate</button>
+              <button class="btn btn-primary">Get subsidy & full quote</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- L1_LARGE_AREA_LEAD 超大面积专属留资卡 -->
+    <div class="section">
+      <div class="title">L1_LARGE_AREA_LEAD（超大面积专属留资）</div>
+      <div class="card large-area">
+        <div class="card-header">
+          <div class="card-title">Large Roof – Custom Design</div>
+          <span class="pill">Area > 450 m²</span>
+        </div>
+        <div class="card-body vstack">
+          <div class="highlights">
+            <div class="hl">Dedicated engineer assessment</div>
+            <div class="hl">Grid & export strategy</div>
+            <div class="hl">Subsidy & policy review</div>
+          </div>
+          <div class="form">
+            <div class="vstack">
+              <label class="label">Name</label>
+              <input class="input" placeholder="Your name">
+            </div>
+            <div class="vstack">
+              <label class="label">Phone or Email</label>
+              <input class="input" placeholder="Contact info">
+            </div>
+            <div class="vstack">
+              <label class="label">Best time to reach</label>
+              <input class="input" placeholder="e.g. 2–5 pm">
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F1 Address fallback -->
+    <div class="section">
+      <div class="title">F1_ADDRESS_FALLBACK</div>
+      <div class="card addr-fb">
+        <div class="card-body vstack">
+          <div class="infobar danger">Address not found. Try a different spelling or a nearby landmark.</div>
+          <div class="actions">
+            <button class="btn">Retry locate</button>
+            <button class="btn">Manual drag on map</button>
+            <button class="btn btn-primary">Contact human assessment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F3 Small area fallback（已去除上传能力） -->
+    <div class="section">
+      <div class="title">F3_IMAGE_FALLBACK_SMALL（无上传）</div>
+      <div class="card small-area">
+        <div class="card-body vstack">
+          <div class="infobar warn">Installable area is likely too small. Zoom in and reselect, or leave contact for a free manual check.</div>
+          <div class="actions">
+            <button class="btn">Reselect roof</button>
+            <button class="btn btn-primary">Free manual assessment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F4 Analysis timeout -->
+    <div class="section">
+      <div class="title">F4_ANALYSIS_TIMEOUT</div>
+      <div class="card">
+        <div class="card-body vstack">
+          <div class="infobar warn">Analysis timeout. Proceeding with conservative parameters. Will auto-refresh when ready.</div>
+          <div class="card-footer">
+            <button class="btn btn-primary">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S8 Lead form（通用） -->
+    <div class="section">
+      <div class="title">S8_LEAD_FORM（通用表单）</div>
+      <div class="card">
+        <div class="card-body vstack">
+          <div class="form">
+            <div class="vstack">
+              <label class="label">Name</label>
+              <input class="input" placeholder="Your name">
+            </div>
+            <div class="vstack">
+              <label class="label">Phone or Email</label>
+              <input class="input" placeholder="Contact info">
+            </div>
+            <div class="vstack">
+              <label class="label">Best time to reach</label>
+              <input class="input" placeholder="e.g. 2–5 pm">
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn">Cancel</button>
+            <button class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F7 Idle recovery -->
+    <div class="section">
+      <div class="title">F7_IDLE_RECOVERY</div>
+      <div class="card">
+        <div class="card-body vstack">
+          <div class="infobar">No interaction detected. Want me to prepare the current result as a report to send later?</div>
+          <div class="card-footer">
+            <button class="btn">Keep exploring</button>
+            <button class="btn btn-primary">Send report later</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP_CARD 交互地图卡片（不影响现有卡片，独立样式/脚本） -->
+    <div class="section">
+      <div class="title">MAP_CARD（拖动/缩放/点选/矩形圈选/重置/撤销）</div>
+      <div class="card">
+        <div class="card-body vstack">
+          <div class="map-toolbar">
+            <button class="btn map-btn" data-map-act="zoom-in">＋</button>
+            <button class="btn map-btn" data-map-act="zoom-out">－</button>
+            <button class="btn map-btn" data-map-act="select-rect">矩形圈选</button>
+            <button class="btn map-btn" data-map-act="reset">Reset</button>
+            <button class="btn map-btn" data-map-act="undo">Undo</button>
+          </div>
+          <div class="map-stage" id="mapStage">
+            <img id="mapImg" class="map-img" src="../Pic/point_523_high.jpg" alt="map"/>
+            <div id="mapOverlay" class="map-overlay"></div>
+          </div>
+          <div class="infobar">提示：
+            · 单指拖动 | · 双指捏合缩放 | · 点击添加标记 | · 矩形圈选按钮后框选
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4_AI_ANALYSIS 分析动画卡片（顶部动画占位） -->
+    <div class="section">
+      <div class="title">4_AI_ANALYSIS（动画占位）</div>
+      <div class="card">
+        <div class="card-body vstack">
+          <div class="ai-anim">
+            <img class="ai-anim-img" src="../Pic/ How the System Works.png" alt="analysis"/>
+          </div>
+          <div class="vstack" style="gap:6px;">
+            <div class="label">Analyzing rooftop and solar potential…</div>
+            <div class="card-sub">This typically takes 5–15 seconds depending on imagery quality.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scoped styles for new cards -->
+  <style>
+    /* MAP namespaced styles */
+    .map-toolbar{ display:flex; gap:8px; flex-wrap:wrap; }
+    .map-btn{ padding:6px 10px; font-size:12px; }
+    .map-stage{ position:relative; width:100%; height:52vw; max-height:360px; overflow:hidden; border:1px solid rgba(16,185,129,.25); border-radius:12px; background:#0b1220; }
+    .map-img{ position:absolute; top:50%; left:50%; transform-origin:50% 50%; will-change:transform; user-select:none; -webkit-user-drag:none; pointer-events:none; }
+    .map-overlay{ position:absolute; inset:0; pointer-events:none; }
+    .map-rect{ position:absolute; border:2px solid rgba(110,231,183,.9); background:rgba(16,185,129,.25); border-radius:4px; pointer-events:none; }
+    .map-dot{ position:absolute; width:10px; height:10px; border-radius:50%; background:#10b981; border:2px solid #a7f3d0; transform:translate(-50%, -50%); pointer-events:none; }
+
+    /* AI analysis placeholder */
+    .ai-anim{ width:100%; aspect-ratio:16/9; border:1px solid rgba(16,185,129,.25); border-radius:12px; overflow:hidden; background:#0b1220; display:flex; align-items:center; justify-content:center; }
+    .ai-anim-img{ width:100%; height:100%; object-fit:contain; opacity:.95; }
+  </style>
+
+  <!-- Scripts for new cards only -->
+  <script>
+  (function(){
+    const stage = document.getElementById('mapStage');
+    const img = document.getElementById('mapImg');
+    const overlay = document.getElementById('mapOverlay');
+    const toolbar = stage?.previousElementSibling?.classList.contains('map-toolbar') ? stage.previousElementSibling : null;
+    if(!stage || !img || !overlay || !toolbar) return;
+
+    const state = {
+      scale: 1.6,
+      tx: 0,
+      ty: 0,
+      selecting: false,
+      selectingRect: null,
+      start: null,
+      pointers: new Map(),
+      history: []
+    };
+
+    function apply(){
+      img.style.transform = `translate(${state.tx}px, ${state.ty}px) translate(-50%, -50%) scale(${state.scale})`;
+    }
+
+    function pushHistory(){
+      state.history.push({ scale: state.scale, tx: state.tx, ty: state.ty, overlayHTML: overlay.innerHTML });
+      if(state.history.length>50) state.history.shift();
+    }
+
+    function undo(){
+      const last = state.history.pop();
+      if(!last) return;
+      state.scale = last.scale; state.tx = last.tx; state.ty = last.ty; overlay.innerHTML = last.overlayHTML; apply();
+    }
+
+    function reset(){
+      pushHistory();
+      state.scale = 1.6; state.tx = 0; state.ty = 0; state.selecting=false; state.selectingRect=null; overlay.innerHTML=''; apply();
+    }
+
+    function zoomAt(factor, cx, cy){
+      pushHistory();
+      // keep (cx,cy) stable in stage coords
+      const beforeScale = state.scale; const afterScale = Math.min(4, Math.max(0.6, beforeScale * factor));
+      const dx = cx - state.tx; const dy = cy - state.ty;
+      const k = afterScale / beforeScale;
+      state.tx = cx - dx * k; state.ty = cy - dy * k; state.scale = afterScale; apply();
+    }
+
+    function stagePoint(evt){
+      const rect = stage.getBoundingClientRect();
+      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+    }
+
+    // Toolbar
+    toolbar.addEventListener('click', (e)=>{
+      const act = e.target?.dataset?.mapAct; if(!act) return;
+      if(act==='zoom-in') return zoomAt(1.2, stage.clientWidth/2, stage.clientHeight/2);
+      if(act==='zoom-out') return zoomAt(1/1.2, stage.clientWidth/2, stage.clientHeight/2);
+      if(act==='reset') return reset();
+      if(act==='undo') return undo();
+      if(act==='select-rect') { state.selecting = !state.selecting; e.target.classList.toggle('btn-primary', state.selecting); if(!state.selecting && state.selectingRect){ state.selectingRect = null; } }
+    });
+
+    // Pointer interactions (pan / tap / rectangle select / pinch)
+    let dragging = false; let moved = false; let last = null; let initialDist = 0; let initialScale = 1;
+
+    function onPointerDown(evt){
+      stage.setPointerCapture(evt.pointerId);
+      state.pointers.set(evt.pointerId, stagePoint(evt));
+      last = stagePoint(evt); dragging = true; moved = false;
+      if(state.selecting && state.pointers.size===1){
+        state.selectingRect = document.createElement('div'); state.selectingRect.className='map-rect'; overlay.appendChild(state.selectingRect);
+        const p = stagePoint(evt); state.start = p; Object.assign(state.selectingRect.style, { left: p.x+'px', top: p.y+'px', width: '0px', height:'0px' });
+      }
+      if(state.pointers.size===2){
+        const [a,b] = Array.from(state.pointers.values()); initialDist = Math.hypot(a.x-b.x, a.y-b.y); initialScale = state.scale; pushHistory();
+      }
+    }
+    function onPointerMove(evt){
+      if(!dragging) return; const p = stagePoint(evt); state.pointers.set(evt.pointerId, p); moved = true;
+      if(state.pointers.size===2){
+        const [a,b] = Array.from(state.pointers.values()); const dist = Math.hypot(a.x-b.x, a.y-b.y); const factor = dist/initialDist; state.scale = Math.min(4, Math.max(0.6, initialScale*factor)); apply(); return;
+      }
+      if(state.selecting && state.selectingRect && state.start){
+        const x = Math.min(state.start.x, p.x), y = Math.min(state.start.y, p.y); const w = Math.abs(p.x-state.start.x), h = Math.abs(p.y-state.start.y);
+        Object.assign(state.selectingRect.style, { left:x+'px', top:y+'px', width:w+'px', height:h+'px' }); return;
+      }
+      // pan
+      pushHistory();
+      state.tx += (p.x - last.x); state.ty += (p.y - last.y); last = p; apply();
+    }
+    function onPointerUp(evt){
+      state.pointers.delete(evt.pointerId);
+      if(state.selecting && state.selectingRect && state.start){ state.selecting=false; toolbar.querySelector('[data-map-act="select-rect"]').classList.remove('btn-primary'); state.start=null; }
+      if(!moved){ // tap -> dot
+        pushHistory();
+        const p = stagePoint(evt); const dot = document.createElement('div'); dot.className='map-dot'; dot.style.left=p.x+'px'; dot.style.top=p.y+'px'; overlay.appendChild(dot);
+      }
+      dragging=false; moved=false; last=null; stage.releasePointerCapture(evt.pointerId);
+    }
+
+    stage.addEventListener('pointerdown', onPointerDown);
+    stage.addEventListener('pointermove', onPointerMove);
+    stage.addEventListener('pointerup', onPointerUp);
+    stage.addEventListener('pointercancel', onPointerUp);
+
+    // Initialize
+    img.addEventListener('load', reset);
+    if(img.complete) reset();
+  })();
+  </script>
+</body>
+</html>
