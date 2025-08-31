@@ -74,3 +74,46 @@
 - One scheme expanded by default (selected or recommended), others collapsed.
 - Contact installer form opens and shares validation with Refine info.
 - If postcode exists in state, STC UI uses it; if not, requests once and stores.
+
+## 问题与修复清单（2025-09-01）
+
+1. 【Step 1 无法输入/点击】
+   - 现象：地址输入无效，“Start exploring” 不可点击。
+   - 根因：初始化期间 `addBotMsg()` 调用的 `refreshIcons()` 未定义，`boot()` 抛错导致包括 `bindStep1()` 在内的所有绑定中断。
+   - 修复：新增全局 `refreshIcons()`；在文末用 `DOMContentLoaded` 保障 `boot()` 调用顺序。
+   - 代码：`generated-page-v1.6_en.html` 中新增 `refreshIcons()`，并在文末新增 `document.addEventListener('DOMContentLoaded', boot)` 包装。
+
+2. 【Share 与 Save image 行为】
+   - 设计策略：
+     - Share：打开分享弹窗，支持原生分享或回退复制。
+     - Save image：按偏好改为“真正保存图片”。
+   - 实现：引入 `html2canvas`，新增 `saveBudgetAsImage()` 将 `#s4BudgetPanel` 导出为 PNG；`#s4SaveImgBtn` 绑定为调用该函数。
+   - 代码：`generated-page-v1.6_en.html` 新增 html2canvas CDN；在 `bindStep4()` 中将 `s4SaveImgBtn` 改绑为 `saveBudgetAsImage`。
+
+3. 【分享链接与复制内容的区别】
+   - Share（弹窗内 Share 按钮）：分享“报价摘要文本 + URL”。
+   - Copy link（弹窗内）：仅复制 URL。
+   - Copy（卡片按钮）：复制“报价摘要文本 + URL”。
+   - URL 来源：统一为 `location.href`（当前 v1.6 页面地址），`openShareModal()` 每次打开都会覆盖 `#shareUrlText`，避免占位符外泄。
+
+4. 【字体资源 404（非阻断）】
+   - 现象：Inter 字体 woff2 404，不影响交互与功能。
+   - 处理建议：后续补齐字体文件或移除引用。
+
+## 链接策略说明（Share/Copy）
+
+- 统一以 `location.href` 为准，不指向弹窗本身。
+- 示例占位 H5 `https://example.com/h5?...` 仅为文案展示，实际在弹窗打开时会被覆盖为当前页面 URL。
+- 如需引导到独立 H5 落地页（含 UTM 追踪），可将 `openShareModal()` 与 `buildShareText()` 的 URL 源改为该落地页地址。
+
+## 额外测试项（更新）
+
+- Step 1：输入 ≥6 字符后按钮可点，点击进入 Step 2。
+- Save image：点击后下载 `#s4BudgetPanel` 的 PNG 文件（文件名含方案与时间戳）。
+- Share 弹窗：每次打开时 `#shareUrlText` 更新为当前页面 URL；Share/Copy link 正常；Contact installer、Learn STC 正常。
+
+## 后续路线图（与本次相关）
+
+- 字体资源：补齐或移除 Inter 字体，消除 404。
+- 导出能力：支持整卡/整屏/含二维码导出可选项。
+- 链接落地：接入真实 H5 落地页并统一 UTM 归因。
