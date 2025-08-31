@@ -9,6 +9,198 @@
   <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    
+    /* Map container styles */
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 75%; /* 4:3 aspect ratio */
+      overflow: hidden;
+      touch-action: none;
+      background-color: #f9fafb;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .map-viewport {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: grab;
+    }
+    
+    .map-viewport:active {
+      cursor: grabbing;
+    }
+    
+    .map-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      will-change: transform;
+      transition: transform 0.15s ease-out;
+      max-width: none;
+      height: auto;
+      touch-action: none;
+      user-select: none;
+    }
+    
+    .map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    /* Toolbar styles */
+    .map-toolbar {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+    
+    .map-toolbar button {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    
+    .map-toolbar button:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+    
+    .map-toolbar button:active {
+      transform: scale(0.95);
+    }
+    
+    .map-toolbar button.active {
+      background: #10b981;
+      border-color: #10b981;
+      color: white;
+    }
+    
+    /* Roof selection pulse animation */
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 0.3;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+    }
+    
+    .roof-pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    /* Coordinate label */
+    .coord-label {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      font-family: 'Roboto Mono', monospace;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+      z-index: 10;
+      pointer-events: none;
+    }
+    
+    /* Back button */
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #374151;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    
+    .back-button:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+    
+    .back-button:active {
+      transform: scale(0.98);
+    }
+    
+    /* Loading animation for AI analysis */
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .map-toolbar {
+        bottom: 0.75rem;
+        right: 0.75rem;
+      }
+      
+      .map-toolbar button {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.5rem;
+      }
+      
+      .coord-label {
+        font-size: 0.6875rem;
+        padding: 0.125rem 0.5rem;
+      }
+      
+      .back-button {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.8125rem;
+      }
+    }
+  </style>
 </head>
 <body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
   <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
@@ -191,35 +383,82 @@
         </div>
       </section>
 
-      <!-- MAP_CARD: Pan/Zoom/Tap/Rect-Select/Reset/Undo (Tailwind aligned) -->
+      <!-- MAP_CARD: Integrated with generated-page-v1.4_en.html -->
       <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
         <div class="p-3">
-          <div class="text-[13px] font-semibold text-gray-900 mb-2">Interactive map</div>
-          <div class="flex items-center gap-2 mb-2">
-            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="zoom-in">＋</button>
-            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="zoom-out">－</button>
-            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="select-rect">Rect</button>
-            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="reset">Reset</button>
-            <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-map-act="undo">Undo</button>
+          <div class="mb-2 flex items-center justify-between">
+            <button id="backBtn" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> Back
+            </button>
+            <div id="coordLabel" class="text-[12px] text-gray-600 truncate max-w-[65%]">Lat/Lng 30.4804, 104.0351</div>
           </div>
-          <div id="mapTailStage" class="relative w-full overflow-hidden rounded-xl border border-green-200 bg-gray-50" style="height: 52vw; max-height: 360px; touch-action: none;">
-            <img id="mapTailImg" src="../Pic/point_523_high.jpg" alt="map" class="absolute top-1/2 left-1/2 select-none pointer-events-none" style="transform-origin: 50% 50%;">
-            <div id="mapTailOverlay" class="absolute inset-0 pointer-events-none"></div>
+          
+          <div id="mapViewport" class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 52vw; max-height: 360px; touch-action: none;">
+            <img id="mapImage" src="../Pic/point_523_high.jpg" alt="map" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none" style="transform: translate(-50%, -50%) scale(1.6); transform-origin: center center; width: 160%; height: auto; max-width: none;">
+            
+            <svg id="roofOverlay" class="absolute inset-0 pointer-events-none w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+            
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100/90 border border-gray-200">Drag/zoom map, then tap your roof</div>
+            <div class="absolute top-2 right-2 flex flex-col gap-1">
+              <button id="zoomIn" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+              <button id="zoomOut" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="minus" class="w-4 h-4"></i>
+              </button>
+              <button id="rectSelect" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="crop" class="w-4 h-4"></i>
+              </button>
+              <button id="resetView" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              </button>
+              <button id="undoAction" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="undo-2" class="w-4 h-4"></i>
+              </button>
+            </div>
           </div>
-          <div class="mt-2 text-[12px] text-gray-600">Tips: Drag to move · Pinch to zoom · Tap to mark · Click Rect to draw rectangle</div>
+          
+          <div class="mt-2 flex items-center justify-between">
+            <div id="roofHint" class="text-[12px] text-gray-600">Tap your roof on the map</div>
+            <button id="confirmRoofBtn" class="shrink-0 inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+              <i data-lucide="check" class="w-4 h-4"></i> Confirm roof
+            </button>
+          </div>
         </div>
       </section>
 
-      <!-- 4_AI_ANALYSIS: top animation placeholder (Tailwind aligned) -->
+      <!-- 4_AI_ANALYSIS: Integrated with animation -->
       <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
         <div class="p-3">
-          <div class="w-full rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="aspect-ratio: 16/9;">
-            <img src="../Pic/ How the System Works.png" alt="analysis" class="w-full h-full object-contain"/>
+          <div class="flex items-center gap-2 text-[12px] text-gray-600">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+            <span>Analyzing</span>
           </div>
-          <div class="mt-2">
-            <div class="text-[13px] font-semibold text-gray-900">Analyzing rooftop and solar potential…</div>
-            <div class="text-[12px] text-gray-600">This typically takes 5–15 seconds depending on imagery quality.</div>
+          <h3 class="mt-1 text-[18px] tracking-tight font-semibold text-gray-800">Smart analysis for your roof</h3>
+          <p class="text-[12px] text-gray-600 mt-1">It's like magic!</p>
+          
+          <!-- Animation placeholder with system works image -->
+          <div class="mt-3 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
+            <div class="w-full" style="aspect-ratio: 16/9;">
+              <img src="../Pic/ How the System Works.png" alt="system analysis" class="w-full h-full object-cover">
+            </div>
           </div>
+          
+          <div class="mt-3 space-y-2 text-[13px]">
+            <div class="flex items-center gap-2 text-gray-600">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+              <span>Analyzing roof area</span>
+            </div>
+            <div class="flex items-center gap-2 text-gray-600">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+              <span>Evaluating sun exposure</span>
+            </div>
+            <div class="flex items-center gap-2 text-gray-600">
+              <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-amber-500"></i>
+              <span>Scanning high-consumption devices</span>
+            </div>
+          </div>
+          <div class="mt-2 text-[12px] text-gray-500">This typically takes 5–15 seconds depending on imagery quality.</div>
         </div>
       </section>
 
@@ -229,65 +468,413 @@
   <script>lucide.createIcons();</script>
   <script>
   (function(){
-    const stage = document.getElementById('mapTailStage');
-    const img = document.getElementById('mapTailImg');
-    const overlay = document.getElementById('mapTailOverlay');
-    if(!stage || !img || !overlay) return;
+    // Map elements
+    const mapViewport = document.getElementById('mapViewport');
+    const mapImage = document.getElementById('mapImage');
+    const roofOverlay = document.getElementById('roofOverlay');
+    const zoomInBtn = document.getElementById('zoomIn');
+    const zoomOutBtn = document.getElementById('zoomOut');
+    const rectSelectBtn = document.getElementById('rectSelect');
+    const resetViewBtn = document.getElementById('resetView');
+    const undoActionBtn = document.getElementById('undoAction');
+    const confirmRoofBtn = document.getElementById('confirmRoofBtn');
+    const roofHint = document.getElementById('roofHint');
+    const coordLabel = document.getElementById('coordLabel');
+    
+    if (!mapViewport || !mapImage || !roofOverlay) return;
 
-    const toolbar = stage.previousElementSibling?.previousElementSibling?.querySelector?.('[data-map-act]') ? stage.previousElementSibling.previousElementSibling.parentElement.querySelectorAll('[data-map-act]') : null;
-    const btn = (act)=> Array.from(stage.parentElement.querySelectorAll('[data-map-act]')).find(b=>b.dataset.mapAct===act);
+    // State management
+    const state = {
+      scale: 1.6,
+      tx: 0,
+      ty: 0,
+      isSelecting: false,
+      isDragging: false,
+      startPos: null,
+      lastPos: null,
+      pointers: new Map(),
+      history: [],
+      roofSelected: false,
+      roofPoint: null,
+      selectionRect: null
+    };
 
-    const state = { scale: 1.6, tx: 0, ty: 0, selecting: false, selectingRect: null, start: null, pointers: new Map(), history: [] };
+    // Apply transform to map image
+    function applyTransform() {
+      mapImage.style.transform = `translate(${state.tx}px, ${state.ty}px) translate(-50%, -50%) scale(${state.scale})`;
+      updateCoordLabel();
+    }
 
-    function apply(){ img.style.transform = `translate(${state.tx}px, ${state.ty}px) translate(-50%, -50%) scale(${state.scale})`; }
-    function pushHistory(){ state.history.push({ scale: state.scale, tx: state.tx, ty: state.ty, overlayHTML: overlay.innerHTML }); if(state.history.length>50) state.history.shift(); }
-    function undo(){ const last = state.history.pop(); if(!last) return; state.scale=last.scale; state.tx=last.tx; state.ty=last.ty; overlay.innerHTML=last.overlayHTML; apply(); }
-    function reset(){ pushHistory(); state.scale=1.6; state.tx=0; state.ty=0; state.selecting=false; state.selectingRect=null; overlay.innerHTML=''; apply(); const r=btn('select-rect'); if(r) r.classList.remove('bg-[#22C55E]','text-white','border-[#22C55E]'); }
-    function zoomAt(factor, cx, cy){ pushHistory(); const before=state.scale; const after=Math.min(4, Math.max(0.6, before*factor)); const dx=cx - state.tx; const dy=cy - state.ty; const k=after/before; state.tx = cx - dx*k; state.ty = cy - dy*k; state.scale = after; apply(); }
-    function stagePoint(evt){ const rect = stage.getBoundingClientRect(); return { x: evt.clientX - rect.left, y: evt.clientY - rect.top }; }
+    // Convert viewport pixel to SVG percentage (0..100)
+    function pxToPct(pxX, pxY){
+      const rect = mapViewport.getBoundingClientRect();
+      return {
+        x: (pxX / rect.width) * 100,
+        y: (pxY / rect.height) * 100
+      };
+    }
 
-    // toolbar
-    stage.parentElement.querySelectorAll('[data-map-act]').forEach(el=>{
-      el.addEventListener('click', (e)=>{
-        const act = e.currentTarget.dataset.mapAct;
-        if(act==='zoom-in') return zoomAt(1.2, stage.clientWidth/2, stage.clientHeight/2);
-        if(act==='zoom-out') return zoomAt(1/1.2, stage.clientWidth/2, stage.clientHeight/2);
-        if(act==='reset') return reset();
-        if(act==='undo') return undo();
-        if(act==='select-rect'){
-          state.selecting = !state.selecting;
-          e.currentTarget.classList.toggle('bg-[#22C55E]', state.selecting);
-          e.currentTarget.classList.toggle('text-white', state.selecting);
-          e.currentTarget.classList.toggle('border-[#22C55E]', state.selecting);
-          if(!state.selecting && state.selectingRect){ state.selectingRect=null; }
+    // Save current state to history
+    function pushHistory() {
+      state.history.push({
+        scale: state.scale,
+        tx: state.tx,
+        ty: state.ty,
+        overlayHTML: roofOverlay.innerHTML,
+        roofSelected: state.roofSelected,
+        roofPoint: state.roofPoint
+      });
+      if (state.history.length > 50) state.history.shift();
+    }
+
+    // Undo last action
+    function undo() {
+      const last = state.history.pop();
+      if (!last) return;
+      
+      state.scale = last.scale;
+      state.tx = last.tx;
+      state.ty = last.ty;
+      state.roofSelected = last.roofSelected;
+      state.roofPoint = last.roofPoint;
+      
+      roofOverlay.innerHTML = last.overlayHTML;
+      updateRoofHint();
+      confirmRoofBtn.disabled = !state.roofSelected;
+      applyTransform();
+    }
+
+    // Reset view to initial state
+    function resetView() {
+      pushHistory();
+      state.scale = 1.6;
+      state.tx = 0;
+      state.ty = 0;
+      state.isSelecting = false;
+      state.roofSelected = false;
+      state.roofPoint = null;
+      
+      rectSelectBtn.classList.remove('bg-[#22C55E]', 'text-white', 'border-[#22C55E]');
+      roofOverlay.innerHTML = '';
+      updateRoofHint();
+      confirmRoofBtn.disabled = true;
+      applyTransform();
+    }
+
+    // Zoom at specific point
+    function zoomAt(factor, cx, cy) {
+      pushHistory();
+      
+      // 计算新的缩放比例，限制在0.6到4倍之间
+      const newScale = Math.min(4, Math.max(0.6, state.scale * factor));
+      
+      // 如果达到缩放限制，不进行平移
+      if ((newScale >= 4 && factor > 1) || (newScale <= 0.6 && factor < 1)) {
+        return;
+      }
+      
+      // 将屏幕坐标转换为地图坐标（以当前平移缩放为基础）
+      const mapX = (cx - state.tx) / state.scale;
+      const mapY = (cy - state.ty) / state.scale;
+      
+      // 应用新的缩放比例
+      state.scale = newScale;
+      
+      // 计算新的平移值，使鼠标下的点保持固定
+      state.tx = cx - mapX * state.scale;
+      state.ty = cy - mapY * state.scale;
+      
+      applyTransform();
+    }
+
+    // Update coordinate label
+    function updateCoordLabel() {
+      // Mock coordinates - in a real app, these would be calculated from the map projection
+      const lat = 30.4804 + (Math.random() * 0.0001 - 0.00005);
+      const lng = 104.0351 + (Math.random() * 0.0001 - 0.00005);
+      coordLabel.textContent = `Lat/Lng ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    }
+
+    // Update roof hint text
+    function updateRoofHint() {
+      if (state.roofSelected) {
+        roofHint.textContent = 'Roof position selected';
+        roofHint.classList.remove('text-gray-600');
+        roofHint.classList.add('text-emerald-600', 'font-medium');
+      } else {
+        roofHint.textContent = 'Tap your roof on the map';
+        roofHint.classList.remove('text-emerald-600', 'font-medium');
+        roofHint.classList.add('text-gray-600');
+      }
+    }
+
+    // Draw roof selection at position
+    function drawRoofAt(clientX, clientY) {
+      const rect = mapViewport.getBoundingClientRect();
+      const x = ((clientX - rect.left) / rect.width) * 100;
+      const y = ((clientY - rect.top) / rect.height) * 100;
+      const w = 20; // Roof width percentage
+      const h = 15; // Roof height percentage
+      
+      // Create or update roof selection
+      roofOverlay.innerHTML = `
+        <rect x="${x - w/2}" y="${y - h/2}" 
+              width="${w}" height="${h}" 
+              rx="2" ry="2" 
+              fill="rgba(16,185,129,0.30)" 
+              stroke="rgba(110,231,183,0.9)" 
+              stroke-width="1.2" class="roof-pulse"/>
+      `;
+      
+      state.roofSelected = true;
+      state.roofPoint = { x, y };
+      updateRoofHint();
+      confirmRoofBtn.disabled = false;
+    }
+
+    // Event handlers
+    function onPointerDown(evt) {
+      evt.preventDefault();
+      const rect = mapViewport.getBoundingClientRect();
+      const x = evt.clientX - rect.left;
+      const y = evt.clientY - rect.top;
+      
+      state.isDragging = true;
+      state.startPos = { x, y };
+      state.lastPos = { x, y };
+      
+      // If in selection mode, start drawing selection
+      if (state.isSelecting) {
+        pushHistory();
+        state.selectionRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        const p = pxToPct(x, y);
+        state.selectionRect.setAttribute("x", p.x);
+        state.selectionRect.setAttribute("y", p.y);
+        state.selectionRect.setAttribute("width", "0");
+        state.selectionRect.setAttribute("height", "0");
+        state.selectionRect.setAttribute("stroke", "#3B82F6");
+        state.selectionRect.setAttribute("stroke-width", "1.5");
+        state.selectionRect.setAttribute("fill", "rgba(59, 130, 246, 0.15)");
+        state.selectionRect.setAttribute("pointer-events", "none");
+        roofOverlay.appendChild(state.selectionRect);
+      }
+      
+      mapViewport.style.cursor = 'grabbing';
+      mapViewport.setPointerCapture(evt.pointerId);
+    }
+
+    function onPointerMove(evt) {
+      if (!state.isDragging) return;
+      
+      const rect = mapViewport.getBoundingClientRect();
+      const x = evt.clientX - rect.left;
+      const y = evt.clientY - rect.top;
+      
+      if (state.isSelecting && state.selectionRect) {
+        // Update selection rectangle in percentage space
+        const p0 = pxToPct(state.startPos.x, state.startPos.y);
+        const p1 = pxToPct(x, y);
+        const rx = Math.min(p0.x, p1.x);
+        const ry = Math.min(p0.y, p1.y);
+        const rw = Math.abs(p1.x - p0.x);
+        const rh = Math.abs(p1.y - p0.y);
+        state.selectionRect.setAttribute("x", rx);
+        state.selectionRect.setAttribute("y", ry);
+        state.selectionRect.setAttribute("width", rw);
+        state.selectionRect.setAttribute("height", rh);
+      } else {
+        // Pan the map
+        const dx = x - state.lastPos.x;
+        const dy = y - state.lastPos.y;
+        state.tx += dx;
+        state.ty += dy;
+        applyTransform();
+      }
+      
+      state.lastPos = { x, y };
+    }
+
+    function onPointerUp(evt) {
+      if (!state.isDragging) return;
+      
+      const rect = mapViewport.getBoundingClientRect();
+      const x = evt.clientX - rect.left;
+      const y = evt.clientY - rect.top;
+      
+      // Check if this was a click (minimal movement)
+      const dx = x - state.startPos.x;
+      const dy = y - state.startPos.y;
+      const isClick = (dx * dx + dy * dy) < 25; // Within 5px
+      
+      if (isClick && !state.isSelecting) {
+        // Single tap - add roof selection and a point marker
+        pushHistory();
+        drawRoofAt(evt.clientX, evt.clientY);
+        const pct = pxToPct(x, y);
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", pct.x);
+        dot.setAttribute("cy", pct.y);
+        dot.setAttribute("r", 1.2);
+        dot.setAttribute("fill", "#10B981");
+        dot.setAttribute("stroke", "#A7F3D0");
+        dot.setAttribute("stroke-width", "0.6");
+        roofOverlay.appendChild(dot);
+      }
+      
+      // Clean up selection mode
+      if (state.isSelecting) {
+        // 只在点击矩形选择按钮时保持选择模式
+        // state.isSelecting = false;
+        // rectSelectBtn.classList.remove('bg-[#22C55E]', 'text-white', 'border-[#22C55E]');
+        
+        // 处理矩形选择
+        if (state.selectionRect) {
+          const width = parseFloat(state.selectionRect.getAttribute('width') || '0');
+          const height = parseFloat(state.selectionRect.getAttribute('height') || '0');
+          
+          if (width < 10 || height < 10) {
+            // 矩形太小，移除
+            if (roofOverlay.contains(state.selectionRect)) {
+              roofOverlay.removeChild(state.selectionRect);
+            }
+          } else {
+            // 矩形选择完成，创建屋顶选择
+            const rx = parseFloat(state.selectionRect.getAttribute('x') || '0');
+            const ry = parseFloat(state.selectionRect.getAttribute('y') || '0');
+            
+            // 创建屋顶选择
+            roofOverlay.innerHTML = `
+              <rect x="${rx}" y="${ry}" 
+                    width="${width}" height="${height}" 
+                    rx="2" ry="2" 
+                    fill="rgba(16,185,129,0.30)" 
+                    stroke="rgba(110,231,183,0.9)" 
+                    stroke-width="1.2" class="roof-pulse"/>
+            `;
+            
+            state.roofSelected = true;
+            state.roofPoint = { 
+              x: rx + width / 2, 
+              y: ry + height / 2 
+            };
+            updateRoofHint();
+            confirmRoofBtn.disabled = false;
+            
+            // 保存到历史记录
+            pushHistory();
+            
+            // 退出选择模式
+            state.isSelecting = false;
+            rectSelectBtn.classList.remove('bg-[#22C55E]', 'text-white', 'border-[#22C55E]');
+          }
+          
+          state.selectionRect = null;
+        }
+      }
+      
+      state.isDragging = false;
+      state.startPos = null;
+      state.lastPos = null;
+      state.lastDist = null;
+      state.pointers.clear();
+      
+      mapViewport.style.cursor = '';
+      mapViewport.releasePointerCapture(evt.pointerId);
+    }
+
+    // Initialize the map
+    function initMap() {
+      // Set initial transform
+      applyTransform();
+      
+      // Add event listeners
+      zoomInBtn.addEventListener('click', () => {
+        const rect = mapViewport.getBoundingClientRect();
+        zoomAt(1.2, rect.width / 2, rect.height / 2);
+      });
+      
+      zoomOutBtn.addEventListener('click', () => {
+        const rect = mapViewport.getBoundingClientRect();
+        zoomAt(1/1.2, rect.width / 2, rect.height / 2);
+      });
+      
+      // Reset view button (undo按钮上方的按钮)
+      resetViewBtn.addEventListener('click', () => {
+        resetView();
+        // 重置选择状态
+        state.isSelecting = false;
+        rectSelectBtn.classList.remove('bg-[#22C55E]', 'text-white', 'border-[#22C55E]');
+        if (state.selectionRect) {
+          roofOverlay.removeChild(state.selectionRect);
+          state.selectionRect = null;
         }
       });
-    });
-
-    // pointer interactions
-    let dragging=false, moved=false, last=null, initialDist=0, initialScale=1;
-    function onPointerDown(evt){ stage.setPointerCapture(evt.pointerId); state.pointers.set(evt.pointerId, stagePoint(evt)); last=stagePoint(evt); dragging=true; moved=false;
-      if(state.selecting && state.pointers.size===1){ state.selectingRect=document.createElement('div'); state.selectingRect.className='absolute border-2 border-emerald-300 bg-emerald-200/25 rounded pointer-events-none'; overlay.appendChild(state.selectingRect); const p=stagePoint(evt); state.start=p; Object.assign(state.selectingRect.style,{left:p.x+'px',top:p.y+'px',width:'0px',height:'0px'}); }
-      if(state.pointers.size===2){ const [a,b]=Array.from(state.pointers.values()); initialDist=Math.hypot(a.x-b.x,a.y-b.y); initialScale=state.scale; pushHistory(); }
+      
+      // Undo button
+      undoActionBtn.addEventListener('click', () => {
+        undo();
+      });
+      
+      // Toggle rectangle selection mode
+      rectSelectBtn.addEventListener('click', () => {
+        state.isSelecting = !state.isSelecting;
+        rectSelectBtn.classList.toggle('bg-[#22C55E]', state.isSelecting);
+        rectSelectBtn.classList.toggle('text-white', state.isSelecting);
+        rectSelectBtn.classList.toggle('border-[#22C55E]', state.isSelecting);
+        
+        if (!state.isSelecting && state.selectionRect) {
+          roofOverlay.removeChild(state.selectionRect);
+          state.selectionRect = null;
+        }
+      });
+      
+      // 添加双击重置视图
+      mapViewport.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        resetView();
+      });
+      
+      // Handle pointer events
+      mapViewport.addEventListener('pointerdown', onPointerDown);
+      mapViewport.addEventListener('pointermove', onPointerMove);
+      mapViewport.addEventListener('pointerup', onPointerUp);
+      mapViewport.addEventListener('pointercancel', onPointerUp);
+      
+      // Prevent context menu on long press
+      mapViewport.addEventListener('contextmenu', (e) => e.preventDefault());
+      
+      // Handle touch events to prevent page scroll
+      mapViewport.addEventListener('touchmove', (e) => {
+        if (state.isDragging) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      
+      // Initialize roof hint
+      updateRoofHint();
+      
+      // Initial coordinate update
+      updateCoordLabel();
+      
+      // Confirm button click handler
+      confirmRoofBtn.addEventListener('click', () => {
+        // In a real app, this would trigger the next step
+        alert('Roof position confirmed!');
+      });
+      
+      // Back button click handler
+      document.getElementById('backBtn')?.addEventListener('click', () => {
+        // In a real app, this would go back to the previous step
+        alert('Going back to previous step');
+      });
     }
-    function onPointerMove(evt){ if(!dragging) return; const p=stagePoint(evt); state.pointers.set(evt.pointerId,p); moved=true;
-      if(state.pointers.size===2){ const [a,b]=Array.from(state.pointers.values()); const dist=Math.hypot(a.x-b.x,a.y-b.y); const factor=dist/initialDist; state.scale=Math.min(4,Math.max(0.6,initialScale*factor)); apply(); return; }
-      if(state.selecting && state.selectingRect && state.start){ const x=Math.min(state.start.x,p.x), y=Math.min(state.start.y,p.y); const w=Math.abs(p.x-state.start.x), h=Math.abs(p.y-state.start.y); Object.assign(state.selectingRect.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'}); return; }
-      pushHistory(); state.tx += (p.x - last.x); state.ty += (p.y - last.y); last=p; apply();
+    
+    // Initialize the map when the DOM is loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+      initMap();
     }
-    function onPointerUp(evt){ state.pointers.delete(evt.pointerId);
-      if(state.selecting && state.selectingRect && state.start){ state.selecting=false; const r=btn('select-rect'); if(r){ r.classList.remove('bg-[#22C55E]','text-white','border-[#22C55E]'); } state.start=null; }
-      if(!moved){ pushHistory(); const p=stagePoint(evt); const dot=document.createElement('div'); dot.className='absolute w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200 pointer-events-none'; dot.style.left=p.x+'px'; dot.style.top=p.y+'px'; dot.style.transform='translate(-50%, -50%)'; overlay.appendChild(dot); }
-      dragging=false; moved=false; last=null; stage.releasePointerCapture(evt.pointerId);
-    }
-
-    stage.addEventListener('pointerdown', onPointerDown);
-    stage.addEventListener('pointermove', onPointerMove);
-    stage.addEventListener('pointerup', onPointerUp);
-    stage.addEventListener('pointercancel', onPointerUp);
-
-    img.addEventListener('load', reset);
-    if(img.complete) reset();
   })();
   </script>
 </body>
