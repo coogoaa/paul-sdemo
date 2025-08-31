@@ -311,13 +311,22 @@
             <li>Grid & export strategy</li>
             <li>Subsidy & policy review</li>
           </ul>
-          <div class="mt-3 grid grid-cols-1 gap-2">
-            <input placeholder="Name" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
-            <input placeholder="Phone or Email" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
-            <input placeholder="Best time to reach" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+          <div class="mt-3 space-y-2">
+            <div class="relative">
+              <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input placeholder="Name" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input type="email" placeholder="Email" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input inputmode="tel" placeholder="Phone" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
           </div>
           <div class="mt-3 flex items-center justify-end">
-            <button class="px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Submit</button>
+            <button class="px-4 py-2.5 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Submit</button>
           </div>
         </div>
       </section>
@@ -572,18 +581,15 @@
       if ((newScale >= 4 && factor > 1) || (newScale <= 0.6 && factor < 1)) {
         return;
       }
-      
-      // 将屏幕坐标转换为地图坐标（以当前平移缩放为基础）
-      const mapX = (cx - state.tx) / state.scale;
-      const mapY = (cy - state.ty) / state.scale;
-      
-      // 应用新的缩放比例
+      // 以 (cx, cy) 为焦点进行缩放，考虑视口中心偏移（图像以视口中心为基准）
+      const rect = mapViewport.getBoundingClientRect();
+      const vx = cx - rect.width / 2; // 以视口中心为原点
+      const vy = cy - rect.height / 2;
+      const mapX = (vx - state.tx) / state.scale;
+      const mapY = (vy - state.ty) / state.scale;
       state.scale = newScale;
-      
-      // 计算新的平移值，使鼠标下的点保持固定
-      state.tx = cx - mapX * state.scale;
-      state.ty = cy - mapY * state.scale;
-      
+      state.tx = vx - mapX * state.scale;
+      state.ty = vy - mapY * state.scale;
       applyTransform();
     }
 
@@ -732,7 +738,7 @@
           const width = parseFloat(state.selectionRect.getAttribute('width') || '0');
           const height = parseFloat(state.selectionRect.getAttribute('height') || '0');
           
-          if (width < 10 || height < 10) {
+          if (width < 2 || height < 2) {
             // 矩形太小，移除
             if (roofOverlay.contains(state.selectionRect)) {
               roofOverlay.removeChild(state.selectionRect);
@@ -765,7 +771,8 @@
             
             // 退出选择模式
             state.isSelecting = false;
-            rectSelectBtn.classList.remove('bg-[#22C55E]', 'text-white', 'border-[#22C55E]');
+            rectSelectBtn.classList.remove('bg-emerald-500', 'border-emerald-500', 'text-white');
+            rectSelectBtn.classList.add('bg-white/90', 'border-gray-200');
           }
           
           state.selectionRect = null;
@@ -815,16 +822,21 @@
         undo();
       });
       
-      // Toggle rectangle selection mode
+      // Toggle rectangle selection mode with explicit class management
       rectSelectBtn.addEventListener('click', () => {
         state.isSelecting = !state.isSelecting;
-        rectSelectBtn.classList.toggle('bg-[#22C55E]', state.isSelecting);
-        rectSelectBtn.classList.toggle('text-white', state.isSelecting);
-        rectSelectBtn.classList.toggle('border-[#22C55E]', state.isSelecting);
-        
-        if (!state.isSelecting && state.selectionRect) {
-          roofOverlay.removeChild(state.selectionRect);
-          state.selectionRect = null;
+        if (state.isSelecting) {
+          // active: emerald theme
+          rectSelectBtn.classList.remove('bg-white/90', 'border-gray-200', 'text-gray-800');
+          rectSelectBtn.classList.add('bg-emerald-500', 'border-emerald-500', 'text-white');
+        } else {
+          // inactive: back to neutral
+          rectSelectBtn.classList.remove('bg-emerald-500', 'border-emerald-500', 'text-white');
+          rectSelectBtn.classList.add('bg-white/90', 'border-gray-200');
+          if (state.selectionRect) {
+            roofOverlay.removeChild(state.selectionRect);
+            state.selectionRect = null;
+          }
         }
       });
       
