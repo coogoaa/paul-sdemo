@@ -658,7 +658,8 @@
       function openShareModal() {
         const modal = document.getElementById('shareModal');
         const urlSpan = document.getElementById('shareUrlText');
-        if (urlSpan && !urlSpan.textContent) urlSpan.textContent = location.href;
+        // Always override with the live page URL to avoid placeholder leaking
+        if (urlSpan) urlSpan.textContent = location.href;
         modal.classList.remove('hidden');
         refreshIcons();
       }
@@ -747,8 +748,33 @@
         setTimeout(() => {
           toast.style.transition = 'opacity .25s ease';
           toast.style.opacity = '0';
-          setTimeout(() => toast.remove(), 260);
+          setTimeout(() => toast.remove(), duration + 320);
         }, duration);
+      }
+
+      // Export helpers
+      async function saveBudgetAsImage() {
+        const target = document.getElementById('s4BudgetPanel');
+        if (!target) { showToast('Budget panel not found', 'error'); return; }
+        // Ensure library
+        if (!(window.html2canvas)) { showToast('Image export not ready', 'error'); return; }
+        try {
+          const canvas = await window.html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+          const dataUrl = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          const scheme = (window.state && window.state.scheme) || 'smart';
+          const ts = new Date().toISOString().replace(/[:.]/g, '-');
+          a.href = dataUrl;
+          a.download = `solar_budget_${scheme}_${ts}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          showToast('Image saved');
+          try { track('s4_save_image', { scheme }); } catch {}
+        } catch (e) {
+          console.error('saveBudgetAsImage failed', e);
+          showToast('Save failed', 'error');
+        }
       }
 
       // Cards/steps
@@ -1234,8 +1260,8 @@
         });
         const openShare = () => { openShareModal(); track('s4_share_open', { scheme: state.scheme || 'smart' }); };
         s4ShareBtn?.addEventListener('click', openShare);
-        // Replace Save image with share dialog per design v1.6
-        s4SaveImgBtn?.addEventListener('click', openShare);
+        // Save image: export budget panel as PNG
+        s4SaveImgBtn?.addEventListener('click', saveBudgetAsImage);
         s4RefineBtn?.addEventListener('click', () => {
           const conf = getSchemeConfig(state.scheme || 'smart');
           state.subsidy = conf.subsidy;
@@ -1664,6 +1690,8 @@
       }
     </script>
   
+  <!-- html2canvas for image export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       try { boot(); } catch (e) { console.error('boot failed', e); }
