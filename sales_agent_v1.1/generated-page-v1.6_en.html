@@ -429,6 +429,48 @@
             </div>
           </div>
 
+          <!-- Share dialog (modal) -->
+          <div id="shareModal" class="hidden fixed inset-0 z-[60]">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            <div class="absolute inset-x-3 bottom-3 max-w-md mx-auto rounded-2xl bg-white border border-green-200 p-4 shadow-2xl">
+              <div class="flex items-start gap-2">
+                <div class="flex-1">
+                  <div class="text-[12px] text-gray-600">Share with your friends and family</div>
+                  <h4 class="text-[18px] tracking-tight font-semibold text-gray-800">Scan to view your interactive proposal</h4>
+                  <p class="text-[12px] text-gray-600 mt-1">Want a more precise quote or to understand your STC benefits? Use the link below or contact our installer for an assessment.</p>
+                </div>
+                <button id="closeShareBtn" class="h-8 w-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                  <i data-lucide="x" class="w-4 h-4 text-gray-600"></i>
+                </button>
+              </div>
+              <div class="mt-3 space-y-2">
+                <div class="rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+                  <img id="shareImg" src="Pic/share card.png" alt="share card" class="w-full h-auto">
+                </div>
+                <div class="flex items-center gap-2 text-[12px]">
+                  <i data-lucide="link" class="w-4 h-4 text-gray-600"></i>
+                  <span id="shareUrlText" class="truncate">https://example.com/h5?utm_source=share_card&utm_medium=web&utm_campaign=au_resi_pv_v1_6</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button id="shareNativeBtn" class="inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200 transition">
+                    <i data-lucide="share-2" class="w-4 h-4"></i> Share
+                  </button>
+                  <button id="shareCopyBtn" class="inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 transition">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copy link
+                  </button>
+                </div>
+                <div class="flex items-center justify-between pt-1">
+                  <a id="learnStcLink" href="#" class="text-[12px] text-emerald-700 hover:underline inline-flex items-center gap-1">
+                    <i data-lucide="info" class="w-4 h-4"></i> Learn STC
+                  </a>
+                  <button id="shareContactBtn" class="inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Contact installer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Step 7: Lead capture (modal) -->
           <!-- Modal overlay -->
           <div id="leadModal" class="hidden fixed inset-0 z-[60]">
@@ -457,7 +499,18 @@
                   <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
                   <input id="leadPhone" inputmode="tel" placeholder="Phone" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
                 </div>
-                <div id="leadError" class="hidden text-[12px] text-red-500">Please fill in name, valid email and phone</div>
+                <div class="relative">
+                  <i data-lucide="map-pin" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                  <input id="leadPostcode" inputmode="numeric" maxlength="4" placeholder="Postcode (for STC estimate)" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
+                </div>
+                <div class="relative">
+                  <textarea id="leadNotes" placeholder="Notes (optional): roof type, battery interest, preferred contact time" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"></textarea>
+                </div>
+                <label class="flex items-start gap-2 text-[12px] text-gray-600 select-none">
+                  <input id="leadConsent" type="checkbox" class="mt-0.5 w-4 h-4 rounded border-gray-300">
+                  <span>I agree to be contacted and consent to the privacy policy.</span>
+                </label>
+                <div id="leadError" class="hidden text-[12px] text-red-500">Please complete at least two of Name/Email/Phone, provide a valid 4-digit postcode and consent.</div>
               </div>
               <div class="mt-3 flex gap-2">
                 <button id="submitLeadBtn" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">
@@ -550,21 +603,85 @@
         setTimeout(() => {
           const defined = !!customElements.get('model-viewer');
           if (!defined) fail('custom element not defined (library failed to load)');
+          if (window.lucide) { try { window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } }); } catch {} }
         }, 500);
       });
     </script>
 
     <script>
-      // Initialize Lucide icons with stroke width 1.5
-      document.addEventListener('DOMContentLoaded', () => {
-        if (window.lucide) {
-          window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
-        }
-        boot();
-      });
+      // Share dialog bindings (global)
+      function bindShare() {
+        const modal = document.getElementById('shareModal');
+        const closeBtn = document.getElementById('closeShareBtn');
+        const shareNativeBtn = document.getElementById('shareNativeBtn');
+        const shareCopyBtn = document.getElementById('shareCopyBtn');
+        const learnStcLink = document.getElementById('learnStcLink');
+        const shareContactBtn = document.getElementById('shareContactBtn');
+        const urlSpan = document.getElementById('shareUrlText');
 
+        closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
+        shareNativeBtn?.addEventListener('click', async () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          const txt = buildShareText(conf);
+          const url = urlSpan?.textContent || location.href;
+          const shareData = { title: 'Solar Proposal', text: txt, url };
+          try {
+            if (navigator.share) {
+              await navigator.share(shareData);
+              showToast('System share opened', 'info');
+              track('share_native', { scheme: state.scheme || 'smart' });
+            } else {
+              await navigator.clipboard.writeText(`${txt}\n${url}`);
+              showToast('Copied link', 'success');
+              track('share_copy_fallback', { scheme: state.scheme || 'smart' });
+            }
+          } catch {
+            showToast('Share canceled', 'info');
+          }
+        });
+        shareCopyBtn?.addEventListener('click', async () => {
+          const url = urlSpan?.textContent || location.href;
+          try { await navigator.clipboard.writeText(url); showToast('Link copied'); }
+          catch { showToast('Copy failed', 'error'); }
+        });
+        learnStcLink?.addEventListener('click', (e) => {
+          e.preventDefault();
+          showToast('STC basics: Small-scale Technology Certificates reduce upfront cost based on zone and system size.', 'info', 2200);
+        });
+        shareContactBtn?.addEventListener('click', () => {
+          modal.classList.add('hidden');
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          state.subsidy = conf.subsidy;
+          openLeadModal(conf.subsidy);
+        });
+      }
+      function openShareModal() {
+        const modal = document.getElementById('shareModal');
+        const urlSpan = document.getElementById('shareUrlText');
+        if (urlSpan && !urlSpan.textContent) urlSpan.textContent = location.href;
+        modal.classList.remove('hidden');
+        refreshIcons();
+      }
+
+      // Postcode helper (global)
+      function extractPostcodeFromText(text) {
+        if (!text) return '';
+        const m = String(text).match(/\b(\d{4})\b/);
+        return m ? m[1] : '';
+      }
+      function validateLeadTwoOfThree(name, email, phone) {
+        const nameOk = !!(name && name.length >= 1 && name.length <= 40 && /^[^~`!@#$%^*+=<>?{}\[\]|\\]+$/.test(name));
+        const emailOk = !!(email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+        const phoneOk = !!(phone && /^(\+?61\s?)?[0-9\-\s]{6,}$/.test(phone));
+        const score = (nameOk?1:0) + (emailOk?1:0) + (phoneOk?1:0);
+        return score >= 2;
+      }
+
+      // Ensure lucide icons refresh utility is globally available
       function refreshIcons() {
-        if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        if (window.lucide) {
+          try { window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } }); } catch {}
+        }
       }
 
       // Chat helpers (kept structure)
@@ -696,6 +813,7 @@
         bindStep6();
         bindStep6A();
         bindLead();
+        bindShare();
         bindBottomChat();
 
         // Pre-populate Step 4 budget panel with default plan so values are never empty
@@ -1049,6 +1167,10 @@
         const modelViewer = document.querySelector('#viewer3d model-viewer');
         const strip = document.getElementById('schemesStrip4');
         const leadBtn = document.getElementById('s4_openLeadBtn');
+        const s4CopyBtn = document.getElementById('s4CopyBtn');
+        const s4ShareBtn = document.getElementById('s4ShareBtn');
+        const s4SaveImgBtn = document.getElementById('s4SaveImgBtn');
+        const s4RefineBtn = document.getElementById('s4RefineBtn');
 
         // Back to previous step
         backTo2?.addEventListener('click', () => {
@@ -1100,6 +1222,24 @@
           state.subsidy = conf.subsidy;
           openLeadModal(conf.subsidy);
           addBotMsg(`Looks compelling, right? You may also qualify for about $${(conf.subsidy || 3000).toLocaleString()} in government subsidies. Want the final price including subsidies? Leave your details and I'll send the full report.`);
+        });
+
+        // Step 4 action buttons wiring
+        s4CopyBtn?.addEventListener('click', async () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          const txt = buildShareText(conf);
+          const url = location.href;
+          try { await navigator.clipboard.writeText(`${txt}\nLink: ${url}`); showToast('Quote copied'); }
+          catch { showToast('Copy failed', 'error'); }
+        });
+        const openShare = () => { openShareModal(); track('s4_share_open', { scheme: state.scheme || 'smart' }); };
+        s4ShareBtn?.addEventListener('click', openShare);
+        // Replace Save image with share dialog per design v1.6
+        s4SaveImgBtn?.addEventListener('click', openShare);
+        s4RefineBtn?.addEventListener('click', () => {
+          const conf = getSchemeConfig(state.scheme || 'smart');
+          state.subsidy = conf.subsidy;
+          openLeadModal(conf.subsidy);
         });
       }
 
@@ -1233,23 +1373,9 @@
           }
         });
 
-        shareBtn?.addEventListener('click', async () => {
-          const conf = getSchemeConfig(state.scheme || 'smart');
-          const txt = buildShareText(conf);
-          const shareData = { title: 'Solar Quote', text: txt, url: location.href };
-          try {
-            if (navigator.share) {
-              await navigator.share(shareData);
-              track('s6a_share_native', { scheme: state.scheme || 'smart' });
-            } else {
-              await navigator.clipboard.writeText(txt + '\n' + location.href);
-              showToast('Copied (share not supported)');
-              track('s6a_share_copy', { scheme: state.scheme || 'smart' });
-            }
-          } catch (e) {
-            console.warn('Share failed', e);
-            showToast('Share canceled');
-          }
+        shareBtn?.addEventListener('click', () => {
+          openShareModal();
+          track('s6a_share_dialog', { scheme: state.scheme || 'smart' });
         });
 
         refineBtn?.addEventListener('click', () => {
@@ -1448,6 +1574,9 @@
         const leadName = document.getElementById('leadName');
         const leadEmail = document.getElementById('leadEmail');
         const leadPhone = document.getElementById('leadPhone');
+        const leadPostcode = document.getElementById('leadPostcode');
+        const leadNotes = document.getElementById('leadNotes');
+        const leadConsent = document.getElementById('leadConsent');
         const leadError = document.getElementById('leadError');
 
         closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
@@ -1456,16 +1585,21 @@
           const name = (leadName.value || '').trim();
           const email = (leadEmail.value || '').trim();
           const phone = (leadPhone.value || '').trim();
-          const ok = name && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && /^[\d\-\+\s]{6,}$/.test(phone);
+          const pc = (leadPostcode.value || '').trim();
+          const consentOk = !!leadConsent?.checked;
+          const twoOk = validateLeadTwoOfThree(name, email, phone);
+          const pcOk = /^\d{4}$/.test(pc);
+          const ok = twoOk && pcOk && consentOk;
           if (ok) {
             leadError.classList.add('hidden');
             modal.classList.add('hidden');
-            addUserMsg('Submitted: ' + name + ' / ' + email + ' / ' + phone);
-            addBotMsg('Thanks! We\'ll send the full report to your email right away.');
+            addUserMsg(`Submitted: ${name || '(no name)'} / ${email || '(no email)'} / ${phone || '(no phone)'} / ${pc}`);
+            addBotMsg('Thanks! We\'ll send the full report shortly, including the subsidy-adjusted price.');
             showStep(7);
+            track('lead_submit', { hasName: !!name, hasEmail: !!email, hasPhone: !!phone });
           } else {
             leadError.classList.remove('hidden');
-            showToast('Please check and complete your contact details');
+            showToast('Please complete required fields', 'error');
           }
         });
       }
@@ -1473,6 +1607,12 @@
         const modal = document.getElementById('leadModal');
         const hint = document.getElementById('subsidyHint');
         hint.textContent = `Based on your plan, you may qualify for about $${(subsidy || 3000).toLocaleString()} in government subsidies. Enter your details to view the final price including subsidies.`;
+        // Prefill postcode from address if available
+        const leadPostcode = document.getElementById('leadPostcode');
+        if (leadPostcode && !leadPostcode.value) {
+          const pc = extractPostcodeFromText(state.address || '');
+          if (pc) leadPostcode.value = pc;
+        }
         modal.classList.remove('hidden');
         refreshIcons();
       }
@@ -1524,4 +1664,9 @@
       }
     </script>
   
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      try { boot(); } catch (e) { console.error('boot failed', e); }
+    });
+  </script>
 </body></html>
