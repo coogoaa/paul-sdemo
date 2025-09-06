@@ -6,6 +6,12 @@ import pandas as pd
 import math
 from types import SimpleNamespace
 
+# 导出摘要 JSON（供 H5 使用）
+try:
+    from export_summary import export_summary_json
+except Exception:
+    export_summary_json = None
+
 try:
     from schemas import InputsConfig
 except ModuleNotFoundError:
@@ -183,6 +189,19 @@ def main():
         st.subheader("导出")
         if st.button("一键导出 Excel（详细版与简化版）"):
             export_excels()
+        if st.button("导出摘要 JSON（proposal_summary.json）"):
+            if cfg is None:
+                st.warning("请先设置参数并点击‘应用参数并计算’后再导出 JSON。")
+            elif export_summary_json is None:
+                st.error("未找到 export_summary 模块或导出函数。")
+            else:
+                try:
+                    out_path = OUTPUT_DIR / "proposal_summary.json"
+                    export_summary_json(cfg, out_path)
+                    st.success(f"已导出摘要 JSON 至: {out_path}")
+                    st.code(str(out_path), language="bash")
+                except Exception as e:
+                    st.error(f"导出失败: {e}")
         st.caption("导出路径：proposal/outputs/")
         st.divider()
         show_notes = st.checkbox("显示说明列", value=True)
