@@ -62,3 +62,55 @@ sales_agent_v1.1/
 
 ---
 如需我将 Inter 字体与 Tailwind 完全本地化、添加 `.nojekyll` 与主页跳转文件、或配置 `docs/` 目录下的发布方式，请说明需求。
+
+---
+
+## Streamlit 界面：光伏与储能报价演示
+
+本仓库在 `proposal/` 目录下提供了一个基于 Streamlit 的交互式应用：
+
+- 入口：`proposal/app.py`
+- 计算引擎：`proposal/calc_engine.py`（与 `proposal/proposal.py` 的公式保持一致）
+- 参数模型：`proposal/schemas.py`
+- 文档：
+  - 计算逻辑详解：`proposal/docs/proposal_logic.md`
+  - 开发计划：`proposal/docs/dev_plan.md`
+
+### 环境准备（推荐使用 venv）
+
+```bash
+# 在 macOS/Apple Silicon 上，优先使用 Homebrew Python（arm64）
+/opt/homebrew/bin/python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -U pip
+python -m pip install -r requirements.txt
+```
+
+### 启动
+
+```bash
+# 如 8501 被占用，可改 8502
+python -m streamlit run proposal/app.py --server.headless true --server.port 8502 --server.address localhost
+```
+
+启动后访问：
+
+- http://localhost:8502
+
+### 功能说明
+
+- 侧边栏参数表单：编辑关键输入参数，点击“应用参数并计算”。
+- Tab 1：新建系统 — 详细版/简化版 对比
+  - 并列展示两套方案的核心指标表格。
+  - 鼠标悬停在第一列单元格，可查看对应行的“计算公式/口径说明”。
+- Tab 2：储能扩容（Battery Retrofit）
+  - 展示 A/B/C/D 容量档的节省、成本、回本年限等。
+  - 同样支持首列逐行悬停查看计算说明。
+- Tab 3：计算逻辑（文档）
+  - 直接渲染 `proposal/docs/proposal_logic.md`，便于对照核验公式。
+- 导出 Excel：侧边栏提供“一键导出（详细版/简化版）”，输出目录为：`proposal/outputs/`。
+
+### 注意事项
+
+- 出于安全与可控性，`proposal/app.py` 导出 Excel 时仅加载 `proposal/proposal.py` 的函数定义，不执行其底部示例写文件逻辑；因此不会再访问 `/mnt/data/`。
+- 若遇到 `pydantic_core` 架构不兼容（x86_64 vs arm64），请使用上面的 venv 流程安装依赖。

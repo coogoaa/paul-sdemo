@@ -126,8 +126,37 @@ def sidebar_params():
 
 def main():
     st.set_page_config(page_title=APP_TITLE, layout="wide")
-    st.title(APP_TITLE)
+    # 全局样式（标题字号变小，表格更紧凑）
+    st.markdown(
+        """
+        <style>
+        h1, h2, .stMarkdown h1, .stMarkdown h2 { margin: 0.2rem 0; }
+        /* 主标题、分标题调小字号 */
+        .app-title { font-size: 1.4rem; font-weight: 600; }
+        .section-title { font-size: 1.05rem; font-weight: 600; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(f"<div class='app-title'>{APP_TITLE}</div>", unsafe_allow_html=True)
     st.caption("详细版/简化版 对比视图 + 储能扩容。支持一键导出 Excel（路径：proposal/outputs/）。")
+
+    def _numeric_format(x):
+        return f"{x:.2f}" if isinstance(x, (int, float)) and not math.isinf(x) else x
+
+    def _attach_tooltips(df: pd.DataFrame, tooltips_map: dict, first_col_name: str) -> pd.io.formats.style.Styler:
+        sty = df.style.format(_numeric_format)
+        try:
+            # 仅在首列（如 Plan A）添加逐行提示
+            tips = pd.DataFrame("", index=df.index, columns=df.columns)
+            if first_col_name in tips.columns:
+                for idx, tip in tooltips_map.items():
+                    if idx in tips.index:
+                        tips.loc[idx, first_col_name] = tip
+            sty = sty.set_tooltips(tips)
+        except Exception:
+            pass
+        return sty
 
     # 侧边栏：参数与导出
     with st.sidebar:
@@ -142,7 +171,7 @@ def main():
     tabs = st.tabs(["新建系统（详细/简化 对比）", "储能扩容（Battery Retrofit）", "计算逻辑（文档）"]) 
 
     with tabs[0]:
-        st.subheader("新建系统 — 详细版/简化版 对比")
+        st.markdown("<div class='section-title'>新建系统 — 详细版/简化版 对比</div>", unsafe_allow_html=True)
         if cfg is None:
             st.info("请在左侧设置参数并点击‘应用参数并计算’。");
         else:
@@ -151,30 +180,69 @@ def main():
             else:
                 df_detailed = compute_plans_detailed(cfg)
                 df_simpl = compute_plans_simplified(cfg)
+                # 逐行提示（首列：Plan A）
+                detailed_tips = {
+                    "solar_kw": "光伏装机容量：按容量系数与上下限 MAX/MIN（A 含最小下限）",
+                    "panel_count": "面板数量：INT(solar_kw / panel_power_kw)",
+                    "inverter_kw": "逆变器容量：CEILING(solar_kw / dc_ac_ratio, 0.1)",
+                    "annual_generation_kwh": "年发电量：solar_kw * yield_per_kw_per_year",
+                    "daily_energy_to_shift_kwh": "每日需转移能量：(annual_gen/365) * (target - baseline_sc)",
+                    "battery_nominal_kwh": "电池标称：CEILING(daily_shift / (DoD*RTE), 1)",
+                    "battery_pack_suggested_kwh": "商用品规建议：按 20/13.5/10/6.5/5 分档",
+                    "cost_panels": "面板成本：panel_count * panel_unit_cost",
+                    "cost_inverter": "逆变器成本：inverter_kw * inverter_unit_cost_per_kw",
+                    "cost_battery": "电池成本：battery_nominal_kwh * battery_unit_cost_per_kwh",
+                    "cost_install": "安装成本：install_base_cost + solar_kw * install_cost_per_kw",
+                    "total_cost": "项目总成本：面板+逆变器+电池+安装",
+                    "price_base": "报价：total_cost * (1 + 利润率)",
+                    "payback_base_years": "回本（基线）：自用+馈网收益",
+                    "payback_low_years": "回本（保守）：-15%发电，-20%购电价，+10%成本",
+                    "payback_high_years": "回本（乐观）：+15%发电，+20%购电价，-10%成本",
+                }
+                simplified_tips = {
+                    "solar_kw": "同详细版容量计算",
+                    "panel_count": "INT(solar_kw / panel_power_kw)",
+                    "annual_generation_kwh": "solar_kw * yield_per_kw_per_year",
+                    "total_hardware_cost": "硬件成本：solar_kw * hardware_cost_per_kw",
+                    "cost_battery": "简化版默认 0（可扩展）",
+                    "cost_install": "install_base_cost + solar_kw * install_cost_per_kw",
+                    "total_cost": "硬件+安装",
+                    "price_base": "total_cost * (1 + 利润率)",
+                    "payback_base_years": "回本（基线）",
+                    "payback_low_years": "回本（保守）",
+                    "payback_high_years": "回本（乐观）",
+                }
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown("**详细版**")
-                    st.dataframe(
-                        df_detailed.style.format(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) and not math.isinf(x) else x),
-                        use_container_width=True,
-                    )
+                    sty = _attach_tooltips(df_detailed, detailed_tips, first_col_name="Plan A")
+                    st.dataframe(sty, use_container_width=True, height=620)
                 with col2:
                     st.markdown("**简化版**")
-                    st.dataframe(
-                        df_simpl.style.format(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) and not math.isinf(x) else x),
-                        use_container_width=True,
-                    )
+                    sty2 = _attach_tooltips(df_simpl, simplified_tips, first_col_name="Plan A")
+                    st.dataframe(sty2, use_container_width=True, height=620)
 
     with tabs[1]:
-        st.subheader("储能扩容（Battery Retrofit）")
+        st.markdown("<div class='section-title'>储能扩容（Battery Retrofit）</div>", unsafe_allow_html=True)
         if cfg is None:
             st.info("请在左侧设置参数并点击‘应用参数并计算’。")
         else:
             df_ret = compute_battery_retrofit(cfg)
-            st.dataframe(
-                df_ret.style.format(lambda x: f"{x:.2f}" if isinstance(x, (int, float)) and not math.isinf(x) else x),
-                use_container_width=True,
-            )
+            retrofit_tips = {
+                "battery_nominal_kwh": "名义容量：来自侧边栏 Retrofit 建议",
+                "usable_battery_capacity_kwh": "可用容量：nominal * DoD",
+                "annual_shifted_kwh_est": "估计可转移：usable * 有效系数 * 365",
+                "max_shiftable_kwh": "可最大转移：由剩余馈网量决定",
+                "final_annual_shifted_kwh": "实际转移：MIN(估计, 最大)",
+                "annual_savings": "年节省：(购电-馈网) * 实际转移",
+                "total_cost": "总成本：电池+安装基础+单位安装费",
+                "price_base": "报价：total_cost * (1 + 利润率)",
+                "payback_years": "回本：price / annual_savings",
+                "new_self_consumption_rate": "新自用率：基线自用 + 转移量 / 年发电",
+                "roi_warning": "ROI 提示：转移量 < 500 kWh/年 则提示 Low ROI",
+            }
+            sty3 = _attach_tooltips(df_ret, retrofit_tips, first_col_name="Retrofit A")
+            st.dataframe(sty3, use_container_width=True, height=620)
 
     with tabs[2]:
         st.subheader("计算逻辑（与 Excel 公式对齐）")
