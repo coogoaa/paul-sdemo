@@ -144,19 +144,14 @@ def main():
     def _numeric_format(x):
         return f"{x:.2f}" if isinstance(x, (int, float)) and not math.isinf(x) else x
 
-    def _attach_tooltips(df: pd.DataFrame, tooltips_map: dict, first_col_name: str) -> pd.io.formats.style.Styler:
-        sty = df.style.format(_numeric_format)
-        try:
-            # 仅在首列（如 Plan A）添加逐行提示
-            tips = pd.DataFrame("", index=df.index, columns=df.columns)
-            if first_col_name in tips.columns:
-                for idx, tip in tooltips_map.items():
-                    if idx in tips.index:
-                        tips.loc[idx, first_col_name] = tip
-            sty = sty.set_tooltips(tips)
-        except Exception:
-            pass
-        return sty
+    def _with_notes_first_col(df: pd.DataFrame, notes_map: dict, col_name: str = "说明") -> pd.DataFrame:
+        notes = pd.Series("", index=df.index)
+        for idx, tip in notes_map.items():
+            if idx in notes.index:
+                notes.loc[idx] = tip
+        # 将说明列放在最前
+        df2 = pd.concat({col_name: notes}, axis=1).join(df)
+        return df2
 
     # 侧边栏：参数与导出
     with st.sidebar:
@@ -215,12 +210,12 @@ def main():
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown("**详细版**")
-                    sty = _attach_tooltips(df_detailed, detailed_tips, first_col_name="Plan A")
-                    st.dataframe(sty, use_container_width=True, height=620)
+                    df_show = _with_notes_first_col(df_detailed, detailed_tips, col_name="说明")
+                    st.dataframe(df_show.style.format(_numeric_format), use_container_width=True, height=620)
                 with col2:
                     st.markdown("**简化版**")
-                    sty2 = _attach_tooltips(df_simpl, simplified_tips, first_col_name="Plan A")
-                    st.dataframe(sty2, use_container_width=True, height=620)
+                    df_show2 = _with_notes_first_col(df_simpl, simplified_tips, col_name="说明")
+                    st.dataframe(df_show2.style.format(_numeric_format), use_container_width=True, height=620)
 
     with tabs[1]:
         st.markdown("<div class='section-title'>储能扩容（Battery Retrofit）</div>", unsafe_allow_html=True)
@@ -241,8 +236,8 @@ def main():
                 "new_self_consumption_rate": "新自用率：基线自用 + 转移量 / 年发电",
                 "roi_warning": "ROI 提示：转移量 < 500 kWh/年 则提示 Low ROI",
             }
-            sty3 = _attach_tooltips(df_ret, retrofit_tips, first_col_name="Retrofit A")
-            st.dataframe(sty3, use_container_width=True, height=620)
+            df_show3 = _with_notes_first_col(df_ret, retrofit_tips, col_name="说明")
+            st.dataframe(df_show3.style.format(_numeric_format), use_container_width=True, height=620)
 
     with tabs[2]:
         st.subheader("计算逻辑（与 Excel 公式对齐）")

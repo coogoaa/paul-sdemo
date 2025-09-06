@@ -168,3 +168,8 @@
   - 由于部分单元格为字符串（例如 ROI 提示、“Inf”等），统一套用数值格式化 `"{:.2f}"` 会触发 `ValueError: Unknown format code 'f' for object of type 'str'`。
   - 处理：使用安全格式化函数，仅对数值且非 `inf` 的单元格进行 `"{:.2f}"` 格式化；其余保留原样。
   - 位置：`app.py` 中对详细版/简化版/Retrofit 三处 DataFrame 展示均已改为 `lambda` 判定后格式化。
+
+### 11.1 悬停说明方案调整
+
+- 原方案：使用 `Styler.set_tooltips()` 在首列添加悬停提示，但会在某些数值单元格中插入 `<span>` 导致显示异常（例如 `3.50<span class="pd-t"></span>`）。
+- 新方案：去除悬停 tooltip，改为在表格最左侧新增一列“说明”，逐行给出公式/口径说明，避免污染数值展示。
