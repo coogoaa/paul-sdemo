@@ -233,3 +233,30 @@
 - 将输入参数抽象为配置文件（JSON/YAML）或数据库来源，便于多项目复用。
 - 提供 CLI 或 Web 表单收集输入并触发生成，提高可用性。
 - 引入单元测试：针对关键公式与边界值（如 0/空值/极大极小值）进行校验。
+
+---
+
+## 11. 已知边界与注意事项（自用率目标 < 基线）
+
+当某方案的目标自用率 `target_sc_rate` 低于基线自用率 `baseline_self_consumption_rate` 时：
+
+- 根据 3.2 的公式：`daily_energy_to_shift_kwh = (annual_generation_kwh / 365) * (target_sc_rate - baseline_sc)`，将产生负值。
+- 当前实现对电池容量的推导为：`IF(daily_energy_to_shift>0, CEILING(...), 0)`，因此在该场景下：
+  - `battery_nominal_kwh = 0`（不建议配置电池，符合“需要减少自用/增加馈网”的逻辑）。
+  - `cost_battery = 0`。
+- 该负值仅表示“自用率目标较基线更低”的意向，对电池 sizing 不会产生正向容量；但在对外展示或进一步衍生计算中，若默认假设“需转移能量应为非负”，可能引起歧义。
+
+产品建议：
+
+- 前端文案或导出摘要中，对 `daily_energy_to_shift_kwh` 可：
+  - 保留原始值用于诊断；
+  - 或显示为 `max(daily_energy_to_shift_kwh, 0)` 以避免负值引发误读（不改变公式，仅在展示处约束）。
+- 对 H5 卡片而言，若仅依赖“是否需要电池”与“电池容量”，上述实现已经确保 `battery_nominal_kwh = 0`，不会误导配置。
+- 如需在节省/回本计算中引入该差值，请确保公式能正确处理负向“转移”含义，或加入边界保护。
+
+验证记录：
+
+- 示例：Plan A 在默认基线 `baseline_sc = 0.30` 下，将 `plan_a_target_sc_rate` 设为 `0.27`：
+  - `annual_generation_kwh = 5110`，则 `daily_energy_to_shift_kwh = 5110/365 * (0.27 - 0.30) ≈ -0.42 kWh/天`；
+  - `battery_nominal_kwh = 0`，`cost_battery = 0`；
+  - 预算与回本期计算仍可进行，但请注意解释口径与展示。
