@@ -161,6 +161,8 @@ def main():
         if st.button("一键导出 Excel（详细版与简化版）"):
             export_excels()
         st.caption("导出路径：proposal/outputs/")
+        st.divider()
+        show_notes = st.checkbox("显示说明列", value=True)
 
     # 主区：三个 Tab（新增“计算逻辑”）
     tabs = st.tabs(["新建系统（详细/简化 对比）", "储能扩容（Battery Retrofit）", "计算逻辑（文档）"]) 
@@ -210,12 +212,18 @@ def main():
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown("**详细版**")
-                    df_show = _with_notes_first_col(df_detailed, detailed_tips, col_name="说明")
-                    st.dataframe(df_show.style.format(_numeric_format), use_container_width=True, height=620)
+                    if show_notes:
+                        df_show = _with_notes_first_col(df_detailed, detailed_tips, col_name="说明")
+                        st.dataframe(df_show.style.format(_numeric_format), use_container_width=True, height=620)
+                    else:
+                        st.dataframe(df_detailed.style.format(_numeric_format), use_container_width=True, height=620)
                 with col2:
                     st.markdown("**简化版**")
-                    df_show2 = _with_notes_first_col(df_simpl, simplified_tips, col_name="说明")
-                    st.dataframe(df_show2.style.format(_numeric_format), use_container_width=True, height=620)
+                    if show_notes:
+                        df_show2 = _with_notes_first_col(df_simpl, simplified_tips, col_name="说明")
+                        st.dataframe(df_show2.style.format(_numeric_format), use_container_width=True, height=620)
+                    else:
+                        st.dataframe(df_simpl.style.format(_numeric_format), use_container_width=True, height=620)
 
     with tabs[1]:
         st.markdown("<div class='section-title'>储能扩容（Battery Retrofit）</div>", unsafe_allow_html=True)
@@ -236,8 +244,11 @@ def main():
                 "new_self_consumption_rate": "新自用率：基线自用 + 转移量 / 年发电",
                 "roi_warning": "ROI 提示：转移量 < 500 kWh/年 则提示 Low ROI",
             }
-            df_show3 = _with_notes_first_col(df_ret, retrofit_tips, col_name="说明")
-            st.dataframe(df_show3.style.format(_numeric_format), use_container_width=True, height=620)
+            if show_notes:
+                df_show3 = _with_notes_first_col(df_ret, retrofit_tips, col_name="说明")
+                st.dataframe(df_show3.style.format(_numeric_format), use_container_width=True, height=620)
+            else:
+                st.dataframe(df_ret.style.format(_numeric_format), use_container_width=True, height=620)
 
     with tabs[2]:
         st.subheader("计算逻辑（与 Excel 公式对齐）")
