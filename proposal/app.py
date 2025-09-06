@@ -72,6 +72,10 @@ def sidebar_params():
         cfg.panel_power_kw = st.number_input("单块面板功率 (kW)", min_value=0.01, value=float(cfg.panel_power_kw), step=0.01)
         cfg.yield_per_kw_per_year = st.number_input("每kW年发电量(兜底)", min_value=1.0, value=float(cfg.yield_per_kw_per_year), step=10.0)
         cfg.dc_ac_ratio = st.number_input("容配比 (DC/AC)", min_value=0.1, value=float(cfg.dc_ac_ratio), step=0.01)
+        # 额外信息（当前计算未直接使用，但保留可配置）
+        cfg.roof_total_area_m2 = st.number_input("屋顶总面积 (m²)", min_value=0.0, value=float(cfg.roof_total_area_m2), step=1.0)
+        cfg.roof_effective_area_m2 = st.number_input("屋顶有效面积 (m²)", min_value=0.0, value=float(cfg.roof_effective_area_m2), step=1.0)
+        cfg.panel_area_m2 = st.number_input("单块面板面积 (m²)", min_value=0.0, value=float(cfg.panel_area_m2), step=0.01)
 
     with st.expander("策略（容量系数/自用率/上下限）", expanded=True):
         col1, col2 = st.columns(2)
@@ -88,8 +92,18 @@ def sidebar_params():
         with col4:
             cfg.plan_c_target_sc_rate = st.number_input("C 目标自用率", min_value=0.0, max_value=1.0, value=float(cfg.plan_c_target_sc_rate), step=0.01)
             cfg.plan_d_target_sc_rate = st.number_input("D 目标自用率", min_value=0.0, max_value=1.0, value=float(cfg.plan_d_target_sc_rate), step=0.01)
-        cfg.plan_a_min_kw = st.number_input("A 最小装机下限 (kW)", min_value=0.0, value=float(cfg.plan_a_min_kw), step=0.1)
-        cfg.plan_c_max_kw = st.number_input("C 最大上限 (kW)", min_value=0.0, value=float(cfg.plan_c_max_kw), step=0.1)
+        st.markdown("**每方案装机上下限 (kW)**")
+        ca, cb = st.columns(2)
+        with ca:
+            cfg.plan_a_min_kw = st.number_input("A 最小", min_value=0.0, value=float(cfg.plan_a_min_kw), step=0.1)
+            cfg.plan_b_min_kw = st.number_input("B 最小", min_value=0.0, value=float(cfg.plan_b_min_kw), step=0.1)
+            cfg.plan_c_min_kw = st.number_input("C 最小", min_value=0.0, value=float(cfg.plan_c_min_kw), step=0.1)
+            cfg.plan_d_min_kw = st.number_input("D 最小", min_value=0.0, value=float(cfg.plan_d_min_kw), step=0.1)
+        with cb:
+            cfg.plan_a_max_kw = st.number_input("A 最大", min_value=0.0, value=float(cfg.plan_a_max_kw), step=0.1)
+            cfg.plan_b_max_kw = st.number_input("B 最大", min_value=0.0, value=float(cfg.plan_b_max_kw), step=0.1)
+            cfg.plan_c_max_kw = st.number_input("C 最大", min_value=0.0, value=float(cfg.plan_c_max_kw), step=0.1)
+            cfg.plan_d_max_kw = st.number_input("D 最大", min_value=0.0, value=float(cfg.plan_d_max_kw), step=0.1)
         cfg.baseline_self_consumption_rate = st.number_input("基线自用率", min_value=0.0, max_value=1.0, value=float(cfg.baseline_self_consumption_rate), step=0.01)
 
     with st.expander("成本/电价", expanded=True):
@@ -102,9 +116,14 @@ def sidebar_params():
             cfg.install_base_cost = st.number_input("安装基础费 (AUD)", min_value=0.0, value=float(cfg.install_base_cost), step=10.0)
             cfg.install_cost_per_kw = st.number_input("安装每kW (AUD/kW)", min_value=0.0, value=float(cfg.install_cost_per_kw), step=10.0)
             cfg.profit_margin_rate = st.number_input("利润率", min_value=0.0, value=float(cfg.profit_margin_rate), step=0.01)
+        cfg.price_range_percent = st.number_input("报价浮动范围（占位）", min_value=0.0, value=float(cfg.price_range_percent), step=0.01)
         cfg.grid_buy_rate = st.number_input("购电价 (AUD/kWh)", min_value=0.0, value=float(cfg.grid_buy_rate), step=0.01)
         cfg.grid_sell_rate = st.number_input("馈网价 (AUD/kWh)", min_value=0.0, value=float(cfg.grid_sell_rate), step=0.01)
-        cfg.annual_home_usage_proxy_med = st.number_input("年用电代理 (kWh/年)", min_value=0.0, value=float(cfg.annual_home_usage_proxy_med), step=100.0)
+        st.markdown("**家庭年用电代理 (kWh/年)**")
+        ua, ub, uc = st.columns(3)
+        cfg.annual_home_usage_proxy_low = ua.number_input("Low", min_value=0.0, value=float(cfg.annual_home_usage_proxy_low), step=100.0)
+        cfg.annual_home_usage_proxy_med = ub.number_input("Med", min_value=0.0, value=float(cfg.annual_home_usage_proxy_med), step=100.0)
+        cfg.annual_home_usage_proxy_high = uc.number_input("High", min_value=0.0, value=float(cfg.annual_home_usage_proxy_high), step=100.0)
 
     with st.expander("电池/Retrofit", expanded=False):
         cfg.battery_dod = st.number_input("电池 DoD", min_value=0.0, max_value=1.0, value=float(cfg.battery_dod), step=0.01)
@@ -119,6 +138,10 @@ def sidebar_params():
         cfg.retrofit_plan_b_kwh = c2.number_input("B", min_value=0.0, value=float(cfg.retrofit_plan_b_kwh), step=0.5)
         cfg.retrofit_plan_c_kwh = c3.number_input("C", min_value=0.0, value=float(cfg.retrofit_plan_c_kwh), step=0.5)
         cfg.retrofit_plan_d_kwh = c4.number_input("D", min_value=0.0, value=float(cfg.retrofit_plan_d_kwh), step=0.5)
+        st.markdown("**既有系统（可空）**")
+        cfg.existing_solar_annual_gen_kwh = st.number_input("已有光伏估算年发电量 (kWh/年)", min_value=0.0, value=float(cfg.existing_solar_annual_gen_kwh or 0.0), step=100.0)
+        cfg.existing_solar_annual_gen_kwh = None if cfg.existing_solar_annual_gen_kwh == 0 else cfg.existing_solar_annual_gen_kwh
+        cfg.existing_sc_rate = st.number_input("已有系统基线自用率", min_value=0.0, max_value=1.0, value=float(cfg.existing_sc_rate), step=0.01)
 
     apply = st.button("应用参数并计算")
     return cfg if apply else None

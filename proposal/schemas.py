@@ -36,8 +36,15 @@ class InputsConfig(BaseModel):
     plan_c_capacity_factor: float = Field(0.8, ge=0)
     plan_d_capacity_factor: float = Field(1.0, ge=0)
 
+    # 每方案装机上下限（新增）
     plan_a_min_kw: float = Field(3.5, ge=0)
+    plan_a_max_kw: float = Field(10.0, ge=0)
+    plan_b_min_kw: float = Field(4.0, ge=0)
+    plan_b_max_kw: float = Field(13.3, ge=0)
+    plan_c_min_kw: float = Field(6.0, ge=0)
     plan_c_max_kw: float = Field(13.3, ge=0)
+    plan_d_min_kw: float = Field(8.0, ge=0)
+    plan_d_max_kw: float = Field(20.0, ge=0)
 
     plan_a_target_sc_rate: float = Field(0.35, ge=0, le=1)
     plan_b_target_sc_rate: float = Field(0.45, ge=0, le=1)
@@ -60,7 +67,9 @@ class InputsConfig(BaseModel):
     grid_sell_rate: float = Field(0.07, ge=0)
 
     # 家用电量代理
+    annual_home_usage_proxy_low: float = Field(3000, ge=0)
     annual_home_usage_proxy_med: float = Field(6000, ge=0)
+    annual_home_usage_proxy_high: float = Field(9000, ge=0)
 
     # 既有系统
     existing_solar_annual_gen_kwh: Optional[float] = Field(None)

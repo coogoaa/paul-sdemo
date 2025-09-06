@@ -25,21 +25,25 @@ def safe_payback(price: float, annual_benefit: float):
 
 
 def _plan_capacity(cfg, letter: str) -> float:
-    # solar_kw capacity by plan
+    # solar_kw capacity by plan with per-plan min/max
     max_panels = cfg.roof_max_panels
     ppkw = cfg.panel_power_kw
-    limit_max = cfg.plan_c_max_kw
     if letter == "A":
         capf = cfg.plan_a_capacity_factor
         base = max_panels * ppkw * capf
-        return max(min(base, limit_max), cfg.plan_a_min_kw)
+        return max(min(base, cfg.plan_a_max_kw), cfg.plan_a_min_kw)
     elif letter == "B":
         capf = cfg.plan_b_capacity_factor
+        base = max_panels * ppkw * capf
+        return max(min(base, cfg.plan_b_max_kw), cfg.plan_b_min_kw)
     elif letter == "C":
         capf = cfg.plan_c_capacity_factor
+        base = max_panels * ppkw * capf
+        return max(min(base, cfg.plan_c_max_kw), cfg.plan_c_min_kw)
     else:
         capf = cfg.plan_d_capacity_factor
-    return min(max_panels * ppkw * capf, limit_max)
+        base = max_panels * ppkw * capf
+        return max(min(base, cfg.plan_d_max_kw), cfg.plan_d_min_kw)
 
 
 def _plan_target_sc(cfg, letter: str) -> float:

@@ -51,9 +51,11 @@
 - 方案容量系数/自用率目标：
   - plan_a_capacity_factor / plan_b_capacity_factor / plan_c_capacity_factor / plan_d_capacity_factor
   - plan_a_target_sc_rate / plan_b_target_sc_rate / plan_c_target_sc_rate / plan_d_target_sc_rate
-- 容量上下限：
-  - plan_a_min_kw（A 方案装机下限）
-  - plan_c_max_kw（C/D 方案装机上限）
+- 容量上下限（已细化到每个方案，均可配置）：
+  - plan_a_min_kw / plan_a_max_kw
+  - plan_b_min_kw / plan_b_max_kw
+  - plan_c_min_kw / plan_c_max_kw
+  - plan_d_min_kw / plan_d_max_kw
 - battery_dod：电池放电深度（Depth of Discharge）
 - battery_rte：电池往返效率（Round-Trip Efficiency）
 - battery_install_base_cost / battery_install_cost_per_kwh：电池安装基础费与单位 kWh 安装费
@@ -63,7 +65,7 @@
 - 电价：
   - grid_buy_rate：购电价 (AUD/kWh)
   - grid_sell_rate：售电/馈网价 (AUD/kWh)
-- annual_home_usage_proxy_low/med/high：年用电量代理（详细版用到 low/med/high，简化版只保留了 med）
+- annual_home_usage_proxy_low/med/high：年用电量代理（页面已提供三档，当前计算默认使用 med 作为上限）
 - 既有系统相关：
   - existing_solar_annual_gen_kwh：已有光伏估算年发电量 (kWh/年)，留空则使用估算
   - existing_sc_rate：已有系统基线自用率
@@ -99,8 +101,11 @@
 以下以某列 `col` 表示当前方案列的列字母：
 
 - 光伏装机容量 `solar_kw`
-  - A：`MAX(MIN(roof_max_panels*panel_power_kw*plan_a_capacity_factor, plan_c_max_kw), plan_a_min_kw)`
-  - B/C/D：`MIN(roof_max_panels*panel_power_kw*plan_x_capacity_factor, plan_c_max_kw)`
+  - 采用“每方案独立的上下限”进行钳制：
+  - A：`MAX(MIN(roof_max_panels*panel_power_kw*plan_a_capacity_factor, plan_a_max_kw), plan_a_min_kw)`
+  - B：`MAX(MIN(roof_max_panels*panel_power_kw*plan_b_capacity_factor, plan_b_max_kw), plan_b_min_kw)`
+  - C：`MAX(MIN(roof_max_panels*panel_power_kw*plan_c_capacity_factor, plan_c_max_kw), plan_c_min_kw)`
+  - D：`MAX(MIN(roof_max_panels*panel_power_kw*plan_d_capacity_factor, plan_d_max_kw), plan_d_min_kw)`
 - 面板数量 `panel_count`
   - `INT(col[row_solar] / panel_power_kw)`（向下取整）
 - 逆变器容量 `inverter_kw`
