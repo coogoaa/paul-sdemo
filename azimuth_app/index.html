@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方位角选择器</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>方位角选择器</h1>
+      <p class="subtitle">拖拽扇形选择安装方位，实时查看角度与方位名称</p>
+    </header>
+
+    <section class="controls">
+      <div class="control">
+        <label for="sectorWidth">扇形张角: <span id="sectorWidthValue">30</span>°</label>
+        <input id="sectorWidth" type="range" min="5" max="120" step="1" value="30" />
+      </div>
+      <div class="readout">
+        <div class="readout-item">
+          <span class="label">当前方位</span>
+          <span id="angleValue" class="value">0°</span>
+        </div>
+        <div class="readout-item">
+          <span class="label">方位名称</span>
+          <span id="compassName" class="value">N</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="dial-wrap">
+      <!-- 自适应正方形容器，内部用 viewBox 绘制 360° 方位盘 -->
+      <svg id="azimuthDial" viewBox="-200 -200 400 400" role="img" aria-label="方位盘">
+        <!-- 基座圆 -->
+        <circle cx="0" cy="0" r="160" class="dial-base" />
+        <!-- 主/辅刻度与标签容器 -->
+        <g id="ticks"></g>
+        <g id="cardinal"></g>
+
+        <!-- 可拖拽扇形（由路径绘制） -->
+        <path id="sector" class="sector" />
+        <!-- 扇形中心线 -->
+        <line id="sectorLine" x1="0" y1="0" x2="0" y2="-160" class="sector-line" />
+        <!-- 交互手柄（末端小圆点） -->
+        <circle id="handle" cx="0" cy="-160" r="6" class="handle" />
+
+        <!-- 圆心点 -->
+        <circle cx="0" cy="0" r="2.5" class="origin" />
+      </svg>
+    </section>
+
+    <footer class="footer">
+      <p>提示：拖拽扇形或末端手柄旋转方位；使用上方滑块调整扇形张角。</p>
+    </footer>
+  </main>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
