@@ -16,7 +16,15 @@
     <section class="controls">
       <div class="control">
         <label for="sectorWidth">扇形张角: <span id="sectorWidthValue">30</span>°</label>
-        <input id="sectorWidth" type="range" min="5" max="120" step="1" value="30" />
+        <input id="sectorWidth" type="range" min="0" max="360" step="1" value="30" />
+      </div>
+      <div class="control inputs-inline">
+        <label>最小角度
+          <input id="minAngle" type="number" min="0" max="359" step="1" value="0" class="num" />
+        </label>
+        <label>最大角度
+          <input id="maxAngle" type="number" min="0" max="359" step="1" value="359" class="num" />
+        </label>
       </div>
       <div class="readout">
         <div class="readout-item">
@@ -27,6 +35,19 @@
           <span class="label">方位名称</span>
           <span id="compassName" class="value">N</span>
         </div>
+      </div>
+    </section>
+
+    <section class="controls controls-secondary">
+      <div class="control inputs-inline">
+        <label>背景图片（上传）
+          <input id="bgFile" type="file" accept="image/*" />
+        </label>
+        <label>背景图片 URL
+          <input id="bgUrl" type="url" placeholder="https://example.com/bg.jpg" class="url" />
+        </label>
+        <button id="applyBg" class="btn">应用背景</button>
+        <button id="clearBg" class="btn btn-ghost">清除背景</button>
       </div>
     </section>
 

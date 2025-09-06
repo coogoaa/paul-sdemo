@@ -71,9 +71,46 @@ body {
   gap: 12px;
 }
 
+.controls-secondary {
+  margin-top: 10px;
+}
+
+.inputs-inline {
+  gap: 8px 12px;
+}
+
 .control label {
   font-size: 14px;
   color: var(--text);
+}
+
+.control input.num {
+  width: 80px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0b1220;
+  color: var(--text);
+}
+
+.control input.url {
+  width: 260px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0b1220;
+  color: var(--text);
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(34,211,238,0.15), rgba(56,189,248,0.15));
+  color: var(--text);
+}
+.btn-ghost {
+  background: transparent;
 }
 
 #sectorWidth {
@@ -124,7 +161,10 @@ body {
   margin: 18px auto 8px;
   width: min(92vw, 520px);
   aspect-ratio: 1 / 1; /* 保持正方形区域 */
-  background: rgba(17, 24, 39, 0.40);
+  background-color: rgba(17, 24, 39, 0.40);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   border: 1px solid var(--border);
   border-radius: 16px;
   display: grid;
@@ -154,11 +194,21 @@ svg#azimuthDial {
   opacity: 0.7;
 }
 
+.tick-mid {
+  stroke: #a5b4fc; /* indigo-300 */
+  stroke-width: 1.2;
+  opacity: 0.9;
+}
+
+.tick-cardinal {
+  stroke: #22d3ee; /* cyan-400 */
+  stroke-width: 2.6;
+}
+
 .tick-label {
   fill: #cbd5e1; /* slate-300 */
   font-size: 10px;
   text-anchor: middle;
-  alignment-baseline: middle;
 }
 
 .cardinal-label {
@@ -166,7 +216,6 @@ svg#azimuthDial {
   font-weight: 700;
   font-size: 12px;
   text-anchor: middle;
-  alignment-baseline: middle;
 }
 
 .sector {

@@ -16,6 +16,13 @@
   const compassNameEl = document.getElementById('compassName');
   const sectorWidthInput = document.getElementById('sectorWidth');
   const sectorWidthValue = document.getElementById('sectorWidthValue');
+  const minAngleInput = document.getElementById('minAngle');
+  const maxAngleInput = document.getElementById('maxAngle');
+  const applyBgBtn = document.getElementById('applyBg');
+  const clearBgBtn = document.getElementById('clearBg');
+  const bgFileInput = document.getElementById('bgFile');
+  const bgUrlInput = document.getElementById('bgUrl');
+  const dialWrap = document.querySelector('.dial-wrap');
 
   const R = 160; // 半径，与 index.html 中的元素一致
 
@@ -23,6 +30,8 @@
   const state = {
     centerAngle: 0, // 以正北为 0°，顺时针递增
     sectorWidth: Number(sectorWidthInput?.value || 30),
+    minAngle: Number(minAngleInput?.value || 0),
+    maxAngle: Number(maxAngleInput?.value || 359),
     dragging: false,
     // 拖拽目标：'handle' | 'sector'
     dragTarget: null,
@@ -32,6 +41,27 @@
   function degToRad(d) { return d * Math.PI / 180; }
   function radToDeg(r) { return r * 180 / Math.PI; }
   function mod360(a) { return (a % 360 + 360) % 360; }
+
+  // 判断角度是否在[min,max]区间（考虑环绕）
+  function isAngleInRange(a, min, max) {
+    a = mod360(a); min = mod360(min); max = mod360(max);
+    if (min <= max) return a >= min && a <= max;
+    // 环绕区间，如 300..60
+    return a >= min || a <= max;
+  }
+
+  function clampAngleToRange(a, min, max) {
+    a = mod360(a); min = mod360(min); max = mod360(max);
+    if (isAngleInRange(a, min, max)) return a;
+    // 计算到边界的角距离，取较近者
+    const distTo = (from, to) => {
+      const d = mod360(to - from);
+      return Math.min(d, 360 - d);
+    };
+    const dMin = distTo(a, min);
+    const dMax = distTo(a, max);
+    return dMin <= dMax ? min : max;
+  }
 
   // 角度 -> 坐标（以正北为 0°，顺时针）
   function polarToXY(angleDeg, radius) {
@@ -65,19 +95,39 @@
   function drawTicks() {
     ticksGroup.innerHTML = '';
 
-    for (let d = 0; d < 360; d += 10) {
-      const isMajor = (d % 30 === 0);
-      const innerR = isMajor ? R - 16 : R - 10;
-      const outerR = R;
+    const cardinalAngles = new Set([0, 45, 90, 135, 180, 225, 270, 315]);
+
+    for (let d = 0; d < 360; d += 1) {
+      const isCardinal = cardinalAngles.has(d);
+      const isMajor = d % 30 === 0;      // 主刻度（带数值）
+      const isMid = !isMajor && d % 5 === 0; // 每5度
+
+      let innerR = R - 6; // 每度短刻度
+      let outerR = R;
+      let klass = 'tick-minor';
+
+      if (isMid) {
+        innerR = R - 10;
+        klass = 'tick-mid';
+      }
+      if (isMajor) {
+        innerR = R - 16;
+        klass = 'tick-major';
+      }
+      if (isCardinal) {
+        innerR = R - 24;
+        outerR = R + 8; // 向外延长
+        klass = 'tick-cardinal';
+      }
+
       const p1 = polarToXY(d, innerR);
       const p2 = polarToXY(d, outerR);
-
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', p1.x.toFixed(3));
       line.setAttribute('y1', p1.y.toFixed(3));
       line.setAttribute('x2', p2.x.toFixed(3));
       line.setAttribute('y2', p2.y.toFixed(3));
-      line.setAttribute('class', isMajor ? 'tick-major' : 'tick-minor');
+      line.setAttribute('class', klass);
       ticksGroup.appendChild(line);
 
       if (isMajor) {
@@ -125,20 +175,34 @@
     const start = mod360(c - half);
     const end = mod360(c + half);
 
-    const pStart = polarToXY(start, R);
-    const pEnd = polarToXY(end, R);
-
-    // 大弧标志：因为 sectorWidth <= 120，不会超过 180，因此固定 0 更安全
-    const largeArcFlag = state.sectorWidth > 180 ? 1 : 0; // 当前滑块上限 120，此处仍处理泛化
-    const sweepFlag = 1; // 顺时针
-
-    const d = [
-      `M 0 0`,
-      `L ${pStart.x.toFixed(3)} ${pStart.y.toFixed(3)}`,
-      `A ${R} ${R} 0 ${largeArcFlag} ${sweepFlag} ${pEnd.x.toFixed(3)} ${pEnd.y.toFixed(3)}`,
-      `Z`
-    ].join(' ');
-    sectorPath.setAttribute('d', d);
+    // 处理特殊情况：0 或 360
+    if (state.sectorWidth <= 0) {
+      sectorPath.setAttribute('d', '');
+    } else if (state.sectorWidth >= 360) {
+      // 使用两个半圆弧构成完整圆扇形
+      const pStart = polarToXY(0, R);
+      const pMid = polarToXY(180, R);
+      const dFull = [
+        `M 0 0`,
+        `L ${pStart.x.toFixed(3)} ${pStart.y.toFixed(3)}`,
+        `A ${R} ${R} 0 1 1 ${pMid.x.toFixed(3)} ${pMid.y.toFixed(3)}`,
+        `A ${R} ${R} 0 1 1 ${pStart.x.toFixed(3)} ${pStart.y.toFixed(3)}`,
+        `Z`
+      ].join(' ');
+      sectorPath.setAttribute('d', dFull);
+    } else {
+      const pStart = polarToXY(start, R);
+      const pEnd = polarToXY(end, R);
+      const largeArcFlag = state.sectorWidth > 180 ? 1 : 0;
+      const sweepFlag = 1; // 顺时针
+      const d = [
+        `M 0 0`,
+        `L ${pStart.x.toFixed(3)} ${pStart.y.toFixed(3)}`,
+        `A ${R} ${R} 0 ${largeArcFlag} ${sweepFlag} ${pEnd.x.toFixed(3)} ${pEnd.y.toFixed(3)}`,
+        `Z`
+      ].join(' ');
+      sectorPath.setAttribute('d', d);
+    }
 
     // 更新中心线与手柄
     const pc = polarToXY(c, R);
@@ -156,7 +220,7 @@
   function updateAngleFromPointer(evt) {
     const pt = getSVGPoint(evt);
     const angle = xyToAngle(pt.x, pt.y);
-    state.centerAngle = angle;
+    state.centerAngle = clampAngleToRange(angle, state.minAngle, state.maxAngle);
     updateSector();
   }
 
@@ -215,9 +279,50 @@
     // 滑块 - 扇形张角
     sectorWidthInput.addEventListener('input', () => {
       const val = Number(sectorWidthInput.value);
-      state.sectorWidth = Math.min(Math.max(val, 5), 160);
+      state.sectorWidth = Math.min(Math.max(val, 0), 360);
       sectorWidthValue.textContent = String(state.sectorWidth);
       updateSector();
+    });
+
+    // 最小/最大角度输入
+    const onMinMaxChange = () => {
+      let min = Number(minAngleInput.value);
+      let max = Number(maxAngleInput.value);
+      // 归一化
+      min = mod360(min); max = mod360(max);
+      state.minAngle = min; state.maxAngle = max;
+      // 重新校验当前角度
+      state.centerAngle = clampAngleToRange(state.centerAngle, min, max);
+      updateSector();
+    };
+    minAngleInput.addEventListener('change', onMinMaxChange);
+    maxAngleInput.addEventListener('change', onMinMaxChange);
+
+    // 背景图片应用
+    function applyBackground(url) {
+      if (!dialWrap) return;
+      if (url) {
+        dialWrap.style.backgroundImage = `url("${url}")`;
+      }
+    }
+    applyBgBtn.addEventListener('click', () => {
+      const url = bgUrlInput.value.trim();
+      if (url) applyBackground(url);
+    });
+    clearBgBtn.addEventListener('click', () => {
+      if (!dialWrap) return;
+      dialWrap.style.backgroundImage = 'none';
+      bgUrlInput.value = '';
+      bgFileInput.value = '';
+    });
+    bgFileInput.addEventListener('change', () => {
+      const file = bgFileInput.files && bgFileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        applyBackground(e.target.result);
+      };
+      reader.readAsDataURL(file);
     });
   }
 
