@@ -158,3 +158,13 @@
 - 输入异常：引入 Pydantic 校验并在 UI 中做范围提示；
 - 取整差异：明确 `INT/CEILING` 行为并在文档/界面中提示；
 - 依赖环境：补充 `requirements.txt` 并在 README 说明运行方式。
+
+---
+
+## 11. 计算逻辑展示与格式化修复（新增）
+
+- 新增页签：在 `app.py` 中增加第三个 Tab —— `计算逻辑（文档）`，直接渲染 `proposal/docs/proposal_logic.md`，用于在界面端展示与 Excel 一致的计算逻辑说明，便于对照核验。
+- 表格格式化修复：
+  - 由于部分单元格为字符串（例如 ROI 提示、“Inf”等），统一套用数值格式化 `"{:.2f}"` 会触发 `ValueError: Unknown format code 'f' for object of type 'str'`。
+  - 处理：使用安全格式化函数，仅对数值且非 `inf` 的单元格进行 `"{:.2f}"` 格式化；其余保留原样。
+  - 位置：`app.py` 中对详细版/简化版/Retrofit 三处 DataFrame 展示均已改为 `lambda` 判定后格式化。
