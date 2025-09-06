@@ -80,19 +80,22 @@
   function arcPosToAngle(p, min) {
     return mod360(min + p);
   }
-  // 在给定 [min,max] 弧内，保证 sectorWidth 不超过弧长，并将 center 限制到扇形完全位于弧内
-  function ensureSectorWithinRange() {
-    const L = arcLength(state.minAngle, state.maxAngle);
-    // 宽度不能超过弧长
-    if (state.sectorWidth > L) state.sectorWidth = L;
-    sectorWidthInput.value = String(Math.round(state.sectorWidth));
-    sectorWidthValue.textContent = String(Math.round(state.sectorWidth));
-
+  // 计算当前扇形的起止（全局角度）
+  function getSectorStartEnd() {
+    const c = state.centerAngle;
     const half = state.sectorWidth / 2;
-    // 以弧坐标系计算中心位置范围 [half, L-half]
-    let p = angleToArcPos(state.centerAngle, state.minAngle);
-    const pClamped = Math.min(Math.max(p, half), Math.max(half, L - half));
-    state.centerAngle = arcPosToAngle(pClamped, state.minAngle);
+    const start = mod360(c - half);
+    const end = mod360(c + half);
+    return { start, end };
+  }
+
+  // 将当前扇形的起止同步到 min/max 输入与 state
+  function syncRangeInputsFromSector() {
+    const { start, end } = getSectorStartEnd();
+    state.minAngle = start;
+    state.maxAngle = end;
+    if (minAngleInput) minAngleInput.value = String(Math.round(start));
+    if (maxAngleInput) maxAngleInput.value = String(Math.round(end));
   }
 
   // 角度 -> 坐标（以正北为 0°，顺时针）
@@ -252,8 +255,7 @@
   function updateAngleFromPointer(evt) {
     const pt = getSVGPoint(evt);
     const angle = xyToAngle(pt.x, pt.y);
-    state.centerAngle = clampAngleToRange(angle, state.minAngle, state.maxAngle);
-    ensureSectorWithinRange();
+    state.centerAngle = angle; // 不再限制在 min/max 区间内
     updateSector();
   }
 
@@ -314,7 +316,8 @@
       const val = Number(sectorWidthInput.value);
       state.sectorWidth = Math.min(Math.max(val, 0), 360);
       sectorWidthValue.textContent = String(state.sectorWidth);
-      ensureSectorWithinRange();
+      // 张角变化时，实时同步范围到起止角
+      syncRangeInputsFromSector();
       updateSector();
     });
 
@@ -325,9 +328,13 @@
       // 归一化
       min = mod360(min); max = mod360(max);
       state.minAngle = min; state.maxAngle = max;
-      // 重新校验当前角度
-      state.centerAngle = clampAngleToRange(state.centerAngle, min, max);
-      ensureSectorWithinRange();
+      // 以输入区间直接定义扇形：张角=弧长，中心=中点
+      const L = arcLength(min, max);
+      state.sectorWidth = L;
+      sectorWidthInput.value = String(Math.round(L));
+      sectorWidthValue.textContent = String(Math.round(L));
+      const mid = arcPosToAngle(L / 2, min);
+      state.centerAngle = mid;
       updateSector();
     };
     minAngleInput.addEventListener('change', onMinMaxChange);
@@ -374,7 +381,6 @@
     drawTicks();
     drawCardinalLabels();
     bindInteractions();
-    ensureSectorWithinRange();
     updateSector();
   }
 
