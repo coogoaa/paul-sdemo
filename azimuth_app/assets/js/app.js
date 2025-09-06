@@ -63,6 +63,38 @@
     return dMin <= dMax ? min : max;
   }
 
+  // 计算从 a 顺时针到 b 的角距离（0..360）
+  function distCW(a, b) {
+    return mod360(b - a);
+  }
+  // 返回 [min,max] 的顺时针弧长；若 min==max 则视为 360
+  function arcLength(min, max) {
+    const L = distCW(min, max);
+    return L === 0 ? 360 : L;
+  }
+  // 将全局角 a 映射到以 min 为 0 的弧内位置（0..L）
+  function angleToArcPos(a, min) {
+    return distCW(min, a);
+  }
+  // 从弧位置 p（0..L）映射回全局角度
+  function arcPosToAngle(p, min) {
+    return mod360(min + p);
+  }
+  // 在给定 [min,max] 弧内，保证 sectorWidth 不超过弧长，并将 center 限制到扇形完全位于弧内
+  function ensureSectorWithinRange() {
+    const L = arcLength(state.minAngle, state.maxAngle);
+    // 宽度不能超过弧长
+    if (state.sectorWidth > L) state.sectorWidth = L;
+    sectorWidthInput.value = String(Math.round(state.sectorWidth));
+    sectorWidthValue.textContent = String(Math.round(state.sectorWidth));
+
+    const half = state.sectorWidth / 2;
+    // 以弧坐标系计算中心位置范围 [half, L-half]
+    let p = angleToArcPos(state.centerAngle, state.minAngle);
+    const pClamped = Math.min(Math.max(p, half), Math.max(half, L - half));
+    state.centerAngle = arcPosToAngle(pClamped, state.minAngle);
+  }
+
   // 角度 -> 坐标（以正北为 0°，顺时针）
   function polarToXY(angleDeg, radius) {
     const a = degToRad(angleDeg);
@@ -130,7 +162,7 @@
       line.setAttribute('class', klass);
       ticksGroup.appendChild(line);
 
-      if (isMajor) {
+      if (d % 10 === 0) {
         const tl = polarToXY(d, R + 14);
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', tl.x.toFixed(3));
@@ -221,6 +253,7 @@
     const pt = getSVGPoint(evt);
     const angle = xyToAngle(pt.x, pt.y);
     state.centerAngle = clampAngleToRange(angle, state.minAngle, state.maxAngle);
+    ensureSectorWithinRange();
     updateSector();
   }
 
@@ -281,6 +314,7 @@
       const val = Number(sectorWidthInput.value);
       state.sectorWidth = Math.min(Math.max(val, 0), 360);
       sectorWidthValue.textContent = String(state.sectorWidth);
+      ensureSectorWithinRange();
       updateSector();
     });
 
@@ -293,16 +327,23 @@
       state.minAngle = min; state.maxAngle = max;
       // 重新校验当前角度
       state.centerAngle = clampAngleToRange(state.centerAngle, min, max);
+      ensureSectorWithinRange();
       updateSector();
     };
     minAngleInput.addEventListener('change', onMinMaxChange);
     maxAngleInput.addEventListener('change', onMinMaxChange);
 
     // 背景图片应用
+    const baseCircle = document.querySelector('.dial-base');
+    const originalBaseFill = baseCircle ? baseCircle.getAttribute('fill') || '' : '';
+    const originalWrapBg = getComputedStyle(dialWrap).backgroundColor;
+
     function applyBackground(url) {
       if (!dialWrap) return;
       if (url) {
         dialWrap.style.backgroundImage = `url("${url}")`;
+        dialWrap.style.backgroundColor = 'transparent';
+        if (baseCircle) baseCircle.style.fill = 'transparent';
       }
     }
     applyBgBtn.addEventListener('click', () => {
@@ -312,6 +353,8 @@
     clearBgBtn.addEventListener('click', () => {
       if (!dialWrap) return;
       dialWrap.style.backgroundImage = 'none';
+      dialWrap.style.backgroundColor = originalWrapBg;
+      if (baseCircle) baseCircle.style.fill = originalBaseFill || '#0b1220';
       bgUrlInput.value = '';
       bgFileInput.value = '';
     });
@@ -331,6 +374,7 @@
     drawTicks();
     drawCardinalLabels();
     bindInteractions();
+    ensureSectorWithinRange();
     updateSector();
   }
 
