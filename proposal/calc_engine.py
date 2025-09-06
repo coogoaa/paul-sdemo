@@ -174,8 +174,12 @@ def compute_plans_simplified(cfg) -> pd.DataFrame:
         annual_gen = solar_kw * cfg.yield_per_kw_per_year
         target_sc = _plan_target_sc(cfg, letter)
 
+        # 计算电池成本（复用详细版逻辑）
+        daily_shift = (annual_gen / 365.0) * (target_sc - cfg.baseline_self_consumption_rate)
+        battery_nominal = ceil_to(daily_shift / (cfg.battery_dod * cfg.battery_rte), 1.0) if daily_shift > 0 else 0.0
+        cost_battery = battery_nominal * cfg.battery_unit_cost_per_kwh
+
         total_hardware_cost = solar_kw * cfg.hardware_cost_per_kw
-        cost_battery = 0.0  # 简化版默认不计电池
         cost_install = cfg.install_base_cost + (solar_kw * cfg.install_cost_per_kw)
         total_cost = total_hardware_cost + cost_battery + cost_install
         price_base = total_cost * (1 + cfg.profit_margin_rate)

@@ -205,15 +205,18 @@
 
 简化要点
 - 以 `hardware_cost_per_kw` 替代面板+逆变器成本拆分
-- 电池成本简化为 0（可扩展）
+- 电池成本计算与详细版保持一致（确保成本准确性）
 - 收益/回本逻辑与详细版一致
 
 步骤 3.1~3.4
 - 与详细版相同：容量、面板数、年发电、目标自用率
 
 步骤 3.5 成本与报价 [C]
+- 电池成本（复用详细版逻辑）：
+  - `daily_shift = (annual_gen / 365) * (target_sc - baseline_sc)`
+  - `battery_nominal = CEILING(daily_shift / (battery_dod * battery_rte), 1.0)` 若 daily_shift > 0，否则为 0
+  - `cost_battery = battery_nominal * battery_unit_cost_per_kwh`
 - `total_hardware_cost = solar_kw * hardware_cost_per_kw`
-- `cost_battery = 0.0`
 - `cost_install = install_base_cost + solar_kw * install_cost_per_kw`
 - `total_cost = total_hardware_cost + cost_battery + cost_install`
 - `price_base = total_cost * (1 + profit_margin_rate)`

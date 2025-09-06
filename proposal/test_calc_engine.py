@@ -185,20 +185,30 @@ def test_simplified_plan_calculation():
     cfg.plan_a_capacity_factor = 0.5
     cfg.plan_a_min_kw = 3.5
     cfg.plan_a_max_kw = 10.0
+    cfg.plan_a_target_sc_rate = 0.4
+    cfg.baseline_self_consumption_rate = 0.3
+    cfg.battery_dod = 0.9
+    cfg.battery_rte = 0.9
+    cfg.battery_unit_cost_per_kwh = 800
     cfg.hardware_cost_per_kw = 1500
     cfg.install_base_cost = 1000
     cfg.install_cost_per_kw = 200
     cfg.profit_margin_rate = 0.1
+    cfg.yield_per_kw_per_year = 1200
     
     df = compute_plans_simplified(cfg)
     
-    # 手动验证 Plan A
+    # 手动验证 Plan A（现在包含电池成本）
     solar_kw_a = 5.0
+    annual_gen_a = solar_kw_a * cfg.yield_per_kw_per_year  # 5.0 * 1200 = 6000
+    daily_shift_a = (annual_gen_a / 365.0) * (cfg.plan_a_target_sc_rate - cfg.baseline_self_consumption_rate)  # (6000/365) * (0.4-0.3) = 1.644
+    battery_nominal_a = ceil_to(daily_shift_a / (cfg.battery_dod * cfg.battery_rte), 1.0)  # ceil_to(1.644 / 0.81, 1.0) = 3.0
+    
     total_hardware_cost_a = solar_kw_a * cfg.hardware_cost_per_kw  # 5.0 * 1500 = 7500
-    cost_battery_a = 0.0  # 简化版默认为0
+    cost_battery_a = battery_nominal_a * cfg.battery_unit_cost_per_kwh  # 3.0 * 800 = 2400
     cost_install_a = cfg.install_base_cost + solar_kw_a * cfg.install_cost_per_kw  # 1000 + 5.0 * 200 = 2000
-    total_cost_a = total_hardware_cost_a + cost_battery_a + cost_install_a  # 7500 + 0 + 2000 = 9500
-    price_base_a = total_cost_a * (1 + cfg.profit_margin_rate)  # 9500 * 1.1 = 10450
+    total_cost_a = total_hardware_cost_a + cost_battery_a + cost_install_a  # 7500 + 2400 + 2000 = 11900
+    price_base_a = total_cost_a * (1 + cfg.profit_margin_rate)  # 11900 * 1.1 = 13090
     
     assert abs(df.loc["total_hardware_cost", "Plan A"] - total_hardware_cost_a) < 0.01, f"hardware_cost: 实际 {df.loc['total_hardware_cost', 'Plan A']}, 期望 {total_hardware_cost_a}"
     assert abs(df.loc["cost_battery", "Plan A"] - cost_battery_a) < 0.01, f"battery_cost: 实际 {df.loc['cost_battery', 'Plan A']}, 期望 {cost_battery_a}"
