@@ -11,7 +11,13 @@ import pandas as pd
 def ceil_to(x: float, step: float) -> float:
     if step <= 0:
         return x
-    return math.ceil(x / step) * step
+    # 计算需要多少个 step 单位
+    steps_needed = x / step
+    # 如果已经是整数倍，直接返回
+    if abs(steps_needed - round(steps_needed)) < 1e-10:
+        return round(steps_needed) * step
+    # 否则向上取整
+    return math.ceil(steps_needed) * step
 
 
 def int_floor(x: float) -> int:
