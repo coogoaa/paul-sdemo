@@ -307,6 +307,9 @@
     // 读数
     angleValue.textContent = `${Math.round(c)}°`;
     compassNameEl.textContent = angleToCompassName(c);
+
+    // 将当前扇形起止同步到最小/最大角度输入，保证拖拽/点击时实时回写
+    syncRangeInputsFromSector();
   }
 
   // 指针位置 -> 更新角度
@@ -395,6 +398,7 @@
       sectorWidthValue.textContent = String(Math.round(L));
       const mid = arcPosToAngle(L / 2, min);
       state.centerAngle = mid;
+      updateSector();
     };
     minAngleInput.addEventListener('change', onMinMaxChange);
     maxAngleInput.addEventListener('change', onMinMaxChange);
@@ -440,16 +444,16 @@
       reader.readAsDataURL(file);
     });
   });
-  bgScaleInput?.addEventListener('input', () => {
+  if (bgScaleInput) bgScaleInput.addEventListener('input', () => {
     setBgScale(Number(bgScaleInput.value));
   });
-  bgRotateInput?.addEventListener('input', () => {
+  if (bgRotateInput) bgRotateInput.addEventListener('input', () => {
     setBgRotate(Number(bgRotateInput.value));
   });
-  bgEditToggle?.addEventListener('change', () => {
+  if (bgEditToggle) bgEditToggle.addEventListener('change', () => {
     state.bg.enabled = !!bgEditToggle.checked;
   });
-  bgResetBtn?.addEventListener('click', () => {
+  if (bgResetBtn) bgResetBtn.addEventListener('click', () => {
     state.bg.scale = 1; state.bg.rotate = 0; state.bg.tx = 0; state.bg.ty = 0;
     if (bgScaleInput) bgScaleInput.value = '1';
     if (bgRotateInput) bgRotateInput.value = '0';
