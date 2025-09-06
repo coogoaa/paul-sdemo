@@ -49,27 +49,11 @@
         <button id="applyBg" class="btn">应用背景</button>
         <button id="clearBg" class="btn btn-ghost">清除背景</button>
       </div>
-      <div class="control inputs-inline">
-        <label>
-          <input id="bgEditToggle" type="checkbox" /> 编辑背景
-        </label>
-        <label>缩放
-          <input id="bgScale" type="range" min="0.1" max="5" step="0.01" value="1" />
-        </label>
-        <label>旋转
-          <input id="bgRotate" type="range" min="-180" max="180" step="1" value="0" />
-        </label>
-        <button id="bgReset" class="btn btn-ghost">重置背景</button>
-      </div>
     </section>
 
     <section class="dial-wrap">
       <!-- 自适应正方形容器，内部用 viewBox 绘制 360° 方位盘 -->
       <svg id="azimuthDial" viewBox="-200 -200 400 400" role="img" aria-label="方位盘">
-        <!-- 背景图片层（在最底层） -->
-        <g id="bgLayer">
-          <image id="bgImage" href="" x="-200" y="-200" width="400" height="400" preserveAspectRatio="xMidYMid slice" visibility="hidden" />
-        </g>
         <!-- 基座圆 -->
         <circle cx="0" cy="0" r="160" class="dial-base" />
         <!-- 主/辅刻度与标签容器 -->

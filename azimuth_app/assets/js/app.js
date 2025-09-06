@@ -23,12 +23,6 @@
   const bgFileInput = document.getElementById('bgFile');
   const bgUrlInput = document.getElementById('bgUrl');
   const dialWrap = document.querySelector('.dial-wrap');
-  const bgLayer = document.getElementById('bgLayer');
-  const bgImage = document.getElementById('bgImage');
-  const bgEditToggle = document.getElementById('bgEditToggle');
-  const bgScaleInput = document.getElementById('bgScale');
-  const bgRotateInput = document.getElementById('bgRotate');
-  const bgResetBtn = document.getElementById('bgReset');
 
   const R = 160; // 半径，与 index.html 中的元素一致
 
@@ -41,18 +35,6 @@
     dragging: false,
     // 拖拽目标：'handle' | 'sector'
     dragTarget: null,
-    // 背景编辑状态
-    bg: {
-      enabled: false,
-      scale: 1,
-      rotate: 0, // 度
-      tx: 0,
-      ty: 0,
-      panning: false,
-      panStart: { x: 0, y: 0 },
-      originStart: { tx: 0, ty: 0 },
-      applied: false,
-    }
   };
 
   // 工具函数
@@ -66,46 +48,6 @@
     if (min <= max) return a >= min && a <= max;
     // 环绕区间，如 300..60
     return a >= min || a <= max;
-  }
-
-  // ---------- 背景图变换 ----------
-  function applyBgTransform() {
-    if (!bgLayer) return;
-    const { scale, rotate, tx, ty } = state.bg;
-    // 以(0,0)为中心缩放/旋转，再平移
-    const tf = `translate(${tx} ${ty}) rotate(${rotate}) scale(${scale})`;
-    bgLayer.setAttribute('transform', tf);
-  }
-
-  function setBgScale(s) {
-    state.bg.scale = Math.max(0.1, Math.min(5, s));
-    if (bgScaleInput) bgScaleInput.value = String(state.bg.scale);
-    applyBgTransform();
-  }
-  function setBgRotate(r) {
-    state.bg.rotate = Math.max(-180, Math.min(180, r));
-    if (bgRotateInput) bgRotateInput.value = String(Math.round(state.bg.rotate));
-    applyBgTransform();
-  }
-  function startBgPan(evt) {
-    if (!state.bg.enabled || !bgImage || bgImage.getAttribute('visibility') !== 'visible') return;
-    const pt = getSVGPoint(evt);
-    state.bg.panning = true;
-    state.bg.panStart = pt;
-    state.bg.originStart = { tx: state.bg.tx, ty: state.bg.ty };
-  }
-  function duringBgPan(evt) {
-    if (!state.bg.panning) return;
-    evt.preventDefault();
-    const pt = getSVGPoint(evt);
-    const dx = pt.x - state.bg.panStart.x;
-    const dy = pt.y - state.bg.panStart.y;
-    state.bg.tx = state.bg.originStart.tx + dx;
-    state.bg.ty = state.bg.originStart.ty + dy;
-    applyBgTransform();
-  }
-  function endBgPan() {
-    state.bg.panning = false;
   }
 
   function clampAngleToRange(a, min, max) {
@@ -138,22 +80,19 @@
   function arcPosToAngle(p, min) {
     return mod360(min + p);
   }
-  // 计算当前扇形的起止（全局角度）
-  function getSectorStartEnd() {
-    const c = state.centerAngle;
-    const half = state.sectorWidth / 2;
-    const start = mod360(c - half);
-    const end = mod360(c + half);
-    return { start, end };
-  }
+  // 在给定 [min,max] 弧内，保证 sectorWidth 不超过弧长，并将 center 限制到扇形完全位于弧内
+  function ensureSectorWithinRange() {
+    const L = arcLength(state.minAngle, state.maxAngle);
+    // 宽度不能超过弧长
+    if (state.sectorWidth > L) state.sectorWidth = L;
+    sectorWidthInput.value = String(Math.round(state.sectorWidth));
+    sectorWidthValue.textContent = String(Math.round(state.sectorWidth));
 
-  // 将当前扇形的起止同步到 min/max 输入与 state
-  function syncRangeInputsFromSector() {
-    const { start, end } = getSectorStartEnd();
-    state.minAngle = start;
-    state.maxAngle = end;
-    if (minAngleInput) minAngleInput.value = String(Math.round(start));
-    if (maxAngleInput) maxAngleInput.value = String(Math.round(end));
+    const half = state.sectorWidth / 2;
+    // 以弧坐标系计算中心位置范围 [half, L-half]
+    let p = angleToArcPos(state.centerAngle, state.minAngle);
+    const pClamped = Math.min(Math.max(p, half), Math.max(half, L - half));
+    state.centerAngle = arcPosToAngle(pClamped, state.minAngle);
   }
 
   // 角度 -> 坐标（以正北为 0°，顺时针）
@@ -307,16 +246,14 @@
     // 读数
     angleValue.textContent = `${Math.round(c)}°`;
     compassNameEl.textContent = angleToCompassName(c);
-
-    // 将当前扇形起止同步到最小/最大角度输入，保证拖拽/点击时实时回写
-    syncRangeInputsFromSector();
   }
 
   // 指针位置 -> 更新角度
   function updateAngleFromPointer(evt) {
     const pt = getSVGPoint(evt);
     const angle = xyToAngle(pt.x, pt.y);
-    state.centerAngle = angle; // 不再限制在 min/max 区间内
+    state.centerAngle = clampAngleToRange(angle, state.minAngle, state.maxAngle);
+    ensureSectorWithinRange();
     updateSector();
   }
 
@@ -369,8 +306,6 @@
     svg.addEventListener('click', function (evt) {
       // 避免拖拽结束瞬间触发 click 再次更新
       if (state.dragging) return;
-      // 若背景编辑开启且正在拖拽，不改变角度
-      if (state.bg.enabled && state.bg.panning) return;
       updateAngleFromPointer(evt);
     });
 
@@ -379,8 +314,7 @@
       const val = Number(sectorWidthInput.value);
       state.sectorWidth = Math.min(Math.max(val, 0), 360);
       sectorWidthValue.textContent = String(state.sectorWidth);
-      // 张角变化时，实时同步范围到起止角
-      syncRangeInputsFromSector();
+      ensureSectorWithinRange();
       updateSector();
     });
 
@@ -391,46 +325,36 @@
       // 归一化
       min = mod360(min); max = mod360(max);
       state.minAngle = min; state.maxAngle = max;
-      // 以输入区间直接定义扇形：张角=弧长，中心=中点
-      const L = arcLength(min, max);
-      state.sectorWidth = L;
-      sectorWidthInput.value = String(Math.round(L));
-      sectorWidthValue.textContent = String(Math.round(L));
-      const mid = arcPosToAngle(L / 2, min);
-      state.centerAngle = mid;
+      // 重新校验当前角度
+      state.centerAngle = clampAngleToRange(state.centerAngle, min, max);
+      ensureSectorWithinRange();
       updateSector();
     };
     minAngleInput.addEventListener('change', onMinMaxChange);
     maxAngleInput.addEventListener('change', onMinMaxChange);
 
-    // 背景图片应用（使用 SVG <image>）
+    // 背景图片应用
     const baseCircle = document.querySelector('.dial-base');
     const originalBaseFill = baseCircle ? baseCircle.getAttribute('fill') || '' : '';
+    const originalWrapBg = getComputedStyle(dialWrap).backgroundColor;
+
     function applyBackground(url) {
-      if (!bgImage) return;
-      bgImage.setAttribute('href', url);
-      bgImage.setAttribute('visibility', 'visible');
-      // 透明表盘
-      if (baseCircle) baseCircle.style.fill = 'transparent';
-      state.bg.applied = true;
-      applyBgTransform();
+      if (!dialWrap) return;
+      if (url) {
+        dialWrap.style.backgroundImage = `url("${url}")`;
+        dialWrap.style.backgroundColor = 'transparent';
+        if (baseCircle) baseCircle.style.fill = 'transparent';
+      }
     }
     applyBgBtn.addEventListener('click', () => {
       const url = bgUrlInput.value.trim();
       if (url) applyBackground(url);
     });
     clearBgBtn.addEventListener('click', () => {
-      if (bgImage) {
-        bgImage.setAttribute('href', '');
-        bgImage.setAttribute('visibility', 'hidden');
-      }
-      // 恢复表盘底色
-      if (baseCircle) baseCircle.style.fill = originalBaseFill || '#ffffff';
-      // 重置变换
-      state.bg.scale = 1; state.bg.rotate = 0; state.bg.tx = 0; state.bg.ty = 0;
-      if (bgScaleInput) bgScaleInput.value = '1';
-      if (bgRotateInput) bgRotateInput.value = '0';
-      applyBgTransform();
+      if (!dialWrap) return;
+      dialWrap.style.backgroundImage = 'none';
+      dialWrap.style.backgroundColor = originalWrapBg;
+      if (baseCircle) baseCircle.style.fill = originalBaseFill || '#0b1220';
       bgUrlInput.value = '';
       bgFileInput.value = '';
     });
@@ -443,60 +367,14 @@
       };
       reader.readAsDataURL(file);
     });
-  });
-  if (bgScaleInput) bgScaleInput.addEventListener('input', () => {
-    setBgScale(Number(bgScaleInput.value));
-  });
-  if (bgRotateInput) bgRotateInput.addEventListener('input', () => {
-    setBgRotate(Number(bgRotateInput.value));
-  });
-  if (bgEditToggle) bgEditToggle.addEventListener('change', () => {
-    state.bg.enabled = !!bgEditToggle.checked;
-  });
-  if (bgResetBtn) bgResetBtn.addEventListener('click', () => {
-    state.bg.scale = 1; state.bg.rotate = 0; state.bg.tx = 0; state.bg.ty = 0;
-    if (bgScaleInput) bgScaleInput.value = '1';
-    if (bgRotateInput) bgRotateInput.value = '0';
-    applyBgTransform();
-  });
-
-  // 背景拖拽平移（仅在编辑开启时）
-  svg.addEventListener('mousedown', (evt) => {
-    if (!state.bg.enabled) return;
-    // 避免与扇形拖拽冲突：若命中手柄/扇形则交给现有逻辑
-    const target = evt.target;
-    const interactiveIds = new Set(['handle', 'sector', 'sectorLine']);
-    if (interactiveIds.has(target.id)) return;
-    startBgPan(evt);
-  });
-  window.addEventListener('mousemove', duringBgPan, { passive: false });
-  window.addEventListener('mouseup', endBgPan);
-  // 触控支持
-  svg.addEventListener('touchstart', (evt) => {
-    if (!state.bg.enabled) return;
-    startBgPan(evt);
-  }, { passive: false });
-  window.addEventListener('touchmove', duringBgPan, { passive: false });
-  window.addEventListener('touchend', endBgPan);
-
-  // 滚轮缩放（编辑开启时）
-  svg.addEventListener('wheel', (evt) => {
-    if (!state.bg.enabled) return;
-    evt.preventDefault();
-    const delta = -evt.deltaY; // 向上滚放大
-    const factor = Math.pow(1.0015, delta);
-    setBgScale(state.bg.scale * factor);
-  }, { passive: false });
-
-  // ...
+  }
 
   // 初始化
   function init() {
     drawTicks();
     drawCardinalLabels();
     bindInteractions();
-    // 初始化背景编辑开关状态
-    if (bgEditToggle) state.bg.enabled = !!bgEditToggle.checked;
+    ensureSectorWithinRange();
     updateSector();
   }
 
