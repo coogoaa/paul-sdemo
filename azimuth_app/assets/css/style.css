@@ -1,13 +1,13 @@
 /* 基础布局与排版 */
 :root {
-  --bg: #0f172a;           /* slate-900 */
-  --panel: #111827;        /* gray-900 */
-  --text: #e5e7eb;         /* gray-200 */
-  --muted: #9ca3af;        /* gray-400 */
-  --accent: #22d3ee;       /* cyan-400 */
-  --accent-2: #38bdf8;     /* sky-400 */
-  --border: #1f2937;       /* gray-800 */
-  --good: #34d399;         /* emerald-400 */
+  --bg: #f8fafc;           /* slate-50 */
+  --panel: #ffffff;        /* white */
+  --text: #0f172a;         /* slate-900 */
+  --muted: #475569;        /* slate-600 */
+  --accent: #0891b2;       /* cyan-700 */
+  --accent-2: #0284c7;     /* sky-700 */
+  --border: #e2e8f0;       /* slate-200 */
+  --good: #059669;         /* emerald-600 */
 }
 
 * {
@@ -20,9 +20,7 @@ html, body {
 
 body {
   margin: 0;
-  background: radial-gradient(1200px 800px at 70% -10%, rgba(56,189,248,0.08), transparent 60%),
-              radial-gradient(900px 600px at 10% 10%, rgba(34,211,238,0.10), transparent 50%),
-              var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -59,10 +57,9 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: rgba(17, 24, 39, 0.6);
+  background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  backdrop-filter: blur(6px);
 }
 
 .control {
@@ -161,7 +158,7 @@ body {
   margin: 18px auto 8px;
   width: min(92vw, 520px);
   aspect-ratio: 1 / 1; /* 保持正方形区域 */
-  background-color: rgba(17, 24, 39, 0.40);
+  background-color: #ffffff;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -178,13 +175,13 @@ svg#azimuthDial {
 
 /* SVG 风格 */
 .dial-base {
-  fill: #0b1220;
-  stroke: #253049;
+  fill: #f3f4f6;   /* 灰白 */
+  stroke: #cbd5e1; /* 浅灰描边 */
   stroke-width: 2;
 }
 
 .tick-major {
-  stroke: #7dd3fc; /* sky-300 */
+  stroke: #334155; /* slate-700 深色 */
   stroke-width: 1.8;
 }
 
@@ -195,24 +192,24 @@ svg#azimuthDial {
 }
 
 .tick-mid {
-  stroke: #a5b4fc; /* indigo-300 */
+  stroke: #475569; /* slate-600 */
   stroke-width: 1.2;
   opacity: 0.9;
 }
 
 .tick-cardinal {
-  stroke: #22d3ee; /* cyan-400 */
+  stroke: #0f172a; /* slate-900 最深 */
   stroke-width: 2.6;
 }
 
 .tick-label {
-  fill: #cbd5e1; /* slate-300 */
+  fill: #334155; /* slate-700 */
   font-size: 10px;
   text-anchor: middle;
 }
 
 .cardinal-label {
-  fill: #e2e8f0;
+  fill: #0f172a;
   font-weight: 700;
   font-size: 12px;
   text-anchor: middle;
