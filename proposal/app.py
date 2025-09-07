@@ -131,6 +131,15 @@ def sidebar_params():
         cfg.annual_home_usage_proxy_med = ub.number_input("Med", min_value=0.0, value=float(cfg.annual_home_usage_proxy_med), step=100.0)
         cfg.annual_home_usage_proxy_high = uc.number_input("High", min_value=0.0, value=float(cfg.annual_home_usage_proxy_high), step=100.0)
 
+    with st.expander("策略开关", expanded=True):
+        cfg.use_plan_limits = st.checkbox("启用每方案装机上下限 (use_plan_limits)", value=bool(getattr(cfg, "use_plan_limits", False)))
+        cfg.usage_cap_policy = st.selectbox(
+            "回本自用上限策略 (usage_cap_policy)",
+            options=["med", "per_plan"],
+            index=0 if getattr(cfg, "usage_cap_policy", "med") == "med" else 1,
+            help="med: 统一使用 annual_home_usage_proxy_med；per_plan: A→low, B→med, C/D→high"
+        )
+
     with st.expander("电池/Retrofit", expanded=False):
         cfg.battery_dod = st.number_input("电池 DoD", min_value=0.0, max_value=1.0, value=float(cfg.battery_dod), step=0.01)
         cfg.battery_rte = st.number_input("电池 RTE", min_value=0.0, max_value=1.0, value=float(cfg.battery_rte), step=0.01)

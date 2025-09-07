@@ -31,24 +31,35 @@ def safe_payback(price: float, annual_benefit: float):
 
 
 def _plan_capacity(cfg, letter: str) -> float:
-    # solar_kw capacity by plan with per-plan min/max
+    """Compute solar_kw per plan.
+    If cfg.use_plan_limits is False (default), do NOT clamp by per-plan min/max; capacity = roof_max_panels * panel_power_kw * capacity_factor.
+    If True, apply per-plan min/max clamping.
+    """
     max_panels = cfg.roof_max_panels
     ppkw = cfg.panel_power_kw
     if letter == "A":
         capf = cfg.plan_a_capacity_factor
         base = max_panels * ppkw * capf
+        if not getattr(cfg, "use_plan_limits", False):
+            return base
         return max(min(base, cfg.plan_a_max_kw), cfg.plan_a_min_kw)
     elif letter == "B":
         capf = cfg.plan_b_capacity_factor
         base = max_panels * ppkw * capf
+        if not getattr(cfg, "use_plan_limits", False):
+            return base
         return max(min(base, cfg.plan_b_max_kw), cfg.plan_b_min_kw)
     elif letter == "C":
         capf = cfg.plan_c_capacity_factor
         base = max_panels * ppkw * capf
+        if not getattr(cfg, "use_plan_limits", False):
+            return base
         return max(min(base, cfg.plan_c_max_kw), cfg.plan_c_min_kw)
     else:
         capf = cfg.plan_d_capacity_factor
         base = max_panels * ppkw * capf
+        if not getattr(cfg, "use_plan_limits", False):
+            return base
         return max(min(base, cfg.plan_d_max_kw), cfg.plan_d_min_kw)
 
 
@@ -72,16 +83,20 @@ def _annual_benefit_from_gen(cfg, annual_gen: float, target_sc: float) -> float:
 
 
 def _plan_usage_cap(cfg, letter: str) -> float:
-    """Per-plan usage cap mapping (方案二):
-    A -> low, B -> med, C -> high, D -> high
+    """Return usage cap per policy.
+    - If cfg.usage_cap_policy == 'med': always MED
+    - If 'per_plan': A->low, B->med, C/D->high
     """
-    if letter == "A":
-        return cfg.annual_home_usage_proxy_low
-    elif letter == "B":
-        return cfg.annual_home_usage_proxy_med
-    else:
-        # C and D use high
-        return cfg.annual_home_usage_proxy_high
+    policy = getattr(cfg, "usage_cap_policy", "med")
+    if policy == "per_plan":
+        if letter == "A":
+            return cfg.annual_home_usage_proxy_low
+        elif letter == "B":
+            return cfg.annual_home_usage_proxy_med
+        else:
+            return cfg.annual_home_usage_proxy_high
+    # default: med
+    return cfg.annual_home_usage_proxy_med
 
 
 def _annual_benefit_from_gen_cap(cfg, annual_gen: float, target_sc: float, cap: float) -> float:

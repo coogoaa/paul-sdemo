@@ -51,6 +51,12 @@ class InputsConfig(BaseModel):
     plan_c_target_sc_rate: float = Field(0.50, ge=0, le=1)
     plan_d_target_sc_rate: float = Field(0.60, ge=0, le=1)
 
+    # 策略开关
+    # 是否启用每方案装机上下限（默认关闭，回归原始：仅按屋顶上限与容量系数计算）
+    use_plan_limits: bool = Field(False)
+    # 回本期自用上限策略：'med' 统一使用 MED；'per_plan' 按方案二映射
+    usage_cap_policy: str = Field("med")
+
     # 电池参数
     battery_dod: float = Field(0.90, ge=0, le=1)
     battery_rte: float = Field(0.90, ge=0, le=1)

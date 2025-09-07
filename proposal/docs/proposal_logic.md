@@ -1,12 +1,13 @@
-### 3.4 使用上限（annual_home_usage_proxy）与方案映射（方案二）
+### 3.4 使用上限（annual_home_usage_proxy）策略
 
-- 现口径：按方案选择家庭年用电上限（cap）：
+- 默认策略：`usage_cap_policy = 'med'`（统一使用 `annual_home_usage_proxy_med` 作为 cap）。
+- 可选策略（方案二）：`usage_cap_policy = 'per_plan'` 时，按方案映射 cap：
   - Plan A → `annual_home_usage_proxy_low`
   - Plan B → `annual_home_usage_proxy_med`
   - Plan C → `annual_home_usage_proxy_high`
   - Plan D → `annual_home_usage_proxy_high`
-- 记号：在回本期计算公式中以 `usage_cap_plan` 表示。
-- 目的：提升四档方案在经济性上的区分度，避免统一 `med` 导致过度乐观或不匹配。
+- 记号：在回本期计算公式中以 `usage_cap_plan` 表示（当 policy='med' 时，`usage_cap_plan = med`）。
+- 目的：在需要时提升四档方案在经济性上的区分度；默认口径保持简单一致。
 
 备注：中长期可用“用户画像维度”替代“方案映射”，使 cap 与用户规模绑定，而非与方案绑定。
 # proposal/proposal.py 逻辑说明（详细版）

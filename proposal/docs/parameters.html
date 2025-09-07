@@ -1,84 +1,63 @@
 <!doctype html>
-<html lang="zh">
+<html lang='zh'>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>参数总览（InputsConfig）</title>
-  <style>
-    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; padding: 24px; }
-    h1 { font-size: 20px; margin: 0 0 12px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #e5e7eb; padding: 8px 10px; font-size: 14px; }
-    th { background: #f9fafb; text-align: left; }
-    tbody tr:nth-child(odd) { background: #fbfdff; }
-    code { color: #ef4444; }
-  </style>
+<meta charset='utf-8'/>
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<title>参数总览（InputsConfig）</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:24px;}h1{font-size:20px;margin:0 0 12px;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #e5e7eb;padding:8px 10px;font-size:14px;}th{background:#f9fafb;text-align:left;}tbody tr:nth-child(odd){background:#fbfdff;}code{color:#ef4444;}</style>
 </head>
 <body>
-  <h1>参数总览（InputsConfig）</h1>
-  <p>此页面为 <code>proposal/schemas.py</code> 中 <code>InputsConfig</code> 的参数清单，便于浏览器中独立查看或分享。</p>
-  <div>
-    <!-- 直接嵌入 Markdown 表格的静态版本 -->
-    <table>
-      <thead>
-        <tr>
-          <th>Parameter (EN)</th>
-          <th>参数中文说明</th>
-          <th style="text-align:right;">Value</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>roof_total_area_m2</td><td>屋顶总面积 (m²)</td><td style="text-align:right;">120.0</td><td>来自上游 3D/测绘估算</td></tr>
-        <tr><td>roof_effective_area_m2</td><td>屋顶有效面积 (m²)</td><td style="text-align:right;">80.0</td><td>过滤朝向/过小坡面后的有效面积</td></tr>
-        <tr><td>roof_max_panels</td><td>屋顶最大面板数 (块)</td><td style="text-align:right;">16</td><td>上游计算得出/可人工修正</td></tr>
-        <tr><td>panel_area_m2</td><td>单块面板面积 (m²)</td><td style="text-align:right;">1.94</td><td>面板规格</td></tr>
-        <tr><td>panel_power_kw</td><td>单块面板功率 (kW)</td><td style="text-align:right;">0.41</td><td>面板标称功率</td></tr>
-        <tr><td>panel_unit_cost</td><td>单块面板成本 (AUD/块)</td><td style="text-align:right;">350</td><td>详细版使用</td></tr>
-        <tr><td>inverter_unit_cost_per_kw</td><td>逆变器成本 (AUD/kW)</td><td style="text-align:right;">250</td><td>详细版使用</td></tr>
-        <tr><td>hardware_cost_per_kw</td><td>硬件包价 (AUD/kW)</td><td style="text-align:right;">1200</td><td>简化版使用（含 PV+逆变器 等）</td></tr>
-        <tr><td>battery_unit_cost_per_kwh</td><td>电池成本 (AUD/kWh)</td><td style="text-align:right;">800</td><td></td></tr>
-        <tr><td>install_base_cost</td><td>安装基础费用 (AUD)</td><td style="text-align:right;">1000</td><td></td></tr>
-        <tr><td>install_cost_per_kw</td><td>安装每 kW 费用 (AUD/kW)</td><td style="text-align:right;">1000</td><td></td></tr>
-        <tr><td>dc_ac_ratio</td><td>容配比 (DC/AC)</td><td style="text-align:right;">1.33</td><td>影响逆变器容量取整</td></tr>
-        <tr><td>yield_per_kw_per_year</td><td>每 kW 年发电量 (kWh/kW/年)</td><td style="text-align:right;">1460</td><td>兜底值；如接入 pvlib 则以模型为准</td></tr>
-        <tr><td>baseline_self_consumption_rate</td><td>基线自用率</td><td style="text-align:right;">0.30</td><td>无电池条件下的自用率估计</td></tr>
-        <tr><td>plan_a_capacity_factor</td><td>方案A 容量系数</td><td style="text-align:right;">0.2</td><td>参与计算装机 kW，并受上下限钳制</td></tr>
-        <tr><td>plan_b_capacity_factor</td><td>方案B 容量系数</td><td style="text-align:right;">0.5</td><td>同上</td></tr>
-        <tr><td>plan_c_capacity_factor</td><td>方案C 容量系数</td><td style="text-align:right;">0.8</td><td>同上</td></tr>
-        <tr><td>plan_d_capacity_factor</td><td>方案D 容量系数</td><td style="text-align:right;">1.0</td><td>同上</td></tr>
-        <tr><td>plan_a_min_kw</td><td>方案A 最小上装机下限 (kW)</td><td style="text-align:right;">3.5</td><td>每方案单独上下限</td></tr>
-        <tr><td>plan_a_max_kw</td><td>方案A 最大上限 (kW)</td><td style="text-align:right;">10.0</td><td></td></tr>
-        <tr><td>plan_b_min_kw</td><td>方案B 最小上装机下限 (kW)</td><td style="text-align:right;">4.0</td><td></td></tr>
-        <tr><td>plan_b_max_kw</td><td>方案B 最大上限 (kW)</td><td style="text-align:right;">13.3</td><td></td></tr>
-        <tr><td>plan_c_min_kw</td><td>方案C 最小上装机下限 (kW)</td><td style="text-align:right;">6.0</td><td></td></tr>
-        <tr><td>plan_c_max_kw</td><td>方案C 最大上限 (kW)</td><td style="text-align:right;">13.3</td><td></td></tr>
-        <tr><td>plan_d_min_kw</td><td>方案D 最小上装机下限 (kW)</td><td style="text-align:right;">8.0</td><td></td></tr>
-        <tr><td>plan_d_max_kw</td><td>方案D 最大上限 (kW)</td><td style="text-align:right;">20.0</td><td></td></tr>
-        <tr><td>plan_a_target_sc_rate</td><td>方案A 目标自用率</td><td style="text-align:right;">0.35</td><td>与基线之差用于推导电池容量（若>0）</td></tr>
-        <tr><td>plan_b_target_sc_rate</td><td>方案B 目标自用率</td><td style="text-align:right;">0.45</td><td></td></tr>
-        <tr><td>plan_c_target_sc_rate</td><td>方案C 目标自用率</td><td style="text-align:right;">0.50</td><td></td></tr>
-        <tr><td>plan_d_target_sc_rate</td><td>方案D 目标自用率</td><td style="text-align:right;">0.60</td><td></td></tr>
-        <tr><td>battery_dod</td><td>电池放电深度 DoD</td><td style="text-align:right;">0.90</td><td>用于电池标称容量计算</td></tr>
-        <tr><td>battery_rte</td><td>电池往返效率 RTE</td><td style="text-align:right;">0.90</td><td>同上</td></tr>
-        <tr><td>battery_install_base_cost</td><td>电池安装基础费 (AUD)</td><td style="text-align:right;">500</td><td></td></tr>
-        <tr><td>battery_install_cost_per_kwh</td><td>电池安装每 kWh 费用 (AUD/kWh)</td><td style="text-align:right;">50</td><td></td></tr>
-        <tr><td>battery_effective_usage_factor</td><td>电池有效使用系数</td><td style="text-align:right;">0.90</td><td>Retrofit 估算使用天数与利用率</td></tr>
-        <tr><td>profit_margin_rate</td><td>利润率</td><td style="text-align:right;">0.10</td><td>用于报价 price_base = total_cost*(1+rate)</td></tr>
-        <tr><td>price_range_percent</td><td>报价浮动范围（占位）</td><td style="text-align:right;">0.05</td><td>当前未直接用于公式，可扩展</td></tr>
-        <tr><td>grid_buy_rate</td><td>购电价 (AUD/kWh)</td><td style="text-align:right;">0.33</td><td></td></tr>
-        <tr><td>grid_sell_rate</td><td>馈网价/售电价 (AUD/kWh)</td><td style="text-align:right;">0.07</td><td>有校验：不高于购电价</td></tr>
-        <tr><td>annual_home_usage_proxy_low</td><td>家庭年用电代理-低 (kWh/年)</td><td style="text-align:right;">3000</td><td>用于截断自用收益上限</td></tr>
-        <tr><td>annual_home_usage_proxy_med</td><td>家庭年用电代理-中 (kWh/年)</td><td style="text-align:right;">6000</td><td>回本计算默认使用 med</td></tr>
-        <tr><td>annual_home_usage_proxy_high</td><td>家庭年用电代理-高 (kWh/年)</td><td style="text-align:right;">9000</td><td>可用于扩展多场景</td></tr>
-        <tr><td>existing_solar_annual_gen_kwh</td><td>既有系统估算年发电量 (kWh/年)</td><td style="text-align:right;">—</td><td>为空则按屋顶估算</td></tr>
-        <tr><td>existing_sc_rate</td><td>既有系统基线自用率</td><td style="text-align:right;">0.30</td><td>Retrofit 计算中使用</td></tr>
-        <tr><td>retrofit_plan_a_kwh</td><td>Retrofit 建议容量 A (kWh)</td><td style="text-align:right;">5</td><td>仅 Retrofit 表用</td></tr>
-        <tr><td>retrofit_plan_b_kwh</td><td>Retrofit 建议容量 B (kWh)</td><td style="text-align:right;">10</td><td></td></tr>
-        <tr><td>retrofit_plan_c_kwh</td><td>Retrofit 建议容量 C (kWh)</td><td style="text-align:right;">13.5</td><td></td></tr>
-        <tr><td>retrofit_plan_d_kwh</td><td>Retrofit 建议容量 D (kWh)</td><td style="text-align:right;">20</td><td></td></tr>
-      </tbody>
-    </table>
-  </div>
+<h1>参数总览（InputsConfig）</h1>
+<p>此页面由当前默认参数动态生成。</p>
+<table><thead><tr><th>Parameter (EN)</th><th>参数中文说明</th><th style='text-align:right;'>Value</th><th>Notes</th></tr></thead><tbody>
+<tr><td>roof_total_area_m2</td><td>屋顶总面积 (m²)</td><td style='text-align:right;'>120.0</td><td>来自上游 3D/测绘估算</td></tr>
+<tr><td>roof_effective_area_m2</td><td>屋顶有效面积 (m²)</td><td style='text-align:right;'>80.0</td><td>过滤朝向/过小坡面后的有效面积</td></tr>
+<tr><td>roof_max_panels</td><td>屋顶最大面板数 (块)</td><td style='text-align:right;'>16</td><td>上游计算得出/可人工修正</td></tr>
+<tr><td>panel_area_m2</td><td>单块面板面积 (m²)</td><td style='text-align:right;'>1.9</td><td>面板规格</td></tr>
+<tr><td>panel_power_kw</td><td>单块面板功率 (kW)</td><td style='text-align:right;'>0.44</td><td>面板标称功率</td></tr>
+<tr><td>panel_unit_cost</td><td>单块面板成本 (AUD/块)</td><td style='text-align:right;'>350</td><td>详细版使用</td></tr>
+<tr><td>inverter_unit_cost_per_kw</td><td>逆变器成本 (AUD/kW)</td><td style='text-align:right;'>250</td><td>详细版使用</td></tr>
+<tr><td>hardware_cost_per_kw</td><td>硬件包价 (AUD/kW)</td><td style='text-align:right;'>1200</td><td>简化版使用（含 PV+逆变器 等）</td></tr>
+<tr><td>battery_unit_cost_per_kwh</td><td>电池成本 (AUD/kWh)</td><td style='text-align:right;'>800</td><td></td></tr>
+<tr><td>install_base_cost</td><td>安装基础费用 (AUD)</td><td style='text-align:right;'>1000</td><td></td></tr>
+<tr><td>install_cost_per_kw</td><td>安装每 kW 费用 (AUD/kW)</td><td style='text-align:right;'>1000</td><td></td></tr>
+<tr><td>dc_ac_ratio</td><td>容配比 (DC/AC)</td><td style='text-align:right;'>1.33</td><td>影响逆变器容量取整</td></tr>
+<tr><td>yield_per_kw_per_year</td><td>每 kW 年发电量 (kWh/kW/年)</td><td style='text-align:right;'>1526</td><td>兜底值；如接入 pvlib 则以模型为准</td></tr>
+<tr><td>baseline_self_consumption_rate</td><td>基线自用率</td><td style='text-align:right;'>0.3</td><td>无电池条件下的自用率估计</td></tr>
+<tr><td>plan_a_capacity_factor</td><td>方案A 容量系数</td><td style='text-align:right;'>0.2</td><td>参与计算装机 kW，并受上下限钳制</td></tr>
+<tr><td>plan_b_capacity_factor</td><td>方案B 容量系数</td><td style='text-align:right;'>0.5</td><td>同上</td></tr>
+<tr><td>plan_c_capacity_factor</td><td>方案C 容量系数</td><td style='text-align:right;'>0.8</td><td>同上</td></tr>
+<tr><td>plan_d_capacity_factor</td><td>方案D 容量系数</td><td style='text-align:right;'>1.0</td><td>同上</td></tr>
+<tr><td>plan_a_min_kw</td><td>方案A 最小上装机下限 (kW)</td><td style='text-align:right;'>3.5</td><td>每方案单独上下限</td></tr>
+<tr><td>plan_a_max_kw</td><td>方案A 最大上限 (kW)</td><td style='text-align:right;'>10.0</td><td></td></tr>
+<tr><td>plan_b_min_kw</td><td>方案B 最小上装机下限 (kW)</td><td style='text-align:right;'>4.0</td><td></td></tr>
+<tr><td>plan_b_max_kw</td><td>方案B 最大上限 (kW)</td><td style='text-align:right;'>13.3</td><td></td></tr>
+<tr><td>plan_c_min_kw</td><td>方案C 最小上装机下限 (kW)</td><td style='text-align:right;'>6.0</td><td></td></tr>
+<tr><td>plan_c_max_kw</td><td>方案C 最大上限 (kW)</td><td style='text-align:right;'>13.3</td><td></td></tr>
+<tr><td>plan_d_min_kw</td><td>方案D 最小上装机下限 (kW)</td><td style='text-align:right;'>8.0</td><td></td></tr>
+<tr><td>plan_d_max_kw</td><td>方案D 最大上限 (kW)</td><td style='text-align:right;'>20.0</td><td></td></tr>
+<tr><td>plan_a_target_sc_rate</td><td>方案A 目标自用率</td><td style='text-align:right;'>0.3</td><td>与基线之差用于推导电池容量（若>0）</td></tr>
+<tr><td>plan_b_target_sc_rate</td><td>方案B 目标自用率</td><td style='text-align:right;'>0.45</td><td></td></tr>
+<tr><td>plan_c_target_sc_rate</td><td>方案C 目标自用率</td><td style='text-align:right;'>0.5</td><td></td></tr>
+<tr><td>plan_d_target_sc_rate</td><td>方案D 目标自用率</td><td style='text-align:right;'>0.6</td><td></td></tr>
+<tr><td>battery_dod</td><td>电池放电深度 DoD</td><td style='text-align:right;'>0.9</td><td>用于电池标称容量计算</td></tr>
+<tr><td>battery_rte</td><td>电池往返效率 RTE</td><td style='text-align:right;'>0.9</td><td>同上</td></tr>
+<tr><td>battery_install_base_cost</td><td>电池安装基础费 (AUD)</td><td style='text-align:right;'>500</td><td></td></tr>
+<tr><td>battery_install_cost_per_kwh</td><td>电池安装每 kWh 费用 (AUD/kWh)</td><td style='text-align:right;'>50</td><td></td></tr>
+<tr><td>battery_effective_usage_factor</td><td>电池有效使用系数</td><td style='text-align:right;'>0.9</td><td>Retrofit 估算使用天数与利用率</td></tr>
+<tr><td>profit_margin_rate</td><td>利润率</td><td style='text-align:right;'>0.1</td><td>用于报价 price_base = total_cost*(1+rate)</td></tr>
+<tr><td>price_range_percent</td><td>报价浮动范围（占位）</td><td style='text-align:right;'>0.05</td><td>当前未直接用于公式，可扩展</td></tr>
+<tr><td>grid_buy_rate</td><td>购电价 (AUD/kWh)</td><td style='text-align:right;'>0.33</td><td></td></tr>
+<tr><td>grid_sell_rate</td><td>馈网价/售电价 (AUD/kWh)</td><td style='text-align:right;'>0.07</td><td>有校验：不高于购电价</td></tr>
+<tr><td>annual_home_usage_proxy_low</td><td>家庭年用电代理-低 (kWh/年)</td><td style='text-align:right;'>3000</td><td>用于截断自用收益上限</td></tr>
+<tr><td>annual_home_usage_proxy_med</td><td>家庭年用电代理-中 (kWh/年)</td><td style='text-align:right;'>6000</td><td>回本计算默认使用 med（或方案映射）</td></tr>
+<tr><td>annual_home_usage_proxy_high</td><td>家庭年用电代理-高 (kWh/年)</td><td style='text-align:right;'>9000</td><td>可用于多场景</td></tr>
+<tr><td>existing_solar_annual_gen_kwh</td><td>既有系统估算年发电量 (kWh/年)</td><td style='text-align:right;'>—</td><td>为空则按屋顶估算</td></tr>
+<tr><td>existing_sc_rate</td><td>既有系统基线自用率</td><td style='text-align:right;'>0.3</td><td>Retrofit 计算中使用</td></tr>
+<tr><td>retrofit_plan_a_kwh</td><td>Retrofit 建议容量 A (kWh)</td><td style='text-align:right;'>5</td><td>仅 Retrofit 表用</td></tr>
+<tr><td>retrofit_plan_b_kwh</td><td>Retrofit 建议容量 B (kWh)</td><td style='text-align:right;'>10</td><td></td></tr>
+<tr><td>retrofit_plan_c_kwh</td><td>Retrofit 建议容量 C (kWh)</td><td style='text-align:right;'>13.5</td><td></td></tr>
+<tr><td>retrofit_plan_d_kwh</td><td>Retrofit 建议容量 D (kWh)</td><td style='text-align:right;'>20</td><td></td></tr>
+</tbody></table>
 </body>
 </html>
