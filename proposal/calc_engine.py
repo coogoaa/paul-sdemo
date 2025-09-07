@@ -65,8 +65,27 @@ def _plan_target_sc(cfg, letter: str) -> float:
 
 
 def _annual_benefit_from_gen(cfg, annual_gen: float, target_sc: float) -> float:
-    # Benefit = MIN(annual_gen*target_sc, usage_med)*buy + (annual_gen - MIN(...))*sell
+    # Default (legacy) behavior uses MED cap
     used = min(annual_gen * target_sc, cfg.annual_home_usage_proxy_med)
+    export = max(annual_gen - used, 0)
+    return used * cfg.grid_buy_rate + export * cfg.grid_sell_rate
+
+
+def _plan_usage_cap(cfg, letter: str) -> float:
+    """Per-plan usage cap mapping (方案二):
+    A -> low, B -> med, C -> high, D -> high
+    """
+    if letter == "A":
+        return cfg.annual_home_usage_proxy_low
+    elif letter == "B":
+        return cfg.annual_home_usage_proxy_med
+    else:
+        # C and D use high
+        return cfg.annual_home_usage_proxy_high
+
+
+def _annual_benefit_from_gen_cap(cfg, annual_gen: float, target_sc: float, cap: float) -> float:
+    used = min(annual_gen * target_sc, cap)
     export = max(annual_gen - used, 0)
     return used * cfg.grid_buy_rate + export * cfg.grid_sell_rate
 
@@ -117,15 +136,16 @@ def compute_plans_detailed(cfg) -> pd.DataFrame:
         price_base = total_cost * (1 + cfg.profit_margin_rate)
 
         # Payback variants
-        base_benefit = _annual_benefit_from_gen(cfg, annual_gen, target_sc)
+        cap = _plan_usage_cap(cfg, letter)
+        base_benefit = _annual_benefit_from_gen_cap(cfg, annual_gen, target_sc, cap)
         payback_base = safe_payback(price_base, base_benefit)
 
         low_gen = annual_gen * 0.85
-        low_target_benefit = _annual_benefit_from_gen(cfg, low_gen, target_sc) * 0.8
+        low_target_benefit = _annual_benefit_from_gen_cap(cfg, low_gen, target_sc, cap) * 0.8
         payback_low = safe_payback(total_cost * 1.1 * (1 + cfg.profit_margin_rate), low_target_benefit)
 
         high_gen = annual_gen * 1.15
-        high_target_benefit = _annual_benefit_from_gen(cfg, high_gen, target_sc) * 1.2
+        high_target_benefit = _annual_benefit_from_gen_cap(cfg, high_gen, target_sc, cap) * 1.2
         payback_high = safe_payback(total_cost * 0.9 * (1 + cfg.profit_margin_rate), high_target_benefit)
 
         df.loc[:, col] = [

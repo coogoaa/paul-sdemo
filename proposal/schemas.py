@@ -8,8 +8,8 @@ class InputsConfig(BaseModel):
     roof_total_area_m2: float = Field(120.0)
     roof_effective_area_m2: float = Field(80.0)
     roof_max_panels: int = Field(16, ge=0)
-    panel_area_m2: float = Field(1.94, gt=0)
-    panel_power_kw: float = Field(0.41, gt=0)
+    panel_area_m2: float = Field(1.9, gt=0)
+    panel_power_kw: float = Field(0.44, gt=0)
 
     # 成本参数（详细版）
     panel_unit_cost: float = Field(350, ge=0)
@@ -25,7 +25,7 @@ class InputsConfig(BaseModel):
 
     # 比率与年发电兜底
     dc_ac_ratio: float = Field(1.33, gt=0)
-    yield_per_kw_per_year: float = Field(1460, gt=0)
+    yield_per_kw_per_year: float = Field(1526, gt=0)
 
     # 自用率
     baseline_self_consumption_rate: float = Field(0.30, ge=0, le=1)
@@ -46,7 +46,7 @@ class InputsConfig(BaseModel):
     plan_d_min_kw: float = Field(8.0, ge=0)
     plan_d_max_kw: float = Field(20.0, ge=0)
 
-    plan_a_target_sc_rate: float = Field(0.35, ge=0, le=1)
+    plan_a_target_sc_rate: float = Field(0.30, ge=0, le=1)
     plan_b_target_sc_rate: float = Field(0.45, ge=0, le=1)
     plan_c_target_sc_rate: float = Field(0.50, ge=0, le=1)
     plan_d_target_sc_rate: float = Field(0.60, ge=0, le=1)

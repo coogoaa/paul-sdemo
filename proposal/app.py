@@ -296,6 +296,81 @@ def main():
         st.markdown("<div class='section-title'>参数总览</div>", unsafe_allow_html=True)
         p_md = (Path(__file__).resolve().parent / "docs" / "parameters.md")
         p_html = (Path(__file__).resolve().parent / "docs" / "parameters.html")
+        # 动态生成 HTML：以当前 InputsConfig 默认值渲染
+        try:
+            from schemas import InputsConfig as _IC
+            _cfg = _IC.default()
+            rows = [
+                ("roof_total_area_m2", "屋顶总面积 (m²)", _cfg.roof_total_area_m2, "来自上游 3D/测绘估算"),
+                ("roof_effective_area_m2", "屋顶有效面积 (m²)", _cfg.roof_effective_area_m2, "过滤朝向/过小坡面后的有效面积"),
+                ("roof_max_panels", "屋顶最大面板数 (块)", _cfg.roof_max_panels, "上游计算得出/可人工修正"),
+                ("panel_area_m2", "单块面板面积 (m²)", _cfg.panel_area_m2, "面板规格"),
+                ("panel_power_kw", "单块面板功率 (kW)", _cfg.panel_power_kw, "面板标称功率"),
+                ("panel_unit_cost", "单块面板成本 (AUD/块)", _cfg.panel_unit_cost, "详细版使用"),
+                ("inverter_unit_cost_per_kw", "逆变器成本 (AUD/kW)", _cfg.inverter_unit_cost_per_kw, "详细版使用"),
+                ("hardware_cost_per_kw", "硬件包价 (AUD/kW)", _cfg.hardware_cost_per_kw, "简化版使用（含 PV+逆变器 等）"),
+                ("battery_unit_cost_per_kwh", "电池成本 (AUD/kWh)", _cfg.battery_unit_cost_per_kwh, ""),
+                ("install_base_cost", "安装基础费用 (AUD)", _cfg.install_base_cost, ""),
+                ("install_cost_per_kw", "安装每 kW 费用 (AUD/kW)", _cfg.install_cost_per_kw, ""),
+                ("dc_ac_ratio", "容配比 (DC/AC)", _cfg.dc_ac_ratio, "影响逆变器容量取整"),
+                ("yield_per_kw_per_year", "每 kW 年发电量 (kWh/kW/年)", _cfg.yield_per_kw_per_year, "兜底值；如接入 pvlib 则以模型为准"),
+                ("baseline_self_consumption_rate", "基线自用率", _cfg.baseline_self_consumption_rate, "无电池条件下的自用率估计"),
+                ("plan_a_capacity_factor", "方案A 容量系数", _cfg.plan_a_capacity_factor, "参与计算装机 kW，并受上下限钳制"),
+                ("plan_b_capacity_factor", "方案B 容量系数", _cfg.plan_b_capacity_factor, "同上"),
+                ("plan_c_capacity_factor", "方案C 容量系数", _cfg.plan_c_capacity_factor, "同上"),
+                ("plan_d_capacity_factor", "方案D 容量系数", _cfg.plan_d_capacity_factor, "同上"),
+                ("plan_a_min_kw", "方案A 最小上装机下限 (kW)", _cfg.plan_a_min_kw, "每方案单独上下限"),
+                ("plan_a_max_kw", "方案A 最大上限 (kW)", _cfg.plan_a_max_kw, ""),
+                ("plan_b_min_kw", "方案B 最小上装机下限 (kW)", _cfg.plan_b_min_kw, ""),
+                ("plan_b_max_kw", "方案B 最大上限 (kW)", _cfg.plan_b_max_kw, ""),
+                ("plan_c_min_kw", "方案C 最小上装机下限 (kW)", _cfg.plan_c_min_kw, ""),
+                ("plan_c_max_kw", "方案C 最大上限 (kW)", _cfg.plan_c_max_kw, ""),
+                ("plan_d_min_kw", "方案D 最小上装机下限 (kW)", _cfg.plan_d_min_kw, ""),
+                ("plan_d_max_kw", "方案D 最大上限 (kW)", _cfg.plan_d_max_kw, ""),
+                ("plan_a_target_sc_rate", "方案A 目标自用率", _cfg.plan_a_target_sc_rate, "与基线之差用于推导电池容量（若>0）"),
+                ("plan_b_target_sc_rate", "方案B 目标自用率", _cfg.plan_b_target_sc_rate, ""),
+                ("plan_c_target_sc_rate", "方案C 目标自用率", _cfg.plan_c_target_sc_rate, ""),
+                ("plan_d_target_sc_rate", "方案D 目标自用率", _cfg.plan_d_target_sc_rate, ""),
+                ("battery_dod", "电池放电深度 DoD", _cfg.battery_dod, "用于电池标称容量计算"),
+                ("battery_rte", "电池往返效率 RTE", _cfg.battery_rte, "同上"),
+                ("battery_install_base_cost", "电池安装基础费 (AUD)", _cfg.battery_install_base_cost, ""),
+                ("battery_install_cost_per_kwh", "电池安装每 kWh 费用 (AUD/kWh)", _cfg.battery_install_cost_per_kwh, ""),
+                ("battery_effective_usage_factor", "电池有效使用系数", _cfg.battery_effective_usage_factor, "Retrofit 估算使用天数与利用率"),
+                ("profit_margin_rate", "利润率", _cfg.profit_margin_rate, "用于报价 price_base = total_cost*(1+rate)"),
+                ("price_range_percent", "报价浮动范围（占位）", _cfg.price_range_percent, "当前未直接用于公式，可扩展"),
+                ("grid_buy_rate", "购电价 (AUD/kWh)", _cfg.grid_buy_rate, ""),
+                ("grid_sell_rate", "馈网价/售电价 (AUD/kWh)", _cfg.grid_sell_rate, "有校验：不高于购电价"),
+                ("annual_home_usage_proxy_low", "家庭年用电代理-低 (kWh/年)", _cfg.annual_home_usage_proxy_low, "用于截断自用收益上限"),
+                ("annual_home_usage_proxy_med", "家庭年用电代理-中 (kWh/年)", _cfg.annual_home_usage_proxy_med, "回本计算默认使用 med（或方案映射）"),
+                ("annual_home_usage_proxy_high", "家庭年用电代理-高 (kWh/年)", _cfg.annual_home_usage_proxy_high, "可用于多场景"),
+                ("existing_solar_annual_gen_kwh", "既有系统估算年发电量 (kWh/年)", _cfg.existing_solar_annual_gen_kwh or "—", "为空则按屋顶估算"),
+                ("existing_sc_rate", "既有系统基线自用率", _cfg.existing_sc_rate, "Retrofit 计算中使用"),
+                ("retrofit_plan_a_kwh", "Retrofit 建议容量 A (kWh)", _cfg.retrofit_plan_a_kwh, "仅 Retrofit 表用"),
+                ("retrofit_plan_b_kwh", "Retrofit 建议容量 B (kWh)", _cfg.retrofit_plan_b_kwh, ""),
+                ("retrofit_plan_c_kwh", "Retrofit 建议容量 C (kWh)", _cfg.retrofit_plan_c_kwh, ""),
+                ("retrofit_plan_d_kwh", "Retrofit 建议容量 D (kWh)", _cfg.retrofit_plan_d_kwh, ""),
+            ]
+            html = [
+                "<!doctype html>",
+                "<html lang='zh'>",
+                "<head>",
+                "<meta charset='utf-8'/>",
+                "<meta name='viewport' content='width=device-width, initial-scale=1' />",
+                "<title>参数总览（InputsConfig）</title>",
+                "<style>body{font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif;padding:24px;}h1{font-size:20px;margin:0 0 12px;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #e5e7eb;padding:8px 10px;font-size:14px;}th{background:#f9fafb;text-align:left;}tbody tr:nth-child(odd){background:#fbfdff;}code{color:#ef4444;}</style>",
+                "</head>",
+                "<body>",
+                "<h1>参数总览（InputsConfig）</h1>",
+                "<p>此页面由当前默认参数动态生成。</p>",
+                "<table><thead><tr><th>Parameter (EN)</th><th>参数中文说明</th><th style='text-align:right;'>Value</th><th>Notes</th></tr></thead><tbody>",
+            ]
+            for k, zh, val, note in rows:
+                v = "—" if val is None else val
+                html.append(f"<tr><td>{k}</td><td>{zh}</td><td style='text-align:right;'>{v}</td><td>{note}</td></tr>")
+            html.extend(["</tbody></table>", "</body>", "</html>"])
+            p_html.write_text("\n".join(html), encoding="utf-8")
+        except Exception as _e:
+            st.warning(f"生成参数 HTML 失败：{_e}")
         if p_md.exists():
             content = p_md.read_text(encoding="utf-8")
             st.markdown(content, unsafe_allow_html=True)

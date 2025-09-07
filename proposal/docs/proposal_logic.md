@@ -1,3 +1,14 @@
+### 3.4 使用上限（annual_home_usage_proxy）与方案映射（方案二）
+
+- 现口径：按方案选择家庭年用电上限（cap）：
+  - Plan A → `annual_home_usage_proxy_low`
+  - Plan B → `annual_home_usage_proxy_med`
+  - Plan C → `annual_home_usage_proxy_high`
+  - Plan D → `annual_home_usage_proxy_high`
+- 记号：在回本期计算公式中以 `usage_cap_plan` 表示。
+- 目的：提升四档方案在经济性上的区分度，避免统一 `med` 导致过度乐观或不匹配。
+
+备注：中长期可用“用户画像维度”替代“方案映射”，使 cap 与用户规模绑定，而非与方案绑定。
 # proposal/proposal.py 逻辑说明（详细版）
 
 本文档系统梳理 `proposal/proposal.py` 中两类 Excel 生成逻辑：
@@ -134,13 +145,13 @@
 目标：`price / 年度收益`。收益由自用与馈网构成（受目标自用率与家庭年用电上限约束）。
 
 - 基线 `payback_base_years`
-  - `IFERROR( price_base / ( MIN(annual_gen*target, annual_home_usage_proxy_med)*grid_buy_rate + (annual_gen - MIN(...))*grid_sell_rate ), "Inf" )`
+  - `IFERROR( price_base / ( MIN(annual_gen*target, usage_cap_plan)*grid_buy_rate + (annual_gen - MIN(...))*grid_sell_rate ), "Inf" )`
 - 保守 `payback_low_years`
   - 成本偏高 10%，发电量与目标自用成分打 85%，购电价打 0.8：
-  - `IFERROR( (total_cost*1.1*(1+pm)) / ( MIN(annual_gen*0.85*target, med)*buy*0.8 + (annual_gen*0.85 - MIN(...))*sell ), "Inf" )`
+  - `IFERROR( (total_cost*1.1*(1+pm)) / ( MIN(annual_gen*0.85*target, usage_cap_plan)*buy*0.8 + (annual_gen*0.85 - MIN(...))*sell ), "Inf" )`
 - 乐观 `payback_high_years`
   - 成本偏低 10%，发电量与目标自用成分打 115%，购电价提到 1.2：
-  - `IFERROR( (total_cost*0.9*(1+pm)) / ( MIN(annual_gen*1.15*target, med)*buy*1.2 + (annual_gen*1.15 - MIN(...))*sell ), "Inf" )`
+  - `IFERROR( (total_cost*0.9*(1+pm)) / ( MIN(annual_gen*1.15*target, usage_cap_plan)*buy*1.2 + (annual_gen*1.15 - MIN(...))*sell ), "Inf" )`
 
 表尾备注：强调 `INT/CEILING` 取整、商用品规建议的存在。
 
@@ -162,7 +173,7 @@
 - 硬件成本 `total_hardware_cost`：`solar_kw * hardware_cost_per_kw`
 - 电池成本 `cost_battery`：默认 `0`（如需带电池可基于电池标称逻辑扩展）
 - 安装成本 `cost_install`：`install_base_cost + solar_kw * install_cost_per_kw`
-- 总成本/报价与回本期估算：与详细版相同结构。
+- 最终总成本/报价与回本期估算：与详细版相同结构（回本使用与方案对应的 `usage_cap_plan`）。
 
 ---
 
@@ -248,13 +259,22 @@
 
 产品建议：
 
-- 前端文案或导出摘要中，对 `daily_energy_to_shift_kwh` 可：
+- 前端文案或导出摘要中，对在 `daily_energy_to_shift_kwh` 为负的场景下，见上文解释与建议。
+
+---
+
+## 12. 默认参数更新记录（近期）
+
+- `panel_power_kw`: 0.41 → 0.44 kW
+- `yield_per_kw_per_year`: 1460 → 1526 kWh/kW/年
+- `panel_area_m2`: 1.94 → 1.9 m²
+- `plan_a_target_sc_rate`: 0.35 → 0.30
   - 保留原始值用于诊断；
   - 或显示为 `max(daily_energy_to_shift_kwh, 0)` 以避免负值引发误读（不改变公式，仅在展示处约束）。
 - 对 H5 卡片而言，若仅依赖“是否需要电池”与“电池容量”，上述实现已经确保 `battery_nominal_kwh = 0`，不会误导配置。
 - 如需在节省/回本计算中引入该差值，请确保公式能正确处理负向“转移”含义，或加入边界保护。
 
-验证记录：
+{{ ... }}
 
 - 示例：Plan A 在默认基线 `baseline_sc = 0.30` 下，将 `plan_a_target_sc_rate` 设为 `0.27`：
   - `annual_generation_kwh = 5110`，则 `daily_energy_to_shift_kwh = 5110/365 * (0.27 - 0.30) ≈ -0.42 kWh/天`；
