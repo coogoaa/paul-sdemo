@@ -281,3 +281,62 @@
   - `annual_generation_kwh = 5110`，则 `daily_energy_to_shift_kwh = 5110/365 * (0.27 - 0.30) ≈ -0.42 kWh/天`；
   - `battery_nominal_kwh = 0`，`cost_battery = 0`；
   - 预算与回本期计算仍可进行，但请注意解释口径与展示。
+
+---
+
+## 13. 提升吸引力但不违背常识的呈现策略（规划）
+
+以下策略仅影响“呈现与说明”或对成本做合理抵扣，核心发电/收益口径不变，保持可解释与可追溯。
+
+### 13.1 STC 粗略预估（新建系统）
+
+- 目的：反映澳洲常见的 STC 抵扣对总价与回本的影响；作为“含/不含 STC”的并列视图。
+- 口径（粗略）：
+  - `stc_count ≈ system_kw × zone_rating × years_to_2030`
+  - `stc_credit_aud ≈ stc_count × stc_price`
+  - `total_cost_after_stc = max(total_cost - stc_credit_aud, 0)`
+  - `price_base_after_stc = total_cost_after_stc × (1 + profit_margin_rate)`
+  - 回本期（含STC）：`price_base_after_stc / annual_benefit`
+- 参数（后续新增到 UI，当前文档先行）：
+  - `stc_zone_rating`（区域系数，示例 1.185/1.536 等）
+  - `stc_price`（STC 证书价格，默认 35 AUD，可调）
+  - `years_to_2030`（从当前年到 2030 的剩余年数，自动计算）
+- 展示：在预算与回本卡片中并列“含STC/不含STC”；文案注明“示意值，实际以安装商报价为准”。
+
+### 13.2 自用行为优化（不改变正式口径）
+
+- 目的：让用户理解通过生活习惯优化（白天用电、热水、EV 充电等）可提升有效自用率。
+- 呈现：在“粗略估算”增加开关，参考把“有效自用率”从 `eff_sc` 上调到 `eff_sc × (1.05~1.10)` 的保守区间；
+  正式结果（base/low/high）仍按既定 cap 与目标自用率计算，不受该开关影响。
+
+### 13.3 电池补贴（Battery Retrofit 与新建可选）
+
+- 目的：反映部分州/地方电池补贴对总价与回本的影响。
+- 口径（可二选一或并用）：
+  - 固定补贴：`total_cost_after_rebate = max(total_cost - rebate_fixed, 0)`
+  - 按容量补贴：`total_cost_after_rebate = max(total_cost - rebate_per_kwh × battery_nominal_kwh, 0)`
+- 展示：并列“含/不含补贴”的价格与回本；文案注明地区差异与政策调整风险。
+
+### 13.4 融资月供对比（可选，不改变回本）
+
+- 目的：提供现金流视角（月节省 vs 月供），更易沟通价值。
+- 口径（示例）：
+  - 月供：等额本息或等额本金，输入利率与年限；
+  - 对比：`monthly_saving ≈ annual_benefit / 12` 与 `monthly_repayment` 的差异。
+- 文案：不改变回本年限，仅作现金流提示。
+
+---
+
+## 14. 当前默认与实施计划
+
+- 当前默认策略：
+  - `use_plan_limits = False`（关闭每方案装机上下限；容量=屋顶上限×面板功率×容量系数）
+  - `usage_cap_policy = 'med'`（回本统一使用 `annual_home_usage_proxy_med` 限制自用收益）
+  - 已提供“粗略估算（cap=Med）”视图，便于快速理解：
+    - `自用=MIN(年发电×目标自用率, cap_med)`；`年节省 = 自用×购电 + 上网×售电`；`回本=报价/年节省`
+
+- 即将实施：
+  - STC 粗略估算参数与展示（含/不含STC 并列）
+  - 粗略估算中的“行为优化”开关（不影响正式结果）
+  - 电池补贴输入与并列表达
+  - 如需：融资月供对比卡片
