@@ -252,7 +252,6 @@ def main():
                     "annual_generation_kwh": "年发电量：solar_kw * yield_per_kw_per_year",
                     "daily_energy_to_shift_kwh": "每日需转移能量：(annual_gen/365) * (target - baseline_sc)",
                     "battery_nominal_kwh": "电池标称：CEILING(daily_shift / (DoD*RTE), 1)",
-                    "battery_pack_suggested_kwh": "商用品规建议：按 20/13.5/10/6.5/5 分档",
                     "cost_panels": "面板成本：panel_count * panel_unit_cost",
                     "cost_inverter": "逆变器成本：inverter_kw * inverter_unit_cost_per_kw",
                     "cost_battery": "电池成本：battery_nominal_kwh * battery_unit_cost_per_kwh",
@@ -279,11 +278,13 @@ def main():
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown("**详细版**")
+                    # 隐藏商用品规建议（battery_pack_suggested_kwh）
+                    df_det_disp = df_detailed.drop(index=["battery_pack_suggested_kwh"], errors="ignore")
                     if show_notes:
-                        df_show = _with_notes_first_col(df_detailed, detailed_tips, col_name="说明")
+                        df_show = _with_notes_first_col(df_det_disp, detailed_tips, col_name="说明")
                         st.dataframe(df_show.style.format(_numeric_format), use_container_width=True, height=620)
                     else:
-                        st.dataframe(df_detailed.style.format(_numeric_format), use_container_width=True, height=620)
+                        st.dataframe(df_det_disp.style.format(_numeric_format), use_container_width=True, height=620)
                 with col2:
                     st.markdown("**简化版**")
                     if show_notes:

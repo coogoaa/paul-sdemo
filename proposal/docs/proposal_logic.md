@@ -128,9 +128,8 @@
   - `(annual_generation_kwh / 365) * (target_sc_rate - baseline_self_consumption_rate)`
   - 其中 `target_sc_rate` 随方案 A/B/C/D 变化
 - 电池标称 `battery_nominal_kwh`
-  - `IF(daily_energy_to_shift>0, CEILING(daily_energy_to_shift / (battery_dod*battery_rte), 1), 0)`（向上取整到 1 kWh）
-- 商用品规建议 `battery_pack_suggested_kwh`
-  - 分段选择：`{20, 13.5, 10, 6.5, 5}` 中就近上限
+  - 现改为：`IF(daily_energy_to_shift>0, ROUND(daily_energy_to_shift / (battery_dod*battery_rte), 2), 0)`（保留两位小数，不再向上取整）
+- 商用品规建议 `battery_pack_suggested_kwh`：已在 UI 隐藏，不再靠档展示；如需，可作为备注提示。
 - 成本：
   - panels：`panel_count * panel_unit_cost`
   - inverter：`inverter_kw * inverter_unit_cost_per_kw`
