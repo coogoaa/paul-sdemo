@@ -81,8 +81,27 @@ def sidebar_params():
         st.markdown("**坡面参数（可选，上游提供）**")
         c1, c2, c3 = st.columns(3)
         cfg.facet_count = c1.number_input("有效坡面个数 facet_count", min_value=0, value=int(getattr(cfg, "facet_count", 0)), step=1)
-        cfg.facet_max_panels = c2.number_input("单坡最大面板数 facet_max_panels", min_value=0, value=int(getattr(cfg, "facet_max_panels", 0)), step=1)
-        cfg.facet_max_power_kw = c3.number_input("单坡最大容量 facet_max_power_kw (kW)", min_value=0.0, value=float(getattr(cfg, "facet_max_power_kw", 0.0)), step=0.1)
+        cfg.facet_max_panels = c2.number_input("单坡最大面板数 facet_max_panels(统一)", min_value=0, value=int(getattr(cfg, "facet_max_panels", 0)), step=1)
+        cfg.facet_max_power_kw = c3.number_input("单坡最大容量 facet_max_power_kw(统一,kW)", min_value=0.0, value=float(getattr(cfg, "facet_max_power_kw", 0.0)), step=0.1)
+        l1, l2 = st.columns(2)
+        csv_panels = l1.text_input("逐坡面面板上限 CSV (例: 10,8,6)", value="")
+        csv_power = l2.text_input("逐坡面容量上限 CSV (kW) (例: 4.2,3.6,2.5)", value="")
+        def _parse_csv_ints(s):
+            try:
+                return [int(x.strip()) for x in s.split(',') if x.strip() != '']
+            except Exception:
+                return []
+        def _parse_csv_floats(s):
+            try:
+                return [float(x.strip()) for x in s.split(',') if x.strip() != '']
+            except Exception:
+                return []
+        lst_pan = _parse_csv_ints(csv_panels)
+        lst_pow = _parse_csv_floats(csv_power)
+        if lst_pan:
+            cfg.facet_panels_list = lst_pan
+        if lst_pow:
+            cfg.facet_power_kw_list = lst_pow
         # 额外信息（当前计算未直接使用，但保留可配置）
         cfg.roof_total_area_m2 = st.number_input("屋顶总面积 (m²)", min_value=0.0, value=float(cfg.roof_total_area_m2), step=1.0)
         cfg.roof_effective_area_m2 = st.number_input("屋顶有效面积 (m²)", min_value=0.0, value=float(cfg.roof_effective_area_m2), step=1.0)
@@ -485,6 +504,8 @@ def main():
                 ("facet_count", "有效坡面个数", _cfg.facet_count, "上游提供（可为0表示未知）"),
                 ("facet_max_panels", "单坡最大面板数", _cfg.facet_max_panels, "上游提供（可为0表示未知）"),
                 ("facet_max_power_kw", "单坡最大容量 (kW)", _cfg.facet_max_power_kw, "上游提供（可为0表示未知）"),
+                ("facet_panels_list", "逐坡面面板上限列表", getattr(_cfg, "facet_panels_list", []), "逗号分隔输入可覆盖统一上限"),
+                ("facet_power_kw_list", "逐坡面容量上限列表 (kW)", getattr(_cfg, "facet_power_kw_list", []), "逗号分隔输入可覆盖统一上限"),
                 ("cap_mode", "容量上限模式", _cfg.cap_mode, "simple/strict"),
                 ("existing_kw_fraction_of_cap", "既有系统占容量比例", _cfg.existing_kw_fraction_of_cap, "0.0-1.0"),
                 ("panel_unit_cost", "单块面板成本 (AUD/块)", _cfg.panel_unit_cost, "详细版使用"),

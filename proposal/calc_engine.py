@@ -55,8 +55,23 @@ def _plan_capacity(cfg, letter: str) -> float:
     facet_max_p_kw = float(getattr(cfg, "facet_max_power_kw", 0.0) or 0.0)
     facet_max_pan = int(getattr(cfg, "facet_max_panels", 0) or 0)
     roof_max_pan = int(getattr(cfg, "roof_max_panels", 0) or 0)
+    # Prefer per-facet lists if provided
+    try:
+        power_list = list(getattr(cfg, "facet_power_kw_list", []) or [])
+        power_list = [float(x) for x in power_list if x is not None]
+    except Exception:
+        power_list = []
+    try:
+        panels_list = list(getattr(cfg, "facet_panels_list", []) or [])
+        panels_list = [int(x) for x in panels_list if x is not None]
+    except Exception:
+        panels_list = []
 
-    sum_facet_power = facet_cnt * facet_max_p_kw if (facet_cnt > 0 and facet_max_p_kw > 0) else 0.0
+    sum_power_list = sum(power_list) if len(power_list) > 0 else 0.0
+    sum_panels_list = sum(panels_list) if len(panels_list) > 0 else 0
+
+    sum_facet_power = sum_power_list if sum_power_list > 0 else (facet_cnt * facet_max_p_kw if (facet_cnt > 0 and facet_max_p_kw > 0) else 0.0)
+    sum_facet_panels = sum_panels_list if sum_panels_list > 0 else (facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else 0)
     baseline_kw = sum_facet_power if sum_facet_power > 0 else (roof_max_pan * ppkw)
 
     unconstrained = baseline_kw * capf
@@ -67,7 +82,7 @@ def _plan_capacity(cfg, letter: str) -> float:
     if sum_facet_power > 0:
         if cap_mode == "strict":
             panel_cap_count = min(roof_max_pan if roof_max_pan > 0 else float("inf"),
-                                   facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else float("inf"))
+                                   sum_facet_panels if sum_facet_panels > 0 else (facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else float("inf")))
             panel_cap_kw = panel_cap_count * ppkw if panel_cap_count != float("inf") else float("inf")
             kw_cap = min(sum_facet_power, panel_cap_kw)
         else:
@@ -302,10 +317,23 @@ def compute_battery_retrofit(cfg) -> pd.DataFrame:
         facet_max_p_kw = float(getattr(cfg, "facet_max_power_kw", 0.0) or 0.0)
         facet_max_pan = int(getattr(cfg, "facet_max_panels", 0) or 0)
         roof_max_pan = int(getattr(cfg, "roof_max_panels", 0) or 0)
-        sum_facet_power = facet_cnt * facet_max_p_kw if (facet_cnt > 0 and facet_max_p_kw > 0) else 0.0
+        try:
+            power_list = list(getattr(cfg, "facet_power_kw_list", []) or [])
+            power_list = [float(x) for x in power_list if x is not None]
+        except Exception:
+            power_list = []
+        try:
+            panels_list = list(getattr(cfg, "facet_panels_list", []) or [])
+            panels_list = [int(x) for x in panels_list if x is not None]
+        except Exception:
+            panels_list = []
+        sum_power_list = sum(power_list) if len(power_list) > 0 else 0.0
+        sum_panels_list = sum(panels_list) if len(panels_list) > 0 else 0
+        sum_facet_power = sum_power_list if sum_power_list > 0 else (facet_cnt * facet_max_p_kw if (facet_cnt > 0 and facet_max_p_kw > 0) else 0.0)
+        sum_facet_panels = sum_panels_list if sum_panels_list > 0 else (facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else 0)
         if getattr(cfg, "cap_mode", "simple") == "strict" and sum_facet_power > 0:
             panel_cap_count = min(roof_max_pan if roof_max_pan > 0 else float("inf"),
-                                   facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else float("inf"))
+                                   sum_facet_panels if sum_facet_panels > 0 else (facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else float("inf")))
             panel_cap_kw = panel_cap_count * cfg.panel_power_kw if panel_cap_count != float("inf") else float("inf")
             cap_kw = min(sum_facet_power, panel_cap_kw)
         else:

@@ -76,6 +76,8 @@ def build_summary_payload(cfg: InputsConfig) -> Dict[str, Any]:
                 "facet_count": getattr(cfg, "facet_count", 0),
                 "facet_max_panels": getattr(cfg, "facet_max_panels", 0),
                 "facet_max_power_kw": getattr(cfg, "facet_max_power_kw", 0.0),
+                "facet_panels_list": getattr(cfg, "facet_panels_list", []),
+                "facet_power_kw_list": getattr(cfg, "facet_power_kw_list", []),
                 "existing_kw_fraction_of_cap": getattr(cfg, "existing_kw_fraction_of_cap", 0.70),
             },
         },

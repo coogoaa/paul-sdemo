@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, Field, validator
 
 
@@ -124,6 +124,9 @@ class InputsConfig(BaseModel):
     facet_count: int = Field(0, ge=0)
     facet_max_panels: int = Field(0, ge=0)  # 若有逐坡面明细，则此为统一上限近似
     facet_max_power_kw: float = Field(0.0, ge=0)  # 单个有效坡面的功率上限（kW）
+    # 逐坡面上限（如提供则优先使用列表的求和），与上面统一上限保持兼容
+    facet_panels_list: List[int] = Field(default_factory=list)
+    facet_power_kw_list: List[float] = Field(default_factory=list)
     # 容量上限模式：simple=仅用 Σfacet_max_power_kw；strict=同时考虑面板数上限对应的功率
     cap_mode: str = Field("simple")  # simple | strict
 

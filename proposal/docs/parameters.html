@@ -11,10 +11,15 @@
 <p>此页面由当前默认参数动态生成。</p>
 <table><thead><tr><th>Parameter (EN)</th><th>参数中文说明</th><th style='text-align:right;'>Value</th><th>Notes</th></tr></thead><tbody>
 <tr><td>roof_total_area_m2</td><td>屋顶总面积 (m²)</td><td style='text-align:right;'>120.0</td><td>来自上游 3D/测绘估算</td></tr>
-<tr><td>roof_effective_area_m2</td><td>屋顶有效面积 (m²)</td><td style='text-align:right;'>80.0</td><td>过滤朝向/过小坡面后的有效面积</td></tr>
-<tr><td>roof_max_panels</td><td>屋顶最大面板数 (块)</td><td style='text-align:right;'>16</td><td>上游计算得出/可人工修正</td></tr>
+<tr><td>roof_effective_area_m2</td><td>屋顶有效面积 (m²)</td><td style='text-align:right;'>80.0</td><td>过滤朝向/过小坡面</td></tr>
+<tr><td>roof_max_panels</td><td>屋顶最大面板数 (块)</td><td style='text-align:right;'>16</td><td>上游/人工修正</td></tr>
 <tr><td>panel_area_m2</td><td>单块面板面积 (m²)</td><td style='text-align:right;'>1.9</td><td>面板规格</td></tr>
-<tr><td>panel_power_kw</td><td>单块面板功率 (kW)</td><td style='text-align:right;'>0.44</td><td>面板标称功率</td></tr>
+<tr><td>panel_power_kw</td><td>单块面板功率 (kW)</td><td style='text-align:right;'>0.44</td><td>面板规格</td></tr>
+<tr><td>facet_count</td><td>有效坡面个数</td><td style='text-align:right;'>0</td><td>上游提供（可为0表示未知）</td></tr>
+<tr><td>facet_max_panels</td><td>单坡最大面板数</td><td style='text-align:right;'>0</td><td>上游提供（可为0表示未知）</td></tr>
+<tr><td>facet_max_power_kw</td><td>单坡最大容量 (kW)</td><td style='text-align:right;'>0.0</td><td>上游提供（可为0表示未知）</td></tr>
+<tr><td>cap_mode</td><td>容量上限模式</td><td style='text-align:right;'>simple</td><td>simple/strict</td></tr>
+<tr><td>existing_kw_fraction_of_cap</td><td>既有系统占容量比例</td><td style='text-align:right;'>0.7</td><td>0.0-1.0</td></tr>
 <tr><td>panel_unit_cost</td><td>单块面板成本 (AUD/块)</td><td style='text-align:right;'>350</td><td>详细版使用</td></tr>
 <tr><td>inverter_unit_cost_per_kw</td><td>逆变器成本 (AUD/kW)</td><td style='text-align:right;'>250</td><td>详细版使用</td></tr>
 <tr><td>hardware_cost_per_kw</td><td>硬件包价 (AUD/kW)</td><td style='text-align:right;'>1200</td><td>简化版使用（含 PV+逆变器 等）</td></tr>
