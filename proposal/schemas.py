@@ -119,3 +119,13 @@ class InputsConfig(BaseModel):
     # 粗略估算中的“行为优化”开关（不影响正式结果）
     rough_optimize_enable: bool = Field(False)
     rough_optimize_factor: float = Field(1.08, ge=1.0)
+
+    # --- 屋顶/坡面上限（来自上游，默认不启用=0）---
+    facet_count: int = Field(0, ge=0)
+    facet_max_panels: int = Field(0, ge=0)  # 若有逐坡面明细，则此为统一上限近似
+    facet_max_power_kw: float = Field(0.0, ge=0)  # 单个有效坡面的功率上限（kW）
+    # 容量上限模式：simple=仅用 Σfacet_max_power_kw；strict=同时考虑面板数上限对应的功率
+    cap_mode: str = Field("simple")  # simple | strict
+
+    # --- Retrofit 兜底：既有装机容量占cap比例（未提供 existing_gen 时使用）---
+    existing_kw_fraction_of_cap: float = Field(0.70, ge=0, le=1)

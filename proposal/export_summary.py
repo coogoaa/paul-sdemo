@@ -71,6 +71,13 @@ def build_summary_payload(cfg: InputsConfig) -> Dict[str, Any]:
                 "enabled": getattr(cfg, "rough_optimize_enable", False),
                 "factor": getattr(cfg, "rough_optimize_factor", 1.0),
             },
+            "capacity_caps": {
+                "cap_mode": getattr(cfg, "cap_mode", "simple"),
+                "facet_count": getattr(cfg, "facet_count", 0),
+                "facet_max_panels": getattr(cfg, "facet_max_panels", 0),
+                "facet_max_power_kw": getattr(cfg, "facet_max_power_kw", 0.0),
+                "existing_kw_fraction_of_cap": getattr(cfg, "existing_kw_fraction_of_cap", 0.70),
+            },
         },
         "baseline_self_consumption_rate": cfg.baseline_self_consumption_rate,
         "electricity_rates": {

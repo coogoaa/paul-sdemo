@@ -74,10 +74,15 @@ def sidebar_params():
     cfg = InputsConfig.default()
 
     with st.expander("基础（面板/发电）", expanded=True):
-        cfg.roof_max_panels = st.number_input("屋顶最大面板数 (块)", min_value=0, value=cfg.roof_max_panels)
-        cfg.panel_power_kw = st.number_input("单块面板功率 (kW)", min_value=0.01, value=float(cfg.panel_power_kw), step=0.01)
-        cfg.yield_per_kw_per_year = st.number_input("每kW年发电量(兜底)", min_value=1.0, value=float(cfg.yield_per_kw_per_year), step=10.0)
-        cfg.dc_ac_ratio = st.number_input("容配比 (DC/AC)", min_value=0.1, value=float(cfg.dc_ac_ratio), step=0.01)
+        cfg.roof_max_panels = st.number_input("屋顶最大面板数 roof_max_panels", min_value=0, value=int(cfg.roof_max_panels), step=1)
+        cfg.panel_power_kw = st.number_input("单块面板功率 panel_power_kw (kW)", min_value=0.0, value=float(cfg.panel_power_kw), step=0.01)
+        cfg.dc_ac_ratio = st.number_input("容配比 dc_ac_ratio (DC/AC)", min_value=0.1, value=float(cfg.dc_ac_ratio), step=0.01)
+        cfg.yield_per_kw_per_year = st.number_input("每kW年发电 (kWh/kW/年)", min_value=0.0, value=float(cfg.yield_per_kw_per_year), step=10.0)
+        st.markdown("**坡面参数（可选，上游提供）**")
+        c1, c2, c3 = st.columns(3)
+        cfg.facet_count = c1.number_input("有效坡面个数 facet_count", min_value=0, value=int(getattr(cfg, "facet_count", 0)), step=1)
+        cfg.facet_max_panels = c2.number_input("单坡最大面板数 facet_max_panels", min_value=0, value=int(getattr(cfg, "facet_max_panels", 0)), step=1)
+        cfg.facet_max_power_kw = c3.number_input("单坡最大容量 facet_max_power_kw (kW)", min_value=0.0, value=float(getattr(cfg, "facet_max_power_kw", 0.0)), step=0.1)
         # 额外信息（当前计算未直接使用，但保留可配置）
         cfg.roof_total_area_m2 = st.number_input("屋顶总面积 (m²)", min_value=0.0, value=float(cfg.roof_total_area_m2), step=1.0)
         cfg.roof_effective_area_m2 = st.number_input("屋顶有效面积 (m²)", min_value=0.0, value=float(cfg.roof_effective_area_m2), step=1.0)
@@ -111,6 +116,13 @@ def sidebar_params():
             cfg.plan_c_max_kw = st.number_input("C 最大", min_value=0.0, value=float(cfg.plan_c_max_kw), step=0.1)
             cfg.plan_d_max_kw = st.number_input("D 最大", min_value=0.0, value=float(cfg.plan_d_max_kw), step=0.1)
         cfg.baseline_self_consumption_rate = st.number_input("基线自用率", min_value=0.0, max_value=1.0, value=float(cfg.baseline_self_consumption_rate), step=0.01)
+        cfg.cap_mode = st.selectbox(
+            "容量上限模式 cap_mode",
+            options=["simple", "strict"],
+            index=0 if getattr(cfg, "cap_mode", "simple") == "simple" else 1,
+            help="simple: kw_cap=Σ(facet_max_power_kw)；strict: 同时考虑面板数上限对应功率"
+        )
+        cfg.existing_kw_fraction_of_cap = st.number_input("既有系统占容量比例 existing_kw_fraction_of_cap", min_value=0.0, max_value=1.0, value=float(getattr(cfg, "existing_kw_fraction_of_cap", 0.0)), step=0.01)
 
     with st.expander("成本/电价", expanded=True):
         col1, col2 = st.columns(2)
@@ -466,10 +478,15 @@ def main():
             _cfg = _IC.default()
             rows = [
                 ("roof_total_area_m2", "屋顶总面积 (m²)", _cfg.roof_total_area_m2, "来自上游 3D/测绘估算"),
-                ("roof_effective_area_m2", "屋顶有效面积 (m²)", _cfg.roof_effective_area_m2, "过滤朝向/过小坡面后的有效面积"),
-                ("roof_max_panels", "屋顶最大面板数 (块)", _cfg.roof_max_panels, "上游计算得出/可人工修正"),
+                ("roof_effective_area_m2", "屋顶有效面积 (m²)", _cfg.roof_effective_area_m2, "过滤朝向/过小坡面"),
+                ("roof_max_panels", "屋顶最大面板数 (块)", _cfg.roof_max_panels, "上游/人工修正"),
                 ("panel_area_m2", "单块面板面积 (m²)", _cfg.panel_area_m2, "面板规格"),
-                ("panel_power_kw", "单块面板功率 (kW)", _cfg.panel_power_kw, "面板标称功率"),
+                ("panel_power_kw", "单块面板功率 (kW)", _cfg.panel_power_kw, "面板规格"),
+                ("facet_count", "有效坡面个数", _cfg.facet_count, "上游提供（可为0表示未知）"),
+                ("facet_max_panels", "单坡最大面板数", _cfg.facet_max_panels, "上游提供（可为0表示未知）"),
+                ("facet_max_power_kw", "单坡最大容量 (kW)", _cfg.facet_max_power_kw, "上游提供（可为0表示未知）"),
+                ("cap_mode", "容量上限模式", _cfg.cap_mode, "simple/strict"),
+                ("existing_kw_fraction_of_cap", "既有系统占容量比例", _cfg.existing_kw_fraction_of_cap, "0.0-1.0"),
                 ("panel_unit_cost", "单块面板成本 (AUD/块)", _cfg.panel_unit_cost, "详细版使用"),
                 ("inverter_unit_cost_per_kw", "逆变器成本 (AUD/kW)", _cfg.inverter_unit_cost_per_kw, "详细版使用"),
                 ("hardware_cost_per_kw", "硬件包价 (AUD/kW)", _cfg.hardware_cost_per_kw, "简化版使用（含 PV+逆变器 等）"),

@@ -31,36 +31,62 @@ def safe_payback(price: float, annual_benefit: float):
 
 
 def _plan_capacity(cfg, letter: str) -> float:
-    """Compute solar_kw per plan.
-    If cfg.use_plan_limits is False (default), do NOT clamp by per-plan min/max; capacity = roof_max_panels * panel_power_kw * capacity_factor.
-    If True, apply per-plan min/max clamping.
+    """Compute solar_kw per plan with optional roof/facet caps.
+    Strategy:
+    - Define a capacity baseline using roof_max_power_kw_like:
+      If facet info exists, use roof_max_power_kw = facet_count * facet_max_power_kw (simple sum); otherwise fallback to roof_max_panels*panel_power_kw.
+    - Compute per-plan unconstrained = baseline * capacity_factor.
+    - Apply cap depending on cfg.cap_mode:
+      * simple: kw_cap = facet_count*facet_max_power_kw (if >0), else no cap
+      * strict: kw_cap = min( sum facet power, panel-cap power ) where panel-cap power = min(roof_max_panels, facet_count*facet_max_panels)*panel_power_kw (when available)
+    - Optionally apply per-plan min/max when use_plan_limits is True.
     """
-    max_panels = cfg.roof_max_panels
     ppkw = cfg.panel_power_kw
-    if letter == "A":
-        capf = cfg.plan_a_capacity_factor
-        base = max_panels * ppkw * capf
-        if not getattr(cfg, "use_plan_limits", False):
-            return base
-        return max(min(base, cfg.plan_a_max_kw), cfg.plan_a_min_kw)
-    elif letter == "B":
-        capf = cfg.plan_b_capacity_factor
-        base = max_panels * ppkw * capf
-        if not getattr(cfg, "use_plan_limits", False):
-            return base
-        return max(min(base, cfg.plan_b_max_kw), cfg.plan_b_min_kw)
-    elif letter == "C":
-        capf = cfg.plan_c_capacity_factor
-        base = max_panels * ppkw * capf
-        if not getattr(cfg, "use_plan_limits", False):
-            return base
-        return max(min(base, cfg.plan_c_max_kw), cfg.plan_c_min_kw)
-    else:
-        capf = cfg.plan_d_capacity_factor
-        base = max_panels * ppkw * capf
-        if not getattr(cfg, "use_plan_limits", False):
-            return base
-        return max(min(base, cfg.plan_d_max_kw), cfg.plan_d_min_kw)
+    # capacity factors per plan
+    capf = (
+        cfg.plan_a_capacity_factor if letter == "A" else
+        cfg.plan_b_capacity_factor if letter == "B" else
+        cfg.plan_c_capacity_factor if letter == "C" else
+        cfg.plan_d_capacity_factor
+    )
+
+    # Derive baseline "roof_max_power" style capacity
+    facet_cnt = int(getattr(cfg, "facet_count", 0) or 0)
+    facet_max_p_kw = float(getattr(cfg, "facet_max_power_kw", 0.0) or 0.0)
+    facet_max_pan = int(getattr(cfg, "facet_max_panels", 0) or 0)
+    roof_max_pan = int(getattr(cfg, "roof_max_panels", 0) or 0)
+
+    sum_facet_power = facet_cnt * facet_max_p_kw if (facet_cnt > 0 and facet_max_p_kw > 0) else 0.0
+    baseline_kw = sum_facet_power if sum_facet_power > 0 else (roof_max_pan * ppkw)
+
+    unconstrained = baseline_kw * capf
+
+    # Compute caps
+    cap_mode = getattr(cfg, "cap_mode", "simple")
+    kw_cap = float("inf")
+    if sum_facet_power > 0:
+        if cap_mode == "strict":
+            panel_cap_count = min(roof_max_pan if roof_max_pan > 0 else float("inf"),
+                                   facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else float("inf"))
+            panel_cap_kw = panel_cap_count * ppkw if panel_cap_count != float("inf") else float("inf")
+            kw_cap = min(sum_facet_power, panel_cap_kw)
+        else:
+            kw_cap = sum_facet_power
+
+    solar_kw = min(unconstrained, kw_cap)
+
+    # Optional per-plan min/max when enabled
+    if getattr(cfg, "use_plan_limits", False):
+        if letter == "A":
+            solar_kw = max(min(solar_kw, cfg.plan_a_max_kw), cfg.plan_a_min_kw)
+        elif letter == "B":
+            solar_kw = max(min(solar_kw, cfg.plan_b_max_kw), cfg.plan_b_min_kw)
+        elif letter == "C":
+            solar_kw = max(min(solar_kw, cfg.plan_c_max_kw), cfg.plan_c_min_kw)
+        else:
+            solar_kw = max(min(solar_kw, cfg.plan_d_max_kw), cfg.plan_d_min_kw)
+
+    return solar_kw
 
 
 def _plan_target_sc(cfg, letter: str) -> float:
@@ -135,13 +161,10 @@ def compute_plans_detailed(cfg) -> pd.DataFrame:
         annual_gen = solar_kw * cfg.yield_per_kw_per_year
         target_sc = _plan_target_sc(cfg, letter)
         daily_shift = (annual_gen / 365.0) * (target_sc - cfg.baseline_self_consumption_rate)
-        batt_nominal = ceil_to(daily_shift / (cfg.battery_dod * cfg.battery_rte), 1.0) if daily_shift > 0 else 0.0
-        # suggested pack ladder: 20, 13.5, 10, 6.5, 5
-        pack = 5.0
-        for p in [20.0, 13.5, 10.0, 6.5, 5.0]:
-            if batt_nominal >= p:
-                pack = p
-                break
+        # 改为：按自用率推算电池标称容量，保留两位小数（不再向上取整到 1kWh）
+        batt_nominal = round(daily_shift / (cfg.battery_dod * cfg.battery_rte), 2) if daily_shift > 0 else 0.0
+        # 商用品规建议暂不采用靠档显示（置为空）
+        pack = float('nan')
 
         cost_panels = panel_count * cfg.panel_unit_cost
         cost_inverter = inverter_kw * cfg.inverter_unit_cost_per_kw
@@ -209,9 +232,9 @@ def compute_plans_simplified(cfg) -> pd.DataFrame:
         annual_gen = solar_kw * cfg.yield_per_kw_per_year
         target_sc = _plan_target_sc(cfg, letter)
 
-        # 计算电池成本（复用详细版逻辑）
+        # 计算电池成本（复用详细版逻辑，保留两位小数）
         daily_shift = (annual_gen / 365.0) * (target_sc - cfg.baseline_self_consumption_rate)
-        battery_nominal = ceil_to(daily_shift / (cfg.battery_dod * cfg.battery_rte), 1.0) if daily_shift > 0 else 0.0
+        battery_nominal = round(daily_shift / (cfg.battery_dod * cfg.battery_rte), 2) if daily_shift > 0 else 0.0
         cost_battery = battery_nominal * cfg.battery_unit_cost_per_kwh
 
         total_hardware_cost = solar_kw * cfg.hardware_cost_per_kw
@@ -272,8 +295,25 @@ def compute_battery_retrofit(cfg) -> pd.DataFrame:
     ]
 
     # Estimate of export energy without explicit existing solar input
-    estimated_gen = cfg.roof_max_panels * cfg.panel_power_kw * 0.7 * 1200
     esg = cfg.existing_solar_annual_gen_kwh
+    # Fallback existing_gen using roof/facet cap and fraction
+    if esg is None or esg == 0:
+        facet_cnt = int(getattr(cfg, "facet_count", 0) or 0)
+        facet_max_p_kw = float(getattr(cfg, "facet_max_power_kw", 0.0) or 0.0)
+        facet_max_pan = int(getattr(cfg, "facet_max_panels", 0) or 0)
+        roof_max_pan = int(getattr(cfg, "roof_max_panels", 0) or 0)
+        sum_facet_power = facet_cnt * facet_max_p_kw if (facet_cnt > 0 and facet_max_p_kw > 0) else 0.0
+        if getattr(cfg, "cap_mode", "simple") == "strict" and sum_facet_power > 0:
+            panel_cap_count = min(roof_max_pan if roof_max_pan > 0 else float("inf"),
+                                   facet_cnt * facet_max_pan if (facet_cnt > 0 and facet_max_pan > 0) else float("inf"))
+            panel_cap_kw = panel_cap_count * cfg.panel_power_kw if panel_cap_count != float("inf") else float("inf")
+            cap_kw = min(sum_facet_power, panel_cap_kw)
+        else:
+            cap_kw = sum_facet_power if sum_facet_power > 0 else (roof_max_pan * cfg.panel_power_kw)
+        existing_kw = cap_kw * float(getattr(cfg, "existing_kw_fraction_of_cap", 0.70) or 0.0)
+        estimated_gen = existing_kw * cfg.yield_per_kw_per_year
+    else:
+        estimated_gen = esg
 
     for i, name in enumerate(cols):
         nominal = sizes[i]
