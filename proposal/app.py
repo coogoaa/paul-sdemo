@@ -79,10 +79,6 @@ def sidebar_params():
         cfg.dc_ac_ratio = st.number_input("容配比 dc_ac_ratio (DC/AC)", min_value=0.1, value=float(cfg.dc_ac_ratio), step=0.01)
         cfg.yield_per_kw_per_year = st.number_input("每kW年发电 (kWh/kW/年)", min_value=0.0, value=float(cfg.yield_per_kw_per_year), step=10.0)
         st.markdown("**坡面参数（可选，上游提供）**")
-        c1, c2, c3 = st.columns(3)
-        cfg.facet_count = c1.number_input("有效坡面个数 facet_count", min_value=0, value=int(getattr(cfg, "facet_count", 0)), step=1)
-        cfg.facet_max_panels = c2.number_input("单坡最大面板数 facet_max_panels(统一)", min_value=0, value=int(getattr(cfg, "facet_max_panels", 0)), step=1)
-        cfg.facet_max_power_kw = c3.number_input("单坡最大容量 facet_max_power_kw(统一,kW)", min_value=0.0, value=float(getattr(cfg, "facet_max_power_kw", 0.0)), step=0.1)
         l1, l2 = st.columns(2)
         csv_panels = l1.text_input("逐坡面面板上限 CSV (例: 10,8,6)", value="")
         csv_power = l2.text_input("逐坡面容量上限 CSV (kW) (例: 4.2,3.6,2.5)", value="")
@@ -136,12 +132,11 @@ def sidebar_params():
             cfg.plan_d_max_kw = st.number_input("D 最大", min_value=0.0, value=float(cfg.plan_d_max_kw), step=0.1)
         cfg.baseline_self_consumption_rate = st.number_input("基线自用率", min_value=0.0, max_value=1.0, value=float(cfg.baseline_self_consumption_rate), step=0.01)
         cfg.cap_mode = st.selectbox(
-            "容量上限模式 cap_mode",
+            "容量上限模式 (cap_mode)",
             options=["simple", "strict"],
             index=0 if getattr(cfg, "cap_mode", "simple") == "simple" else 1,
             help="simple: kw_cap=Σ(facet_max_power_kw)；strict: 同时考虑面板数上限对应功率"
         )
-        cfg.existing_kw_fraction_of_cap = st.number_input("既有系统占容量比例 existing_kw_fraction_of_cap", min_value=0.0, max_value=1.0, value=float(getattr(cfg, "existing_kw_fraction_of_cap", 0.0)), step=0.01)
 
     with st.expander("成本/电价", expanded=True):
         col1, col2 = st.columns(2)
@@ -194,6 +189,7 @@ def sidebar_params():
         cfg.battery_install_base_cost = st.number_input("电池安装基础费 (AUD)", min_value=0.0, value=float(cfg.battery_install_base_cost), step=10.0)
         cfg.battery_install_cost_per_kwh = st.number_input("电池安装每kWh (AUD/kWh)", min_value=0.0, value=float(cfg.battery_install_cost_per_kwh), step=10.0)
         cfg.battery_effective_usage_factor = st.number_input("电池有效使用系数", min_value=0.0, max_value=1.0, value=float(cfg.battery_effective_usage_factor), step=0.01)
+        cfg.existing_kw_fraction_of_cap = st.number_input("既有系统占容量比例 (Retrofit 兜底)", min_value=0.0, max_value=1.0, value=float(getattr(cfg, "existing_kw_fraction_of_cap", 0.70)), step=0.01, help="用于估算已有发电：cap_kw×比例×年等效小时；仅在未提供已有发电量时生效")
         st.markdown("**Retrofit 容量建议 (kWh)**")
         c1, c2, c3, c4 = st.columns(4)
         cfg.retrofit_plan_a_kwh = c1.number_input("A", min_value=0.0, value=float(cfg.retrofit_plan_a_kwh), step=0.5)
@@ -501,9 +497,6 @@ def main():
                 ("roof_max_panels", "屋顶最大面板数 (块)", _cfg.roof_max_panels, "上游/人工修正"),
                 ("panel_area_m2", "单块面板面积 (m²)", _cfg.panel_area_m2, "面板规格"),
                 ("panel_power_kw", "单块面板功率 (kW)", _cfg.panel_power_kw, "面板规格"),
-                ("facet_count", "有效坡面个数", _cfg.facet_count, "上游提供（可为0表示未知）"),
-                ("facet_max_panels", "单坡最大面板数", _cfg.facet_max_panels, "上游提供（可为0表示未知）"),
-                ("facet_max_power_kw", "单坡最大容量 (kW)", _cfg.facet_max_power_kw, "上游提供（可为0表示未知）"),
                 ("facet_panels_list", "逐坡面面板上限列表", getattr(_cfg, "facet_panels_list", []), "逗号分隔输入可覆盖统一上限"),
                 ("facet_power_kw_list", "逐坡面容量上限列表 (kW)", getattr(_cfg, "facet_power_kw_list", []), "逗号分隔输入可覆盖统一上限"),
                 ("cap_mode", "容量上限模式", _cfg.cap_mode, "simple/strict"),
