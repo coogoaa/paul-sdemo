@@ -18,7 +18,7 @@
 - 取整约定
   - INT 向下取整：[int_floor(x) = floor(x)](cci:1://file:///Users/paulgao/Documents/augment-projects/sales_agent_demo/proposal/calc_engine.py:16:0-17:29)
   - CEILING 以步长向上取整：[ceil_to(x, step)](cci:1://file:///Users/paulgao/Documents/augment-projects/sales_agent_demo/proposal/calc_engine.py:10:0-13:37)
-  - 本项目：逆变器容量向上取整到 0.1 kW；电池标称向上取整到 1 kWh
+  - 本项目：逆变器容量向上取整到 0.1 kW；电池标称改为保留两位小数（不再向上取整到 1 kWh）
 
 - 方案说明
   - 新建系统包含 A/B/C/D 四个方案（详细版与简化版）
@@ -80,10 +80,15 @@
 输出：行 = 指标，列 = `Plan A/B/C/D`（DataFrame）
 
 步骤 2.1 容量（solar_kw）[C]
-- 输入：`roof_max_panels` [P], `panel_power_kw` [P], `plan_*_capacity_factor` [P], `plan_*_min/max_kw` [P]
-- 公式（每方案独立钳制）：
-  - `base = roof_max_panels * panel_power_kw * plan_x_capacity_factor`
-  - `solar_kw = MAX(MIN(base, plan_x_max_kw), plan_x_min_kw)`
+- 输入：`facet_panels_list` [P]（逐坡面面板上限，CSV）、`facet_power_kw_list` [P]（逐坡面容量上限，CSV）、`roof_max_panels` [P]、`panel_power_kw` [P]、`plan_*_capacity_factor` [P]、`plan_*_min/max_kw` [P]、`cap_mode` [P]
+- 定义与公式：
+  - 逐坡面求和：`sum_panels = Σ facet_panels_list`（若列表为空则视为 0）；`sum_power = Σ facet_power_kw_list`（若列表为空则视为 0）
+  - baseline（容量基线）：`baseline_kw = sum_power > 0 ? sum_power : roof_max_panels * panel_power_kw`
+  - per-plan 未约束容量：`unconstrained = baseline_kw * plan_x_capacity_factor`
+  - cap（上限，按 cap_mode）：
+    - 简化 simple（默认）：`kw_cap = (sum_power > 0) ? sum_power : +∞`
+    - 严格 strict：`kw_cap = min( sum_power, min(roof_max_panels, sum_panels) * panel_power_kw )`（仅当 `sum_power>0` 且有可用上限时）
+  - 每方案容量：`solar_kw = min(unconstrained, kw_cap)`，若开启 `use_plan_limits` 再做 `MAX/MIN` 钳制
 
 步骤 2.2 面板数（panel_count）[C]
 - 输入：`solar_kw` [C], `panel_power_kw` [P]
@@ -104,12 +109,10 @@
 步骤 2.6 电池标称（battery_nominal_kwh）[C]
 - 输入：`daily_energy_to_shift_kwh` [C], `battery_dod` [P], `battery_rte` [P]
 - 公式：若 `daily_shift > 0`：  
-  `battery_nominal_kwh = CEILING(daily_shift / (battery_dod * battery_rte), 1.0)`  
+  `battery_nominal_kwh = ROUND(daily_shift / (battery_dod * battery_rte), 2)`  
   否则 `battery_nominal_kwh = 0`
 
-步骤 2.7 商用品规建议（battery_pack_suggested_kwh）[C]
-- 输入：`battery_nominal_kwh` [C]
-- 规则：从 `[20, 13.5, 10, 6.5, 5]` 中选择“第一个 ≤ `battery_nominal_kwh` 的值”；否则取 5
+（取消）商用品规建议 `battery_pack_suggested_kwh`：已在 UI 隐藏，不再靠档展示
 
 步骤 2.8 成本拆分与合计 [C]
 - 输入：
@@ -149,7 +152,7 @@
 
 输出（每列 A/B/C/D）：
 - `solar_kw`, `panel_count`, `inverter_kw`, `annual_generation_kwh`
-- `daily_energy_to_shift_kwh`, `battery_nominal_kwh`, `battery_pack_suggested_kwh`
+- `daily_energy_to_shift_kwh`, `battery_nominal_kwh`
 - `cost_panels`, `cost_inverter`, `cost_battery`, `cost_install`, `total_cost`
 - `price_base`, `payback_base_years`, `payback_low_years`, `payback_high_years`
 
@@ -214,7 +217,7 @@
 步骤 3.5 成本与报价 [C]
 - 电池成本（复用详细版逻辑）：
   - `daily_shift = (annual_gen / 365) * (target_sc - baseline_sc)`
-  - `battery_nominal = CEILING(daily_shift / (battery_dod * battery_rte), 1.0)` 若 daily_shift > 0，否则为 0
+  - `battery_nominal = ROUND(daily_shift / (battery_dod * battery_rte), 2)`（若 daily_shift ≤ 0 则为 0）
   - `cost_battery = battery_nominal * battery_unit_cost_per_kwh`
 - `total_hardware_cost = solar_kw * hardware_cost_per_kw`
 - `cost_install = install_base_cost + solar_kw * install_cost_per_kw`
@@ -246,8 +249,12 @@
 - `annual_est = usable * battery_effective_usage_factor * 365`
 
 步骤 4.4 最大可转移上限（max_shiftable_kwh）[C]
-- 若 `existing_solar_annual_gen_kwh` [E] 为空/0：
-  - `estimated_gen = roof_max_panels * panel_power_kw * 0.7 * 1200`（经验估算）
+- 若 `existing_solar_annual_gen_kwh` [E] 为空/0（兜底估算）：
+  - 计算 cap_kw（同新建系统 cap 逻辑）：
+    - simple：`cap_kw = Σ facet_power_kw_list`（若列表为空则回退 `roof_max_panels * panel_power_kw`）
+    - strict：`cap_kw = min( Σ功率上限, min(roof_max_panels, Σ面板上限) * panel_power_kw )`
+  - 估算既有装机：`existing_kw = cap_kw * existing_kw_fraction_of_cap`（默认 0.70）
+  - 估算年发电：`estimated_gen = existing_kw * yield_per_kw_per_year`
   - `max_shift = estimated_gen * (1 - existing_sc_rate)`
 - 否则：
   - `max_shift = existing_solar_annual_gen_kwh * (1 - existing_sc_rate)`
@@ -265,7 +272,6 @@
 步骤 4.8 回本年限（payback_years）[C]
 - `payback = price_base / annual_savings`（≤0 则 Inf）
 
-步骤 4.9 新自用率（new_self_consumption_rate）[C]
 - 若 `existing_solar_annual_gen_kwh` 为空/0：
   - `denom = estimated_gen`
   - `numer = estimated_gen * existing_sc_rate + final_shift`
@@ -291,7 +297,7 @@
 - 回本年限：当收益（或年节省）≤ 0 时为 `Inf`
 - 电池标称：当 `daily_energy_to_shift_kwh <= 0` 时置 0
 - 简化版：默认不计电池成本；可接入详细版逻辑扩展
-- 估算发电量：`estimated_gen = roof_max_panels * panel_power_kw * 0.7 * 1200` 为经验估算，可替换为更精细模型
+- 估算发电量（兜底）：`estimated_gen = (cap_kw * existing_kw_fraction_of_cap) * yield_per_kw_per_year`（cap_kw 见上；仅在 `existing_solar_annual_gen_kwh` 为空时使用）
 
 ---
 

@@ -113,11 +113,16 @@
 以下以某列 `col` 表示当前方案列的列字母：
 
 - 光伏装机容量 `solar_kw`
-  - 采用“每方案独立的上下限”进行钳制：
-  - A：`MAX(MIN(roof_max_panels*panel_power_kw*plan_a_capacity_factor, plan_a_max_kw), plan_a_min_kw)`
-  - B：`MAX(MIN(roof_max_panels*panel_power_kw*plan_b_capacity_factor, plan_b_max_kw), plan_b_min_kw)`
-  - C：`MAX(MIN(roof_max_panels*panel_power_kw*plan_c_capacity_factor, plan_c_max_kw), plan_c_min_kw)`
-  - D：`MAX(MIN(roof_max_panels*panel_power_kw*plan_d_capacity_factor, plan_d_max_kw), plan_d_min_kw)`
+  - 基线与上限（优先使用逐坡面列表，未提供则回退）：
+    - 逐坡面求和：`sum_panels = Σ facet_panels_list`，`sum_power = Σ facet_power_kw_list`
+    - 基线：`baseline_kw = (sum_power > 0) ? sum_power : roof_max_panels * panel_power_kw`
+    - 上限 cap（按 `cap_mode`）：
+      - simple（默认）：`kw_cap = (sum_power > 0) ? sum_power : +∞`
+      - strict：`kw_cap = min(sum_power, min(roof_max_panels, sum_panels) * panel_power_kw)`（当 sum_power>0 时生效）
+  - 每方案容量：
+    - `unconstrained = baseline_kw * plan_x_capacity_factor`
+    - `solar_kw = min(unconstrained, kw_cap)`
+    - 若开启 `use_plan_limits`：`solar_kw = MAX(MIN(solar_kw, plan_x_max_kw), plan_x_min_kw)`
 - 面板数量 `panel_count`
   - `INT(col[row_solar] / panel_power_kw)`（向下取整）
 - 逆变器容量 `inverter_kw`
@@ -187,8 +192,14 @@
 - annual_shifted_kwh_est：理论可转移量（按 `battery_effective_usage_factor` 与全年 365 天估算）
   - `usable * battery_effective_usage_factor * 365`
 - max_shiftable_kwh：可最大转移上限（由剩余可自用潜力决定）
-  - 若 `existing_solar_annual_gen_kwh` 留空：`(roof_max_panels*panel_power_kw*0.7*1200)*(1-existing_sc_rate)` 作为估算剩余馈网量
-  - 否则：`existing * (1-existing_sc_rate)`
+  - 若 `existing_solar_annual_gen_kwh` 留空（兜底）：
+    - 计算 cap_kw（同新建系统 cap 逻辑）：
+      - simple：`cap_kw = Σ facet_power_kw_list`（若列表为空则回退 `roof_max_panels * panel_power_kw`）
+      - strict：`cap_kw = min( Σ功率上限, min(roof_max_panels, Σ面板上限) * panel_power_kw )`
+    - 估算既有装机：`existing_kw = cap_kw * existing_kw_fraction_of_cap`（默认 0.70）
+    - 估算年发电：`estimated_gen = existing_kw * yield_per_kw_per_year`
+    - `max_shift = estimated_gen * (1-existing_sc_rate)`
+  - 否则：`max_shift = existing * (1-existing_sc_rate)`
 - final_annual_shifted_kwh：`MIN(annual_shifted_kwh_est, max_shiftable_kwh)`
 - annual_savings：`final_annual_shifted_kwh * (grid_buy_rate - grid_sell_rate)`
 - total_cost：`battery_kwh * battery_unit_cost_per_kwh + battery_install_base_cost + battery_kwh * battery_install_cost_per_kwh`
