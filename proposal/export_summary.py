@@ -53,6 +53,24 @@ def build_summary_payload(cfg: InputsConfig) -> Dict[str, Any]:
         "meta": {
             "version": "1.0",
             "notes": "Summary aligns with calc_engine payback low/base/high scenarios.",
+            "use_plan_limits": getattr(cfg, "use_plan_limits", False),
+            "usage_cap_policy": getattr(cfg, "usage_cap_policy", "med"),
+            "stc": {
+                "enabled": getattr(cfg, "stc_enable", False),
+                "zone_rating": getattr(cfg, "stc_zone_rating", None),
+                "price_aud": getattr(cfg, "stc_price_aud", None),
+                "years_to_2030": getattr(cfg, "stc_years_to_2030", None),
+            },
+            "battery_rebate": {
+                "fixed_aud": getattr(cfg, "rebate_fixed_aud", 0.0),
+                "per_kwh_aud": getattr(cfg, "rebate_per_kwh_aud", 0.0),
+                "cap_aud": getattr(cfg, "rebate_cap_aud", 0.0),
+                "stack_mode": getattr(cfg, "rebate_stack_mode", "stack"),
+            },
+            "rough_optimize": {
+                "enabled": getattr(cfg, "rough_optimize_enable", False),
+                "factor": getattr(cfg, "rough_optimize_factor", 1.0),
+            },
         },
         "baseline_self_consumption_rate": cfg.baseline_self_consumption_rate,
         "electricity_rates": {

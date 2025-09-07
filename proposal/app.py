@@ -140,6 +140,22 @@ def sidebar_params():
             help="med: 统一使用 annual_home_usage_proxy_med；per_plan: A→low, B→med, C/D→high"
         )
 
+    with st.expander("政策/补贴（STC / 电池补贴）", expanded=True):
+        st.subheader("STC 粗略估算（新建系统）")
+        cfg.stc_enable = st.checkbox("启用 STC 粗略抵扣", value=bool(getattr(cfg, "stc_enable", True)))
+        c1, c2, c3 = st.columns(3)
+        cfg.stc_zone_rating = c1.number_input("STC 区域系数 (zone)", min_value=0.0, value=float(getattr(cfg, "stc_zone_rating", 1.185)), step=0.001, format="%.3f")
+        cfg.stc_price_aud = c2.number_input("STC 价格 (AUD/张)", min_value=0.0, value=float(getattr(cfg, "stc_price_aud", 35.0)), step=1.0)
+        cfg.stc_years_to_2030 = c3.number_input("Deeming 剩余年数", min_value=0, value=int(getattr(cfg, "stc_years_to_2030", 6)), step=1)
+        st.caption("说明：示意值，实际以安装商报价与政策为准；SRES 将于 2030 结束，deeming 每年递减。")
+
+        st.subheader("电池补贴（Retrofit & 新建中的电池部分）")
+        d1, d2, d3 = st.columns(3)
+        cfg.rebate_fixed_aud = d1.number_input("固定补贴 (AUD)", min_value=0.0, value=float(getattr(cfg, "rebate_fixed_aud", 0.0)), step=50.0)
+        cfg.rebate_per_kwh_aud = d2.number_input("每 kWh 补贴 (AUD/kWh)", min_value=0.0, value=float(getattr(cfg, "rebate_per_kwh_aud", 0.0)), step=10.0)
+        cfg.rebate_cap_aud = d3.number_input("总补贴上限 (0 不限)", min_value=0.0, value=float(getattr(cfg, "rebate_cap_aud", 0.0)), step=50.0)
+        cfg.rebate_stack_mode = st.selectbox("叠加策略", options=["stack", "max"], index=0 if getattr(cfg, "rebate_stack_mode", "stack") == "stack" else 1, help="stack: 固定+每kWh 叠加；max: 两者取其大")
+
     with st.expander("电池/Retrofit", expanded=False):
         cfg.battery_dod = st.number_input("电池 DoD", min_value=0.0, max_value=1.0, value=float(cfg.battery_dod), step=0.01)
         cfg.battery_rte = st.number_input("电池 RTE", min_value=0.0, max_value=1.0, value=float(cfg.battery_rte), step=0.01)
@@ -276,6 +292,104 @@ def main():
                     else:
                         st.dataframe(df_simpl.style.format(_numeric_format), use_container_width=True, height=620)
 
+                st.divider()
+                # --- 新建系统：STC 并列视图（仅影响展示，不改原数据） ---
+                if getattr(cfg, "stc_enable", True):
+                    st.markdown("**STC 粗略抵扣（展示）** — 并列显示不含/含 STC 的报价与回本（基线）。")
+                    cols_names = ["Plan A", "Plan B", "Plan C", "Plan D"]
+                    comp_index = [
+                        "price_base_no_stc",
+                        "price_base_with_stc",
+                        "payback_base_no_stc",
+                        "payback_base_with_stc",
+                        "stc_count",
+                        "stc_credit_aud",
+                    ]
+                    df_comp = pd.DataFrame(index=comp_index, columns=cols_names, dtype=float)
+                    for i, colname in enumerate(cols_names):
+                        solar_kw = float(df_detailed.loc["solar_kw", colname])
+                        total_cost = float(df_detailed.loc["total_cost", colname])
+                        price_base = float(df_detailed.loc["price_base", colname])
+                        payback_base = float(df_detailed.loc["payback_base_years", colname])
+                        # 反推出 annual_benefit（基线）
+                        annual_benefit = price_base / payback_base if payback_base and not math.isinf(payback_base) else 0.0
+                        stc_count = round(solar_kw * cfg.stc_zone_rating * int(cfg.stc_years_to_2030))
+                        stc_credit = stc_count * cfg.stc_price_aud
+                        total_cost_after = max(total_cost - stc_credit, 0.0)
+                        price_after = total_cost_after * (1 + cfg.profit_margin_rate)
+                        payback_after = (price_after / annual_benefit) if annual_benefit > 0 else float("inf")
+                        df_comp.loc[:, colname] = [
+                            price_base,
+                            price_after,
+                            payback_base,
+                            payback_after,
+                            stc_count,
+                            stc_credit,
+                        ]
+                    st.dataframe(df_comp.style.format(_numeric_format), use_container_width=True)
+
+                st.divider()
+                st.markdown("**粗略估算（cap=Med）** — 按你提出的公式展示：自用/上网/年节省与回本。")
+                show_rough = st.checkbox("显示粗略估算结果", value=True)
+                if show_rough:
+                    try:
+                        from calc_engine import _plan_target_sc, _plan_capacity
+                    except Exception:
+                        _plan_target_sc = _plan_capacity = None
+                    if _plan_capacity is None:
+                        st.warning("找不到容量/自用率函数，无法计算粗略估算。")
+                    else:
+                        cols = ["Plan A", "Plan B", "Plan C", "Plan D"]
+                        index = [
+                            "annual_generation_kwh",
+                            "self_use_kwh_effective",
+                            "export_kwh",
+                            "self_use_rate_effective",
+                            "annual_savings",
+                            "price_base",
+                            "payback_years",
+                        ]
+                        df_rough = pd.DataFrame(index=index, columns=cols, dtype=float)
+                        cap_med = float(cfg.annual_home_usage_proxy_med)
+                        opt_enable = bool(getattr(cfg, "rough_optimize_enable", False))
+                        opt_factor = float(getattr(cfg, "rough_optimize_factor", 1.08))
+                        if opt_enable:
+                            st.info(f"行为优化已开启：有效自用率按 {opt_factor:.2f} 倍参考提升（仍受 cap 截断，且不影响正式结果）")
+                        for i, letter in enumerate(["A", "B", "C", "D"]):
+                            colname = cols[i]
+                            solar_kw = _plan_capacity(cfg, letter)
+                            annual_gen = solar_kw * cfg.yield_per_kw_per_year
+                            target_sc = _plan_target_sc(cfg, letter)
+                            eff_target = target_sc * (opt_factor if opt_enable else 1.0)
+                            eff_target = min(eff_target, 1.0)
+                            used = min(annual_gen * eff_target, cap_med)
+                            export = max(annual_gen - used, 0.0)
+                            savings = used * cfg.grid_buy_rate + export * cfg.grid_sell_rate
+                            price_base = float(df_detailed.loc["price_base", colname]) if "price_base" in df_detailed.index else 0.0
+                            payback = (price_base / savings) if savings > 0 else float("inf")
+                            eff_sc = (used / annual_gen) if annual_gen > 0 else 0.0
+                            df_rough.loc[:, colname] = [
+                                annual_gen,
+                                used,
+                                export,
+                                eff_sc,
+                                savings,
+                                price_base,
+                                payback,
+                            ]
+                        tips = {
+                            "self_use_kwh_effective": "有效自用电量 = MIN(年发电×目标自用率, annual_home_usage_proxy_med)",
+                            "export_kwh": "上网电量 = 年发电 - 自用",
+                            "self_use_rate_effective": "有效自用率 = 自用/年发电（已受cap截断）",
+                            "annual_savings": "年节省 = 自用×购电价 + 上网×售电价",
+                            "payback_years": "回本周期 = 报价/年节省（报价取详细版的 price_base）",
+                        }
+                        if show_notes:
+                            df_show_rough = _with_notes_first_col(df_rough, tips, col_name="说明")
+                            st.dataframe(df_show_rough.style.format(_numeric_format), use_container_width=True)
+                        else:
+                            st.dataframe(df_rough.style.format(_numeric_format), use_container_width=True)
+
     with tabs[1]:
         st.markdown("<div class='section-title'>储能扩容（Battery Retrofit）</div>", unsafe_allow_html=True)
         if cfg is None:
@@ -300,6 +414,46 @@ def main():
                 st.dataframe(df_show3.style.format(_numeric_format), use_container_width=True, height=620)
             else:
                 st.dataframe(df_ret.style.format(_numeric_format), use_container_width=True, height=620)
+
+            # 并列：含/不含电池补贴
+            st.divider()
+            st.markdown("**电池补贴（展示）** — 并列显示不含/含补贴的报价与回本。")
+            comp_idx = [
+                "price_base_no_rebate",
+                "price_base_with_rebate",
+                "payback_no_rebate",
+                "payback_with_rebate",
+                "rebate_applied_aud",
+            ]
+            cols_names = list(df_ret.columns)
+            df_comp2 = pd.DataFrame(index=comp_idx, columns=cols_names, dtype=float)
+            for name in cols_names:
+                total_cost = float(df_ret.loc["total_cost", name])
+                price_base = float(df_ret.loc["price_base", name])
+                payback = float(df_ret.loc["payback_years", name])
+                annual_savings = price_base / payback if payback and not math.isinf(payback) else 0.0
+                nominal = float(df_ret.loc["battery_nominal_kwh", name])
+                rebate_fixed = float(getattr(cfg, "rebate_fixed_aud", 0.0))
+                rebate_per_kwh = float(getattr(cfg, "rebate_per_kwh_aud", 0.0))
+                stack = getattr(cfg, "rebate_stack_mode", "stack") == "stack"
+                if stack:
+                    rebate_total = rebate_fixed + rebate_per_kwh * nominal
+                else:
+                    rebate_total = max(rebate_fixed, rebate_per_kwh * nominal)
+                cap_total = float(getattr(cfg, "rebate_cap_aud", 0.0))
+                if cap_total > 0:
+                    rebate_total = min(rebate_total, cap_total)
+                total_after = max(total_cost - rebate_total, 0.0)
+                price_after = total_after * (1 + cfg.profit_margin_rate)
+                payback_after = (price_after / annual_savings) if annual_savings > 0 else float("inf")
+                df_comp2.loc[:, name] = [
+                    price_base,
+                    price_after,
+                    payback,
+                    payback_after,
+                    rebate_total,
+                ]
+            st.dataframe(df_comp2.style.format(_numeric_format), use_container_width=True)
 
     with tabs[2]:
         st.markdown("<div class='section-title'>参数总览</div>", unsafe_allow_html=True)
