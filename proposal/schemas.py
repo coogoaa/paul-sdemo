@@ -112,7 +112,7 @@ class InputsConfig(BaseModel):
 
     # 电池补贴（Retrofit & 可用于新建的电池部分），默认 0（保守）
     rebate_fixed_aud: float = Field(0.0, ge=0)
-    rebate_per_kwh_aud: float = Field(0.0, ge=0)
+    rebate_per_kwh_aud: float = Field(300.0, ge=0)
     rebate_cap_aud: float = Field(0.0, ge=0)  # 0 表示不设上限
     rebate_stack_mode: str = Field("stack")  # stack 或 max
 
