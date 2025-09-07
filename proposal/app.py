@@ -206,8 +206,8 @@ def main():
         st.divider()
         show_notes = st.checkbox("显示说明列", value=True)
 
-    # 主区：三个 Tab（新增“计算逻辑”）
-    tabs = st.tabs(["新建系统（详细/简化 对比）", "储能扩容（Battery Retrofit）", "计算逻辑（文档）"]) 
+    # 主区：四个 Tab（新增“参数总览”）
+    tabs = st.tabs(["新建系统（详细/简化 对比）", "储能扩容（Battery Retrofit）", "参数总览", "计算逻辑（文档）"]) 
 
     with tabs[0]:
         st.markdown("<div class='section-title'>新建系统 — 详细版/简化版 对比</div>", unsafe_allow_html=True)
@@ -293,6 +293,22 @@ def main():
                 st.dataframe(df_ret.style.format(_numeric_format), use_container_width=True, height=620)
 
     with tabs[2]:
+        st.markdown("<div class='section-title'>参数总览</div>", unsafe_allow_html=True)
+        p_md = (Path(__file__).resolve().parent / "docs" / "parameters.md")
+        p_html = (Path(__file__).resolve().parent / "docs" / "parameters.html")
+        if p_md.exists():
+            content = p_md.read_text(encoding="utf-8")
+            st.markdown(content, unsafe_allow_html=True)
+        else:
+            st.warning(f"未找到参数文档：{p_md}")
+        st.divider()
+        if p_html.exists():
+            st.caption("静态 HTML 版本：")
+            st.code(str(p_html), language="bash")
+        else:
+            st.caption("未生成静态 HTML（parameters.html）")
+
+    with tabs[3]:
         st.subheader("计算逻辑（与 Excel 公式对齐）")
         doc_path = (Path(__file__).resolve().parent / "docs" / "proposal_logic.md")
         if doc_path.exists():
