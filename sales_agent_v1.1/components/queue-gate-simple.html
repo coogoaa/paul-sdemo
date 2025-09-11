@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Queue Gate · Simple</title>
+  <!-- Align resources with other component pages -->
+  <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAFFFE] text-gray-800">
+  <!-- Full-screen gate -->
+  <div class="min-h-screen flex flex-col">
+    <!-- Top hint (optional) -->
+    <header class="px-4 py-3">
+      <div class="mx-auto max-w-md flex items-center justify-between">
+        <div class="inline-flex items-center gap-2 text-[12px] text-gray-600">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+          <span>为确保服务质量，已开启限流</span>
+        </div>
+        <div class="text-[11px] text-gray-500">Demo / Components</div>
+      </div>
+    </header>
+  
+  <!-- Address bar mock (for previewing how the URL looks on mobile) -->
+  <div class="px-4 -mt-1">
+    <div class="mx-auto max-w-md">
+      <div class="address-bar-mock flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-sm">
+        <div class="h-4 w-4 rounded-sm bg-gray-200 grid place-items-center">
+          <span class="text-[9px] text-gray-500">🔒</span>
+        </div>
+        <div id="addrText" class="text-[12px] text-gray-700 truncate">https://example.com/components/queue-gate-simple.html</div>
+      </div>
+      <div class="mt-1 text-[10px] text-gray-500">该条为“地址栏”模拟，便于手机预览观感</div>
+    </div>
+  </div>
+  
+    <!-- Centered content -->
+    <main class="flex-1 grid place-items-center px-4">
+      <div class="w-full max-w-md">
+        <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-5">
+            <div class="flex items-center gap-2">
+              <div class="inline-flex items-center gap-1.5 text-[12px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+                <i data-lucide="flame" class="w-4 h-4"></i>
+                <span>活动火爆</span>
+              </div>
+              <span class="text-[11px] text-gray-500">请稍后重试</span>
+            </div>
+
+            <h1 class="mt-2 text-[22px] sm:text-[24px] font-semibold tracking-tight text-gray-900">
+              活动太火爆了，请稍后重试
+            </h1>
+            <p class="mt-1 text-[13px] text-gray-600">
+              当前访问人数较多。建议稍等片刻后再试，或点击下方按钮立即刷新。
+            </p>
+
+            <div class="mt-4 flex items-center gap-2">
+              <button id="refreshBtn" class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-[13px] hover:bg-gray-100 inline-flex items-center gap-1.5">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>刷新</span>
+              </button>
+              <label class="ml-auto inline-flex items-center gap-2 text-[12px] text-gray-600 select-none">
+                <input id="autoRefreshToggle" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#22C55E] focus:ring-[#22C55E]" checked />
+                <span>自动刷新（<span id="countdown">10</span>s）</span>
+              </label>
+            </div>
+
+            <div class="mt-3 flex items-center justify-between text-[12px] text-gray-500">
+              <div class="inline-flex items-center gap-1.5">
+                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                <span>非高峰时段等待更短：工作日 10:00–12:00</span>
+              </div>
+              <button id="backBtn" class="text-gray-600 hover:text-gray-800 inline-flex items-center gap-1">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                返回
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Optional: lightweight tips below card -->
+        <div class="mt-3 text-center text-[11px] text-gray-500">
+          你可以保持此页面打开，系统会在倒计时结束时尝试刷新。
+        </div>
+      </div>
+    </main>
+
+    <footer class="px-4 py-4">
+      <div class="mx-auto max-w-md text-center text-[11px] text-gray-400">
+        © Demo Page · Queue Gate Simple
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      function initIcons(){ try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch(e){} }
+
+      function initAddressBar(){
+        try {
+          var el = document.getElementById('addrText');
+          if (el) el.textContent = window.location.href;
+        } catch(e){}
+      }
+
+      function bindActions(){
+        const refreshBtn = document.getElementById('refreshBtn');
+        const backBtn = document.getElementById('backBtn');
+        const autoToggle = document.getElementById('autoRefreshToggle');
+        const countdownEl = document.getElementById('countdown');
+        let remain = 10;
+        let timer = null;
+
+        function startCountdown(){
+          if (!autoToggle.checked) return;
+          clearInterval(timer);
+          timer = setInterval(() => {
+            if (!autoToggle.checked) { clearInterval(timer); return; }
+            remain -= 1;
+            if (remain < 0) {
+              clearInterval(timer);
+              try { window.location.reload(); } catch(e){}
+              return;
+            }
+            if (countdownEl) countdownEl.textContent = String(remain);
+          }, 1000);
+        }
+
+        function resetCountdown(){ remain = 10; if (countdownEl) countdownEl.textContent = String(remain); }
+
+        refreshBtn && refreshBtn.addEventListener('click', () => { try { window.location.reload(); } catch(e){} });
+        backBtn && backBtn.addEventListener('click', () => { try { history.back(); } catch(e){} });
+        autoToggle && autoToggle.addEventListener('change', () => {
+          if (autoToggle.checked) { resetCountdown(); startCountdown(); }
+          else { clearInterval(timer); }
+        });
+
+        resetCountdown();
+        startCountdown();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => { initIcons(); initAddressBar(); bindActions(); });
+      } else {
+        initIcons(); initAddressBar(); bindActions();
+      }
+    })();
+  </script>
+</body>
+</html>

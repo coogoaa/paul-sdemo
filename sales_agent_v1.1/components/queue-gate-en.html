@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>We're popular today!</title>
+  <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAFFFE] text-gray-800">
+  <main class="min-h-screen grid place-items-center px-4">
+    <div class="w-full max-w-md text-center">
+      <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span>High demand</span>
+      </div>
+
+      <h1 class="mt-3 text-[24px] sm:text-[26px] font-semibold tracking-tight text-gray-900">
+        We're popular today! You're in the queue.
+      </h1>
+      <p class="mt-2 text-[13px] text-gray-600">
+        It looks like many homeowners are exploring their solar potential right now!
+        Your request has been secured, and our AI agent will begin analyzing your roof shortly.
+      </p>
+
+      <div class="mt-4 flex justify-center">
+        <button class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-[13px] hover:bg-gray-100 inline-flex items-center gap-1.5" onclick="window.location.reload()">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          <span>Refresh</span>
+        </button>
+      </div>
+
+      <p class="mt-3 text-[11px] text-gray-500">
+        Thanks for your patience — this usually takes just a moment.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch(e){}
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>访问提示 · 简洁版</title>
+  <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAFFFE] text-gray-800">
+  <main class="min-h-screen grid place-items-center px-4">
+    <div class="w-full max-w-md text-center">
+      <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+        <i data-lucide="flame" class="w-4 h-4"></i>
+        <span>访问高峰</span>
+      </div>
+
+      <h1 class="mt-3 text-[24px] sm:text-[26px] font-semibold tracking-tight text-gray-900">
+        活动太火爆了，请稍后重试
+      </h1>
+      <p class="mt-2 text-[13px] text-gray-600">
+        由于并发超载，暂时无法进入。稍等片刻后再试，或点击下方按钮刷新页面。
+      </p>
+
+      <div class="mt-4 flex justify-center">
+        <button class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-[13px] hover:bg-gray-100 inline-flex items-center gap-1.5" onclick="window.location.reload()">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          <span>刷新</span>
+        </button>
+      </div>
+
+      <p class="mt-3 text-[11px] text-gray-500">
+        为确保服务质量，我们会在容量空闲时开放访问。感谢理解。
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch(e){}
+    })();
+  </script>
+</body>
+</html>
