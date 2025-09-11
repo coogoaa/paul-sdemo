@@ -622,24 +622,15 @@
       const urlSpan = document.getElementById('shareUrlText');
 
       closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
-      shareNativeBtn?.addEventListener('click', async () => {
-        const conf = getSchemeConfig(state.scheme || 'smart');
-        const txt = buildShareText(conf);
-        const url = urlSpan?.textContent || location.href;
-        const shareData = { title: 'Solar Proposal', text: txt, url };
-        try {
-          if (navigator.share) {
-            await navigator.share(shareData);
-            showToast('System share opened', 'info');
-            track('share_native', { scheme: state.scheme || 'smart' });
-          } else {
-            await navigator.clipboard.writeText(`${txt}\n${url}`);
-            showToast('Copied link', 'success');
-            track('share_copy_fallback', { scheme: state.scheme || 'smart' });
-          }
-        } catch {
-          showToast('Share canceled', 'info');
-        }
+      shareNativeBtn?.addEventListener('click', () => {
+        const pageUrl = urlSpan?.textContent || location.href;
+        const shareImg = document.getElementById('shareImg');
+        const imgSrc = shareImg?.getAttribute('src') || 'Pic/share card.png';
+        const imgUrl = new URL(imgSrc, location.href).href;
+        const text = `${pageUrl}\n${imgUrl}`;
+        const wa = 'https://wa.me/?text=' + encodeURIComponent(text);
+        window.open(wa, '_blank');
+        try { track('share_whatsapp', { scheme: state.scheme || 'smart' }); } catch {}
       });
       shareCopyBtn?.addEventListener('click', async () => {
         const url = urlSpan?.textContent || location.href;
