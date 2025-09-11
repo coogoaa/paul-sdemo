@@ -211,6 +211,43 @@
 
     <main class="flex-1 px-3 pb-20 space-y-4">
 
+      <!-- MAP_CARD: Step 2 roof confirmation demo (with image) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="mb-2 flex items-center justify-between">
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <i data-lucide="map" class="w-4 h-4"></i>
+              <span>Map card (Step 2)</span>
+            </div>
+            <div class="text-[11px] text-gray-500">Demo · Tap to place marker</div>
+          </div>
+          <div class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 45vh;">
+            <!-- Map viewport -->
+            <div id="demoMapViewport" class="absolute inset-0 touch-pan-y touch-pan-x cursor-grab active:cursor-grabbing">
+              <img id="demoMapImage" src="../Pic/point_523_high.jpg" class="select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="transform: translate(-50%, -50%) scale(1.6); transform-origin: center center; width: 160%; height: auto;">
+              <!-- Roof highlight / marker overlay -->
+              <svg id="demoRoofOverlay" class="absolute inset-0 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+              <!-- Map HUD -->
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag/zoom map, then tap your roof</div>
+              <div class="absolute top-2 right-2 flex flex-col gap-1">
+                <button id="demoZoomIn" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                <button id="demoZoomOut" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                <button id="demoResetView" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+              </div>
+            </div>
+            <!-- Confirm bar -->
+            <div class="absolute bottom-0 inset-x-0 p-2 bg-gradient-to-t from-gray-100 to-transparent">
+              <div class="flex items-center gap-2">
+                <div id="demoRoofHint" class="flex-1 text-[12px] text-gray-600">Tap your roof on the map</div>
+                <button id="demoConfirmRoof" class="shrink-0 inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                  <i data-lucide="check" class="w-4 h-4"></i> Confirm roof
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- S5_COMPOSITE_CARD: 3D/2D + Plans + Value + CTA -->
       <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
         <div class="p-3">
