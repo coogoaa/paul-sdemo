@@ -201,6 +201,7 @@
       }
     }
   </style>
+  <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=68c2a297e9a9a694b16bc081&product=sop' async='async'></script>
 </head>
 <body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
   <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
@@ -352,6 +353,10 @@
               <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white hover:bg-gray-50 inline-flex items-center gap-1.5">
                 <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                 <span>Share</span>
+              </button>
+              <button id="waShare1" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-[#25D366] text-white hover:bg-[#1ebe57] inline-flex items-center gap-1.5">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                <span>WhatsApp</span>
               </button>
               <button class="btn-export px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white hover:bg-gray-50 inline-flex items-center gap-1.5" data-target="#shareCard">
                 <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
@@ -1070,5 +1075,77 @@
       } else { try{ bindExportButtons(); if (window.lucide && lucide.createIcons) lucide.createIcons(); }catch(e){} }
     })();
   </script>
+  <!-- WhatsApp share helper for Shareable summary -->
+  <script>
+    (function(){
+      function getText(el){ return (el && el.textContent ? el.textContent : '').trim(); }
+      function buildShareText(suffix){
+        const addr = getText(document.getElementById('shareAddr' + suffix));
+        const plan = getText(document.getElementById('sharePlan' + suffix));
+        const size = getText(document.getElementById('shareSize' + suffix));
+        const budget = getText(document.getElementById('shareBudget' + suffix));
+        const roi = getText(document.getElementById('shareROI' + suffix));
+        const selfUse = getText(document.getElementById('shareSelfUse' + suffix));
+        const date = getText(document.getElementById('shareDate' + suffix));
+        const url = window.location.href;
+        const lines = [
+          'Solar Estimation — Shareable Summary',
+          addr && ('Address: ' + addr),
+          plan && ('Plan: ' + plan),
+          size && ('System size: ' + size),
+          budget && ('Budget: ' + budget),
+          roi && ('Payback: ' + roi),
+          selfUse && ('Self-consumption: ' + selfUse),
+          date && ('Date: ' + date),
+          url && ('Link: ' + url)
+        ].filter(Boolean);
+        return encodeURIComponent(lines.join('\n'));
+      }
+
+      function initDates(){
+        try{
+          const d = new Date();
+          const localeDate = d.toLocaleDateString();
+          const el1 = document.getElementById('shareDate');
+          const el2 = document.getElementById('shareDate2');
+          if (el1 && !el1.textContent) el1.textContent = localeDate;
+          if (el2 && !el2.textContent) el2.textContent = localeDate;
+        }catch(e){}
+      }
+
+      function bindWA(){
+        const btn1 = document.getElementById('waShare1');
+        if (btn1 && !btn1.__bound) {
+          btn1.__bound = true;
+          btn1.addEventListener('click', () => {
+            const text = buildShareText('');
+            const wa = 'https://wa.me/?text=' + text;
+            window.open(wa, '_blank');
+          });
+        }
+        const btn2 = document.getElementById('waShare2');
+        if (btn2 && !btn2.__bound) {
+          btn2.__bound = true;
+          btn2.addEventListener('click', () => {
+            const text = buildShareText('2');
+            const wa = 'https://wa.me/?text=' + text;
+            window.open(wa, '_blank');
+          });
+        }
+        try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch(e){}
+      }
+
+      function init(){ initDates(); bindWA(); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+  <!-- Bottom Share Buttons -->
+  <div class="px-3 pb-6">
+    <div class="sharethis-inline-share-buttons"></div>
+  </div>
 </body>
 </html>
