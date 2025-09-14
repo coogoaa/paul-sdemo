@@ -1,3 +1,51 @@
+                <!-- 储能扩容参数 (储能扩容) -->
+                <div class="config-section section-retrofit">
+                    <h6>储能扩容预设容量</h6>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label>储能A 电池(kWh)</label>
+                            <input type="number" id="retrofit_plan_a_kwh" class="form-control" value="5" step="0.5">
+                        </div>
+                        <div class="col-6">
+                            <label>储能B 电池(kWh)</label>
+                            <input type="number" id="retrofit_plan_b_kwh" class="form-control" value="10" step="0.5">
+                        </div>
+                        <div class="col-6">
+                            <label>储能C 电池(kWh)</label>
+                            <input type="number" id="retrofit_plan_c_kwh" class="form-control" value="13.5" step="0.5">
+                        </div>
+                        <div class="col-6">
+                            <label>储能D 电池(kWh)</label>
+                            <input type="number" id="retrofit_plan_d_kwh" class="form-control" value="20" step="0.5">
+                        </div>
+                    </div>
+                    <hr>
+                    <h6>储能扩容成本</h6>
+                    <div class="mb-2">
+                        <label>电池成本 (AUD/kWh)</label>
+                        <input type="number" id="battery_unit_cost_per_kwh_retrofit" class="form-control" value="500" step="10">
+                    </div>
+                    <div class="mb-2">
+                        <label>安装基础费 (AUD)</label>
+                        <input type="number" id="battery_install_base_cost" class="form-control" value="500" step="10">
+                    </div>
+                    <div class="mb-2">
+                        <label>安装每kWh (AUD/kWh)</label>
+                        <input type="number" id="battery_install_cost_per_kwh" class="form-control" value="50" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label>扩容利润率</label>
+                        <input type="number" id="battery_profit_margin_rate" class="form-control" value="0.1" step="0.01">
+                    </div>
+                    <div class="mb-2">
+                        <label>报价浮动范围</label>
+                        <input type="number" id="battery_price_range_percent" class="form-control" value="0.05" step="0.01">
+                    </div>
+                    <div class="mb-2">
+                        <label>有效利用天数 (天)</label>
+                        <input type="number" id="annual_effective_days" class="form-control" value="300" step="1">
+                    </div>
+                </div>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -49,8 +97,18 @@
             <!-- 左侧：输入参数 -->
             <div class="col-md-3 sticky-top-custom">
                 <h4>输入参数</h4>
+                <div class="alert alert-secondary py-2 px-3 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <strong>模式：</strong>
+                        <select id="modeSelector" class="form-select form-select-sm" style="width:auto">
+                            <option value="new">新建系统</option>
+                            <option value="retrofit">储能扩容</option>
+                        </select>
+                    </div>
+                    <div class="small text-muted mt-1">切换后仅显示相关输入，并在中间展示对应的计算过程</div>
+                </div>
                 
-                <!-- 配置文件管理 -->
+                <!-- 配置文件管理 (共用) -->
                 <div class="config-section">
                     <h6>配置文件管理</h6>
                     <input type="file" id="configFile" accept=".json" class="form-control mb-2">
@@ -58,8 +116,8 @@
                     <button class="btn btn-sm btn-success" onclick="exportConfig()">导出配置</button>
                 </div>
 
-                <!-- 手动输入数据 -->
-                <div class="config-section">
+                <!-- 手动输入数据 (新建系统) -->
+                <div class="config-section section-new">
                     <h6>手动输入数据</h6>
                     <div class="mb-2">
                         <label>屋顶最大装机容量 (kW)</label>
@@ -71,8 +129,8 @@
                     </div>
                 </div>
 
-                <!-- 方案配置 -->
-                <div class="config-section">
+                <!-- 方案配置 (新建系统) -->
+                <div class="config-section section-new">
                     <h6>方案配置</h6>
                     <div class="row g-2">
                         <div class="col-6">
@@ -110,8 +168,8 @@
                     </div>
                 </div>
 
-                <!-- 技术参数 -->
-                <div class="config-section">
+                <!-- 技术参数 (共用) -->
+                <div class="config-section section-shared">
                     <h6>技术参数</h6>
                     <div class="mb-2">
                         <label>单块面板功率 (kW)</label>
@@ -135,8 +193,8 @@
                     </div>
                 </div>
 
-                <!-- 成本参数 -->
-                <div class="config-section">
+                <!-- 成本参数 (新建系统) -->
+                <div class="config-section section-new">
                     <h6>成本参数</h6>
                     <div class="mb-2">
                         <label>面板单价 (AUD/块)</label>
@@ -164,8 +222,8 @@
                     </div>
                 </div>
 
-                <!-- 电价参数 -->
-                <div class="config-section">
+                <!-- 电价参数 (共用) -->
+                <div class="config-section section-shared">
                     <h6>电价参数</h6>
                     <div class="mb-2">
                         <label>购电价 (AUD/kWh)</label>
@@ -191,8 +249,11 @@
                             <option value="C">方案C</option>
                             <option value="D">方案D</option>
                         </select>
+                        <select id="stepsModeSelector" class="form-select form-select-sm" style="width:auto">
+                            <option value="new">新建系统步骤</option>
+                            <option value="retrofit">储能扩容步骤</option>
+                        </select>
                         <select id="retrofitSelector" class="form-select form-select-sm" style="width:auto">
-                            <option value="none">不显示储能步骤</option>
                             <option value="A">储能A</option>
                             <option value="B">储能B</option>
                             <option value="C">储能C</option>
@@ -312,7 +373,7 @@
                 D: { cf: getInputValue('plan_d_capacity_factor'), sc: getInputValue('plan_d_target_sc_rate') }
             };
 
-            // 逐方案计算
+            // 逐方案计算（新建系统）
             const planResults = {};
             Object.entries(plans).forEach(([key, p]) => {
                 const solarKw = roofMaxPower * p.cf;
@@ -339,18 +400,27 @@
             });
             lastComputed.plans = planResults;
 
-            // 显示计算步骤（按选择的方案）
-            const selectedPlan = document.getElementById('planSelector').value;
-            displayPlanSteps(selectedPlan, planResults[selectedPlan], {
-                panelPower, dcAcRatio, baselineSc, batteryDod, batteryRte,
-                panelCost, inverterCost, batteryCostNew, installBase, installPerKw, profitMargin,
-                gridBuyRate, gridSellRate, annualGeneration
-            });
+            // 显示计算步骤（根据模式）
+            const stepsMode = document.getElementById('stepsModeSelector').value;
+            if (stepsMode === 'new') {
+                const selectedPlan = document.getElementById('planSelector').value;
+                displayPlanSteps(selectedPlan, planResults[selectedPlan], {
+                    panelPower, dcAcRatio, baselineSc, batteryDod, batteryRte,
+                    panelCost, inverterCost, batteryCostNew, installBase, installPerKw, profitMargin,
+                    gridBuyRate, gridSellRate, annualGeneration
+                });
+            } else {
+                const idxMap = {A:0,B:1,C:2,D:3};
+                const sel = document.getElementById('retrofitSelector').value;
+                // 仅显示储能步骤（先清空）
+                displayCalculationSteps([]);
+                // 计算储能并展示所选步骤
+                const arr = calculateRetrofit({ gridBuyRate, gridSellRate, batteryDod, batteryRte, returnOnly: true });
+                displayRetrofitSteps(arr[idxMap[sel]], { gridBuyRate, gridSellRate, batteryDod, batteryRte });
+            }
 
-            // 显示多方案结果
+            // 始终更新结果表
             displayResultsPV(planResults);
-
-            // 储能扩容计算
             calculateRetrofit({ gridBuyRate, gridSellRate, batteryDod, batteryRte });
         }
 
@@ -495,16 +565,16 @@
 
         function calculateRetrofit(ctx) {
             // 读取配置
-            const capA = config?.retrofit_params?.battery_capacities?.retrofit_plan_a_kwh?.value ?? 5;
-            const capB = config?.retrofit_params?.battery_capacities?.retrofit_plan_b_kwh?.value ?? 10;
-            const capC = config?.retrofit_params?.battery_capacities?.retrofit_plan_c_kwh?.value ?? 13.5;
-            const capD = config?.retrofit_params?.battery_capacities?.retrofit_plan_d_kwh?.value ?? 20;
-            const costPerKwh = config?.retrofit_params?.retrofit_costs?.battery_unit_cost_per_kwh_retrofit?.value ?? 500;
-            const installBase = config?.retrofit_params?.retrofit_costs?.battery_install_base_cost?.value ?? 500;
-            const installPerKwh = config?.retrofit_params?.retrofit_costs?.battery_install_cost_per_kwh?.value ?? 50;
-            const profitRate = config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1;
-            const priceRange = config?.retrofit_params?.pricing_params?.battery_price_range_percent?.value ?? 0.05;
-            const annualDays = config?.retrofit_params?.system_params?.annual_effective_days?.value ?? 300;
+            const capA = parseFloat(document.getElementById('retrofit_plan_a_kwh')?.value) || (config?.retrofit_params?.battery_capacities?.retrofit_plan_a_kwh?.value ?? 5);
+            const capB = parseFloat(document.getElementById('retrofit_plan_b_kwh')?.value) || (config?.retrofit_params?.battery_capacities?.retrofit_plan_b_kwh?.value ?? 10);
+            const capC = parseFloat(document.getElementById('retrofit_plan_c_kwh')?.value) || (config?.retrofit_params?.battery_capacities?.retrofit_plan_c_kwh?.value ?? 13.5);
+            const capD = parseFloat(document.getElementById('retrofit_plan_d_kwh')?.value) || (config?.retrofit_params?.battery_capacities?.retrofit_plan_d_kwh?.value ?? 20);
+            const costPerKwh = parseFloat(document.getElementById('battery_unit_cost_per_kwh_retrofit')?.value) || (config?.retrofit_params?.retrofit_costs?.battery_unit_cost_per_kwh_retrofit?.value ?? 500);
+            const installBase = parseFloat(document.getElementById('battery_install_base_cost')?.value) || (config?.retrofit_params?.retrofit_costs?.battery_install_base_cost?.value ?? 500);
+            const installPerKwh = parseFloat(document.getElementById('battery_install_cost_per_kwh')?.value) || (config?.retrofit_params?.retrofit_costs?.battery_install_cost_per_kwh?.value ?? 50);
+            const profitRate = parseFloat(document.getElementById('battery_profit_margin_rate')?.value) || (config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1);
+            const priceRange = parseFloat(document.getElementById('battery_price_range_percent')?.value) || (config?.retrofit_params?.pricing_params?.battery_price_range_percent?.value ?? 0.05);
+            const annualDays = parseFloat(document.getElementById('annual_effective_days')?.value) || (config?.retrofit_params?.system_params?.annual_effective_days?.value ?? 300);
 
             const calcOne = (cap) => {
                 const retrofitCost = (cap * costPerKwh) + installBase + (cap * installPerKwh);
@@ -520,10 +590,10 @@
             displayResultsRetrofit(arr);
 
             // 可选：显示储能步骤（根据下拉选择）
-            const sel = document.getElementById('retrofitSelector').value;
-            if (sel !== 'none') {
-                const idxMap = {A:0,B:1,C:2,D:3};
-                displayRetrofitSteps(arr[idxMap[sel]], ctx);
+            if (ctx?.returnOnly) {
+                return arr;
+            } else {
+                return arr;
             }
         }
 
@@ -667,13 +737,24 @@
                 // 重新展示当前选择方案步骤
                 calculate();
             });
-            document.getElementById('retrofitSelector').addEventListener('change', () => {
-                // 切换储能步骤显示
+            document.getElementById('stepsModeSelector').addEventListener('change', () => {
                 calculate();
             });
+            document.getElementById('retrofitSelector').addEventListener('change', () => {
+                calculate();
+            });
+            document.getElementById('modeSelector').addEventListener('change', applyMode);
             // 初始化：加载默认配置并计算
             loadDefaultConfig();
+            applyMode();
         });
+
+        function applyMode() {
+            const mode = document.getElementById('modeSelector').value; // new | retrofit
+            document.querySelectorAll('.section-new').forEach(el => el.style.display = (mode === 'new') ? '' : 'none');
+            document.querySelectorAll('.section-retrofit').forEach(el => el.style.display = (mode === 'retrofit') ? '' : 'none');
+            document.querySelectorAll('.section-shared').forEach(el => el.style.display = '');
+        }
 
         // 文件上传处理
         document.getElementById('configFile').addEventListener('change', function(e) {
@@ -693,5 +774,6 @@
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
