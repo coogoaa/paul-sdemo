@@ -74,7 +74,7 @@
                 <!-- 方案配置 -->
                 <div class="config-section">
                     <h6>方案配置</h6>
-                    <div class="row">
+                    <div class="row g-2">
                         <div class="col-6">
                             <label>方案A容量系数</label>
                             <input type="number" id="plan_a_capacity_factor" class="form-control" value="0.3" step="0.1">
@@ -82,6 +82,30 @@
                         <div class="col-6">
                             <label>方案A自用率</label>
                             <input type="number" id="plan_a_target_sc_rate" class="form-control" value="0.3" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label>方案B容量系数</label>
+                            <input type="number" id="plan_b_capacity_factor" class="form-control" value="0.5" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label>方案B自用率</label>
+                            <input type="number" id="plan_b_target_sc_rate" class="form-control" value="0.5" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label>方案C容量系数</label>
+                            <input type="number" id="plan_c_capacity_factor" class="form-control" value="0.8" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label>方案C自用率</label>
+                            <input type="number" id="plan_c_target_sc_rate" class="form-control" value="0.7" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label>方案D容量系数</label>
+                            <input type="number" id="plan_d_capacity_factor" class="form-control" value="0.9" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label>方案D自用率</label>
+                            <input type="number" id="plan_d_target_sc_rate" class="form-control" value="0.9" step="0.1">
                         </div>
                     </div>
                 </div>
@@ -158,20 +182,53 @@
 
             <!-- 中间：计算过程 -->
             <div class="col-md-5">
-                <h4>计算过程详解</h4>
-                <div id="calculationSteps"></div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">计算过程详解</h4>
+                    <div class="d-flex gap-2">
+                        <select id="planSelector" class="form-select form-select-sm" style="width:auto">
+                            <option value="A">方案A</option>
+                            <option value="B">方案B</option>
+                            <option value="C">方案C</option>
+                            <option value="D">方案D</option>
+                        </select>
+                        <select id="retrofitSelector" class="form-select form-select-sm" style="width:auto">
+                            <option value="none">不显示储能步骤</option>
+                            <option value="A">储能A</option>
+                            <option value="B">储能B</option>
+                            <option value="C">储能C</option>
+                            <option value="D">储能D</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="calculationSteps" class="mt-2"></div>
             </div>
 
             <!-- 右侧：结果展示 -->
             <div class="col-md-4">
                 <h4>计算结果</h4>
-                <div id="results"></div>
+                <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pv-tab" data-bs-toggle="tab" data-bs-target="#pv" type="button" role="tab">新建光伏方案</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="retrofit-tab" data-bs-toggle="tab" data-bs-target="#retrofit" type="button" role="tab">储能扩容方案</button>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane fade show active p-2" id="pv" role="tabpanel">
+                    <div id="resultsPV"></div>
+                  </div>
+                  <div class="tab-pane fade p-2" id="retrofit" role="tabpanel">
+                    <div id="resultsRetrofit"></div>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         let config = {};
+        let lastComputed = { plans: {}, retrofit: {} };
 
         // 加载默认配置
         async function loadDefaultConfig() {
@@ -194,7 +251,13 @@
             const updates = {
                 'panel_power_kw': config.roof_analysis?.panel_power_kw?.value,
                 'plan_a_capacity_factor': config.new_system_plans?.capacity_factors?.plan_a_capacity_factor?.value,
+                'plan_b_capacity_factor': config.new_system_plans?.capacity_factors?.plan_b_capacity_factor?.value,
+                'plan_c_capacity_factor': config.new_system_plans?.capacity_factors?.plan_c_capacity_factor?.value,
+                'plan_d_capacity_factor': config.new_system_plans?.capacity_factors?.plan_d_capacity_factor?.value,
                 'plan_a_target_sc_rate': config.new_system_plans?.target_sc_rates?.plan_a_target_sc_rate?.value,
+                'plan_b_target_sc_rate': config.new_system_plans?.target_sc_rates?.plan_b_target_sc_rate?.value,
+                'plan_c_target_sc_rate': config.new_system_plans?.target_sc_rates?.plan_c_target_sc_rate?.value,
+                'plan_d_target_sc_rate': config.new_system_plans?.target_sc_rates?.plan_d_target_sc_rate?.value,
                 'dc_ac_ratio': config.new_system_plans?.technical_params?.dc_ac_ratio?.value,
                 'baseline_self_consumption_rate': config.new_system_plans?.technical_params?.baseline_self_consumption_rate?.value,
                 'battery_dod': config.new_system_plans?.technical_params?.battery_dod?.value,
@@ -223,16 +286,11 @@
             return element ? parseFloat(element.value) : 0;
         }
 
-        // 计算函数
+        // 计算函数（多方案 + 储能扩容）
         function calculate() {
-            const steps = [];
-            const results = {};
-
-            // 获取输入参数
+            // 通用输入
             const roofMaxPower = getInputValue('roof_max_power_kw');
             const annualGeneration = getInputValue('annual_generation_pvlib_kwh');
-            const planACapacityFactor = getInputValue('plan_a_capacity_factor');
-            const planATargetSc = getInputValue('plan_a_target_sc_rate');
             const panelPower = getInputValue('panel_power_kw');
             const dcAcRatio = getInputValue('dc_ac_ratio');
             const baselineSc = getInputValue('baseline_self_consumption_rate');
@@ -240,91 +298,128 @@
             const batteryRte = getInputValue('battery_rte');
             const panelCost = getInputValue('panel_unit_cost');
             const inverterCost = getInputValue('inverter_unit_cost_per_kw');
-            const batteryCost = getInputValue('battery_unit_cost_per_kwh_new');
+            const batteryCostNew = getInputValue('battery_unit_cost_per_kwh_new');
             const installBase = getInputValue('install_base_cost');
             const installPerKw = getInputValue('install_cost_per_kw');
             const profitMargin = getInputValue('profit_margin_rate');
             const gridBuyRate = getInputValue('grid_buy_rate');
             const gridSellRate = getInputValue('grid_sell_rate');
 
-            // 步骤1：计算光伏容量
-            const solarKw = roofMaxPower * planACapacityFactor;
-            steps.push({
-                title: '步骤1: 计算方案A光伏容量',
-                inputs: [
-                    `roof_max_power_kw = ${roofMaxPower} kW (手动输入)`,
-                    `plan_a_capacity_factor = ${planACapacityFactor} (配置文件)`
-                ],
-                formula: 'solar_kw = roof_max_power_kw × plan_a_capacity_factor',
-                calculation: `solar_kw = ${roofMaxPower} × ${planACapacityFactor} = ${solarKw.toFixed(2)} kW`,
-                result: `方案A光伏容量: ${solarKw.toFixed(2)} kW`
+            const plans = {
+                A: { cf: getInputValue('plan_a_capacity_factor'), sc: getInputValue('plan_a_target_sc_rate') },
+                B: { cf: getInputValue('plan_b_capacity_factor'), sc: getInputValue('plan_b_target_sc_rate') },
+                C: { cf: getInputValue('plan_c_capacity_factor'), sc: getInputValue('plan_c_target_sc_rate') },
+                D: { cf: getInputValue('plan_d_capacity_factor'), sc: getInputValue('plan_d_target_sc_rate') }
+            };
+
+            // 逐方案计算
+            const planResults = {};
+            Object.entries(plans).forEach(([key, p]) => {
+                const solarKw = roofMaxPower * p.cf;
+                const panelCount = Math.floor(solarKw / panelPower);
+                const inverterKw = Math.ceil((solarKw / dcAcRatio) * 10) / 10;
+                const dailyEnergyShift = (annualGeneration / 365) * (p.sc - baselineSc);
+                const batteryNominal = dailyEnergyShift > 0 ? Math.round((dailyEnergyShift / (batteryDod * batteryRte)) * 100) / 100 : 0;
+                const costPanels = panelCount * panelCost;
+                const costInverter = inverterKw * inverterCost;
+                const costBattery = batteryNominal * batteryCostNew;
+                const costInstall = installBase + solarKw * installPerKw;
+                const totalCost = costPanels + costInverter + costBattery + costInstall;
+                const priceBase = totalCost * (1 + profitMargin);
+                const annualSelfConsumption = annualGeneration * p.sc;
+                const annualGridExport = annualGeneration - annualSelfConsumption;
+                const annualSavings = (annualSelfConsumption * gridBuyRate) + (annualGridExport * gridSellRate);
+                const paybackPeriod = annualSavings > 0 ? priceBase / annualSavings : Infinity;
+
+                planResults[key] = {
+                    solarKw, panelCount, inverterKw, batteryNominal, priceBase,
+                    annualSelfConsumption, annualGridExport, annualSavings, paybackPeriod,
+                    inputs: { roofMaxPower, cf: p.cf, sc: p.sc }
+                };
+            });
+            lastComputed.plans = planResults;
+
+            // 显示计算步骤（按选择的方案）
+            const selectedPlan = document.getElementById('planSelector').value;
+            displayPlanSteps(selectedPlan, planResults[selectedPlan], {
+                panelPower, dcAcRatio, baselineSc, batteryDod, batteryRte,
+                panelCost, inverterCost, batteryCostNew, installBase, installPerKw, profitMargin,
+                gridBuyRate, gridSellRate, annualGeneration
             });
 
-            // 步骤2：计算面板数量
-            const panelCount = Math.floor(solarKw / panelPower);
+            // 显示多方案结果
+            displayResultsPV(planResults);
+
+            // 储能扩容计算
+            calculateRetrofit({ gridBuyRate, gridSellRate, batteryDod, batteryRte });
+        }
+
+        function displayPlanSteps(planKey, r, ctx) {
+            const steps = [];
+            // 步骤1
+            steps.push({
+                title: `步骤1: 计算方案${planKey}光伏容量`,
+                inputs: [
+                    `roof_max_power_kw = ${r.inputs.roofMaxPower} kW (手动输入)`,
+                    `plan_${planKey.toLowerCase()}_capacity_factor = ${r.inputs.cf} (配置文件)`
+                ],
+                formula: 'solar_kw = roof_max_power_kw × plan_capacity_factor',
+                calculation: `solar_kw = ${r.inputs.roofMaxPower} × ${r.inputs.cf} = ${r.solarKw.toFixed(2)} kW`,
+                result: `光伏容量: ${r.solarKw.toFixed(2)} kW`
+            });
+            // 步骤2
             steps.push({
                 title: '步骤2: 计算面板数量',
                 inputs: [
-                    `solar_kw = ${solarKw.toFixed(2)} kW (上游计算)`,
-                    `panel_power_kw = ${panelPower} kW (配置文件)`
+                    `solar_kw = ${r.solarKw.toFixed(2)} kW (上游计算)`,
+                    `panel_power_kw = ${ctx.panelPower} kW (配置文件)`
                 ],
                 formula: 'panel_count = FLOOR(solar_kw / panel_power_kw)',
-                calculation: `panel_count = FLOOR(${solarKw.toFixed(2)} / ${panelPower}) = ${panelCount} 块`,
-                result: `面板数量: ${panelCount} 块`
+                calculation: `panel_count = FLOOR(${r.solarKw.toFixed(2)} / ${ctx.panelPower}) = ${r.panelCount} 块`,
+                result: `面板数量: ${r.panelCount} 块`
             });
-
-            // 步骤3：计算逆变器功率
-            const inverterKw = Math.ceil((solarKw / dcAcRatio) * 10) / 10;
+            // 步骤3
             steps.push({
                 title: '步骤3: 计算逆变器功率',
                 inputs: [
-                    `solar_kw = ${solarKw.toFixed(2)} kW (上游计算)`,
-                    `dc_ac_ratio = ${dcAcRatio} (配置文件)`
+                    `solar_kw = ${r.solarKw.toFixed(2)} kW (上游计算)`,
+                    `dc_ac_ratio = ${ctx.dcAcRatio} (配置文件)`
                 ],
                 formula: 'inverter_kw = CEILING_TO_0.1(solar_kw / dc_ac_ratio)',
-                calculation: `inverter_kw = CEILING_TO_0.1(${solarKw.toFixed(2)} / ${dcAcRatio}) = ${inverterKw.toFixed(1)} kW`,
-                result: `逆变器功率: ${inverterKw.toFixed(1)} kW`
+                calculation: `inverter_kw = CEILING_TO_0.1(${r.solarKw.toFixed(2)} / ${ctx.dcAcRatio}) = ${r.inverterKw.toFixed(1)} kW`,
+                result: `逆变器功率: ${r.inverterKw.toFixed(1)} kW`
             });
-
-            // 步骤4：计算电池容量需求
-            const dailyEnergyShift = (annualGeneration / 365) * (planATargetSc - baselineSc);
-            const batteryNominal = dailyEnergyShift > 0 ? Math.round((dailyEnergyShift / (batteryDod * batteryRte)) * 100) / 100 : 0;
+            // 步骤4
+            const dailyEnergyShift = (ctx.annualGeneration / 365) * (r.inputs.sc - ctx.baselineSc);
             steps.push({
                 title: '步骤4: 计算电池容量需求',
                 inputs: [
-                    `annual_generation_kwh = ${annualGeneration} kWh (pvlib输入)`,
-                    `plan_a_target_sc_rate = ${planATargetSc} (配置文件)`,
-                    `baseline_self_consumption_rate = ${baselineSc} (配置文件)`,
-                    `battery_dod = ${batteryDod} (配置文件)`,
-                    `battery_rte = ${batteryRte} (配置文件)`
+                    `annual_generation_kwh = ${ctx.annualGeneration} kWh (pvlib输入)`,
+                    `target_sc_rate = ${r.inputs.sc} (配置文件)`,
+                    `baseline_self_consumption_rate = ${ctx.baselineSc} (配置文件)`,
+                    `battery_dod = ${ctx.batteryDod} (配置文件)`,
+                    `battery_rte = ${ctx.batteryRte} (配置文件)`
                 ],
                 formula: [
                     'daily_energy_to_shift_kwh = (annual_generation_kwh / 365) × (target_sc_rate - baseline_sc_rate)',
                     'battery_nominal_kwh = daily_energy_to_shift_kwh / (battery_dod × battery_rte)'
                 ],
                 calculation: [
-                    `daily_energy_to_shift_kwh = (${annualGeneration} / 365) × (${planATargetSc} - ${baselineSc}) = ${dailyEnergyShift.toFixed(2)} kWh`,
-                    `battery_nominal_kwh = ${dailyEnergyShift.toFixed(2)} / (${batteryDod} × ${batteryRte}) = ${batteryNominal} kWh`
+                    `daily_energy_to_shift_kwh = (${ctx.annualGeneration} / 365) × (${r.inputs.sc} - ${ctx.baselineSc}) = ${dailyEnergyShift.toFixed(2)} kWh`,
+                    `battery_nominal_kwh = ${dailyEnergyShift.toFixed(2)} / (${ctx.batteryDod} × ${ctx.batteryRte}) = ${r.batteryNominal} kWh`
                 ],
-                result: `推荐电池容量: ${batteryNominal} kWh`
+                result: `推荐电池容量: ${r.batteryNominal} kWh`
             });
-
-            // 步骤5：计算成本
-            const costPanels = panelCount * panelCost;
-            const costInverter = inverterKw * inverterCost;
-            const costBattery = batteryNominal * batteryCost;
-            const costInstall = installBase + solarKw * installPerKw;
+            // 步骤5
+            const costPanels = r.panelCount * ctx.panelCost;
+            const costInverter = r.inverterKw * ctx.inverterCost;
+            const costBattery = r.batteryNominal * ctx.batteryCostNew;
+            const costInstall = ctx.installBase + r.solarKw * ctx.installPerKw;
             const totalCost = costPanels + costInverter + costBattery + costInstall;
-            const priceBase = totalCost * (1 + profitMargin);
-
+            const priceBase = totalCost * (1 + ctx.profitMargin);
             steps.push({
                 title: '步骤5: 计算系统成本',
-                inputs: [
-                    `panel_count = ${panelCount} 块 (上游计算)`,
-                    `inverter_kw = ${inverterKw.toFixed(1)} kW (上游计算)`,
-                    `battery_nominal_kwh = ${batteryNominal} kWh (上游计算)`,
-                    `各项单价来自配置文件`
-                ],
+                inputs: ['各项单价来自配置文件'],
                 formula: [
                     'cost_panels = panel_count × panel_unit_cost',
                     'cost_inverter = inverter_kw × inverter_unit_cost_per_kw',
@@ -334,29 +429,25 @@
                     'price_base = total_cost × (1 + profit_margin_rate)'
                 ],
                 calculation: [
-                    `cost_panels = ${panelCount} × ${panelCost} = $${costPanels.toFixed(0)}`,
-                    `cost_inverter = ${inverterKw.toFixed(1)} × ${inverterCost} = $${costInverter.toFixed(0)}`,
-                    `cost_battery = ${batteryNominal} × ${batteryCost} = $${costBattery.toFixed(0)}`,
-                    `cost_install = ${installBase} + ${solarKw.toFixed(2)} × ${installPerKw} = $${costInstall.toFixed(0)}`,
-                    `total_cost = ${costPanels.toFixed(0)} + ${costInverter.toFixed(0)} + ${costBattery.toFixed(0)} + ${costInstall.toFixed(0)} = $${totalCost.toFixed(0)}`,
-                    `price_base = ${totalCost.toFixed(0)} × (1 + ${profitMargin}) = $${priceBase.toFixed(0)}`
+                    `cost_panels = ${r.panelCount} × ${ctx.panelCost} = $${costPanels.toFixed(0)}`,
+                    `cost_inverter = ${r.inverterKw.toFixed(1)} × ${ctx.inverterCost} = $${costInverter.toFixed(0)}`,
+                    `cost_battery = ${r.batteryNominal} × ${ctx.batteryCostNew} = $${costBattery.toFixed(0)}`,
+                    `cost_install = ${ctx.installBase} + ${r.solarKw.toFixed(2)} × ${ctx.installPerKw} = $${costInstall.toFixed(0)}`,
+                    `total_cost = ${totalCost.toFixed(0)}`,
+                    `price_base = ${totalCost.toFixed(0)} × (1 + ${ctx.profitMargin}) = $${priceBase.toFixed(0)}`
                 ],
                 result: `基准报价: $${priceBase.toFixed(0)}`
             });
-
-            // 步骤6：计算经济效益
-            const annualSelfConsumption = annualGeneration * planATargetSc;
-            const annualGridExport = annualGeneration - annualSelfConsumption;
-            const annualSavings = (annualSelfConsumption * gridBuyRate) + (annualGridExport * gridSellRate);
-            const paybackPeriod = priceBase / annualSavings;
-
+            // 步骤6
+            const annualSelfConsumption = ctx.annualGeneration * r.inputs.sc;
+            const annualGridExport = ctx.annualGeneration - annualSelfConsumption;
+            const annualSavings = (annualSelfConsumption * ctx.gridBuyRate) + (annualGridExport * ctx.gridSellRate);
+            const paybackPeriod = annualSavings > 0 ? (priceBase / annualSavings) : Infinity;
             steps.push({
                 title: '步骤6: 计算经济效益',
                 inputs: [
-                    `annual_generation_kwh = ${annualGeneration} kWh (pvlib输入)`,
-                    `plan_a_target_sc_rate = ${planATargetSc} (配置文件)`,
-                    `grid_buy_rate = ${gridBuyRate} AUD/kWh (配置文件)`,
-                    `grid_sell_rate = ${gridSellRate} AUD/kWh (配置文件)`
+                    `grid_buy_rate = ${ctx.gridBuyRate} AUD/kWh (配置文件)`,
+                    `grid_sell_rate = ${ctx.gridSellRate} AUD/kWh (配置文件)`
                 ],
                 formula: [
                     'annual_self_consumption_kwh = annual_generation_kwh × target_sc_rate',
@@ -365,25 +456,142 @@
                     'payback_period_years = price_base / annual_savings_aud'
                 ],
                 calculation: [
-                    `annual_self_consumption_kwh = ${annualGeneration} × ${planATargetSc} = ${annualSelfConsumption.toFixed(0)} kWh`,
-                    `annual_grid_export_kwh = ${annualGeneration} - ${annualSelfConsumption.toFixed(0)} = ${annualGridExport.toFixed(0)} kWh`,
-                    `annual_savings_aud = (${annualSelfConsumption.toFixed(0)} × ${gridBuyRate}) + (${annualGridExport.toFixed(0)} × ${gridSellRate}) = $${annualSavings.toFixed(0)}`,
+                    `annual_self_consumption_kwh = ${ctx.annualGeneration} × ${r.inputs.sc} = ${annualSelfConsumption.toFixed(0)} kWh`,
+                    `annual_grid_export_kwh = ${ctx.annualGeneration} - ${annualSelfConsumption.toFixed(0)} = ${annualGridExport.toFixed(0)} kWh`,
+                    `annual_savings_aud = (${annualSelfConsumption.toFixed(0)} × ${ctx.gridBuyRate}) + (${annualGridExport.toFixed(0)} × ${ctx.gridSellRate}) = $${annualSavings.toFixed(0)}`,
                     `payback_period_years = ${priceBase.toFixed(0)} / ${annualSavings.toFixed(0)} = ${paybackPeriod.toFixed(1)} 年`
                 ],
-                result: `年度节省: $${annualSavings.toFixed(0)}, 回本周期: ${paybackPeriod.toFixed(1)} 年`
+                result: `年度节省: $${annualSavings.toFixed(0)}, 回本周期: ${isFinite(paybackPeriod)?paybackPeriod.toFixed(1):'∞'} 年`
             });
-
-            // 更新显示
             displayCalculationSteps(steps);
-            displayResults({
-                solarKw: solarKw.toFixed(2),
-                panelCount,
-                inverterKw: inverterKw.toFixed(1),
-                batteryNominal,
-                priceBase: priceBase.toFixed(0),
-                annualSavings: annualSavings.toFixed(0),
-                paybackPeriod: paybackPeriod.toFixed(1)
+        }
+
+        function displayResultsPV(planResults) {
+            const container = document.getElementById('resultsPV');
+            const rows = ['A','B','C','D'].map(k => {
+                const r = planResults[k];
+                return `<tr>
+                    <td>方案${k}</td>
+                    <td>${r.solarKw.toFixed(2)}</td>
+                    <td>${r.panelCount}</td>
+                    <td>${r.inverterKw.toFixed(1)}</td>
+                    <td>${r.batteryNominal}</td>
+                    <td>$${r.priceBase.toFixed(0)}</td>
+                    <td>$${r.annualSavings.toFixed(0)}</td>
+                    <td>${isFinite(r.paybackPeriod)?r.paybackPeriod.toFixed(1):'∞'}</td>
+                </tr>`;
+            }).join('');
+            container.innerHTML = `
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>方案</th><th>光伏容量(kW)</th><th>面板数(块)</th><th>逆变器(kW)</th><th>电池(kWh)</th><th>基准报价</th><th>年度节省</th><th>回本(年)</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        function calculateRetrofit(ctx) {
+            // 读取配置
+            const capA = config?.retrofit_params?.battery_capacities?.retrofit_plan_a_kwh?.value ?? 5;
+            const capB = config?.retrofit_params?.battery_capacities?.retrofit_plan_b_kwh?.value ?? 10;
+            const capC = config?.retrofit_params?.battery_capacities?.retrofit_plan_c_kwh?.value ?? 13.5;
+            const capD = config?.retrofit_params?.battery_capacities?.retrofit_plan_d_kwh?.value ?? 20;
+            const costPerKwh = config?.retrofit_params?.retrofit_costs?.battery_unit_cost_per_kwh_retrofit?.value ?? 500;
+            const installBase = config?.retrofit_params?.retrofit_costs?.battery_install_base_cost?.value ?? 500;
+            const installPerKwh = config?.retrofit_params?.retrofit_costs?.battery_install_cost_per_kwh?.value ?? 50;
+            const profitRate = config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1;
+            const priceRange = config?.retrofit_params?.pricing_params?.battery_price_range_percent?.value ?? 0.05;
+            const annualDays = config?.retrofit_params?.system_params?.annual_effective_days?.value ?? 300;
+
+            const calcOne = (cap) => {
+                const retrofitCost = (cap * costPerKwh) + installBase + (cap * installPerKwh);
+                const priceBase = retrofitCost * (1 + profitRate);
+                const dailyDischarge = cap * ctx.batteryDod * ctx.batteryRte;
+                const annualSavings = dailyDischarge * (ctx.gridBuyRate - ctx.gridSellRate) * annualDays;
+                const payback = annualSavings > 0 ? priceBase / annualSavings : Infinity;
+                return { cap, retrofitCost, priceBase, annualSavings, payback,
+                    priceFloor: priceBase * (1 - priceRange), priceCeil: priceBase * (1 + priceRange) };
+            };
+            const arr = [calcOne(capA), calcOne(capB), calcOne(capC), calcOne(capD)];
+            lastComputed.retrofit = arr;
+            displayResultsRetrofit(arr);
+
+            // 可选：显示储能步骤（根据下拉选择）
+            const sel = document.getElementById('retrofitSelector').value;
+            if (sel !== 'none') {
+                const idxMap = {A:0,B:1,C:2,D:3};
+                displayRetrofitSteps(arr[idxMap[sel]], ctx);
+            }
+        }
+
+        function displayResultsRetrofit(items) {
+            const container = document.getElementById('resultsRetrofit');
+            const rows = items.map((r, i) => {
+                const name = ['A','B','C','D'][i];
+                return `<tr>
+                    <td>储能${name}</td>
+                    <td>${r.cap}</td>
+                    <td>$${r.priceBase.toFixed(0)}</td>
+                    <td>$${r.annualSavings.toFixed(0)}</td>
+                    <td>${isFinite(r.payback)?r.payback.toFixed(1):'∞'}</td>
+                    <td>$${r.priceFloor.toFixed(0)} - $${r.priceCeil.toFixed(0)}</td>
+                </tr>`;
+            }).join('');
+            container.innerHTML = `
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>方案</th><th>电池(kWh)</th><th>报价基准</th><th>年度节省</th><th>回本(年)</th><th>报价区间</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        function displayRetrofitSteps(r, ctx) {
+            const steps = [];
+            steps.push({
+                title: '储能步骤1: 扩容成本与报价',
+                inputs: ['参数来自配置文件: retrofit_costs, pricing_params'],
+                formula: [
+                    'retrofit_battery_cost = cap × unit_cost + base + cap × install_per_kwh',
+                    'retrofit_price_base = retrofit_battery_cost × (1 + profit_rate)'
+                ],
+                calculation: [
+                    `retrofit_battery_cost = ${r.cap} × ... = $${(r.priceBase/(1+ (config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1))).toFixed(0)}`,
+                    `retrofit_price_base = $${r.priceBase.toFixed(0)}`
+                ],
+                result: `报价基准: $${r.priceBase.toFixed(0)}`
             });
+            steps.push({
+                title: '储能步骤2: 年度节省与回本',
+                inputs: ['参数来自配置文件: electricity_rates, system_params, battery_dod/rte'],
+                formula: [
+                    'daily_discharge = cap × DoD × RTE',
+                    'annual_savings = daily_discharge × (buy_rate - sell_rate) × effective_days',
+                    'payback_years = price_base / annual_savings'
+                ],
+                calculation: [
+                    `annual_savings = $${r.annualSavings.toFixed(0)}`,
+                    `payback_years = ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
+                ],
+                result: `年度节省: $${r.annualSavings.toFixed(0)}, 回本: ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
+            });
+            // 在现有步骤后追加展示
+            const container = document.getElementById('calculationSteps');
+            container.insertAdjacentHTML('beforeend', steps.map(step => `
+                <div class="calculation-step">
+                    <h6>${step.title}</h6>
+                    <div class="data-source"><strong>输入数据来源:</strong><br>${Array.isArray(step.inputs)?step.inputs.join('<br>'):step.inputs}</div>
+                    <div class="formula-box mt-2"><strong>计算公式:</strong><br>${Array.isArray(step.formula)?step.formula.join('<br>'):step.formula}</div>
+                    <div class="mt-2"><strong>计算过程:</strong><br>${Array.isArray(step.calculation)?step.calculation.join('<br>'):step.calculation}</div>
+                    <div class="result-highlight mt-2">${step.result}</div>
+                </div>
+            `).join(''));
         }
 
         // 显示计算步骤
@@ -412,27 +620,7 @@
         }
 
         // 显示结果
-        function displayResults(results) {
-            const container = document.getElementById('results');
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h5>方案A 计算结果</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-sm">
-                            <tr><td>光伏容量</td><td>${results.solarKw} kW</td></tr>
-                            <tr><td>面板数量</td><td>${results.panelCount} 块</td></tr>
-                            <tr><td>逆变器功率</td><td>${results.inverterKw} kW</td></tr>
-                            <tr><td>推荐电池容量</td><td>${results.batteryNominal} kWh</td></tr>
-                            <tr class="table-warning"><td><strong>基准报价</strong></td><td><strong>$${results.priceBase}</strong></td></tr>
-                            <tr class="table-success"><td><strong>年度节省</strong></td><td><strong>$${results.annualSavings}</strong></td></tr>
-                            <tr class="table-info"><td><strong>回本周期</strong></td><td><strong>${results.paybackPeriod} 年</strong></td></tr>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
+        // 结果展示已拆分为 displayResultsPV/displayResultsRetrofit
 
         // 导出配置
         function exportConfig() {
@@ -441,6 +629,12 @@
                 annual_generation_pvlib_kwh: getInputValue('annual_generation_pvlib_kwh'),
                 plan_a_capacity_factor: getInputValue('plan_a_capacity_factor'),
                 plan_a_target_sc_rate: getInputValue('plan_a_target_sc_rate'),
+                plan_b_capacity_factor: getInputValue('plan_b_capacity_factor'),
+                plan_b_target_sc_rate: getInputValue('plan_b_target_sc_rate'),
+                plan_c_capacity_factor: getInputValue('plan_c_capacity_factor'),
+                plan_c_target_sc_rate: getInputValue('plan_c_target_sc_rate'),
+                plan_d_capacity_factor: getInputValue('plan_d_capacity_factor'),
+                plan_d_target_sc_rate: getInputValue('plan_d_target_sc_rate'),
                 panel_power_kw: getInputValue('panel_power_kw'),
                 dc_ac_ratio: getInputValue('dc_ac_ratio'),
                 baseline_self_consumption_rate: getInputValue('baseline_self_consumption_rate'),
@@ -468,12 +662,17 @@
         // 监听输入变化
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => {
-                input.addEventListener('input', calculate);
+            inputs.forEach(input => input.addEventListener('input', calculate));
+            document.getElementById('planSelector').addEventListener('change', () => {
+                // 重新展示当前选择方案步骤
+                calculate();
             });
-            
-            // 初始计算
-            calculate();
+            document.getElementById('retrofitSelector').addEventListener('change', () => {
+                // 切换储能步骤显示
+                calculate();
+            });
+            // 初始化：加载默认配置并计算
+            loadDefaultConfig();
         });
 
         // 文件上传处理

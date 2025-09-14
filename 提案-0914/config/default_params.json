@@ -313,6 +313,38 @@
         "min": 3000,
         "max": 15000
       }
+    },
+    "pricing_params": {
+      "battery_profit_margin_rate": {
+        "value": 0.1,
+        "unit": "-",
+        "description": "电池扩容利润率",
+        "min": 0.05,
+        "max": 0.3
+      },
+      "battery_price_range_percent": {
+        "value": 0.05,
+        "unit": "-",
+        "description": "电池扩容报价浮动范围",
+        "min": 0.01,
+        "max": 0.2
+      }
+    },
+    "display_params": {
+      "battery_annual_profit_range": {
+        "value": 0.05,
+        "unit": "-",
+        "description": "年度节省金额浮动比例",
+        "min": 0.01,
+        "max": 0.2
+      },
+      "sc_rate_lower_limit": {
+        "value": 0.9,
+        "unit": "-",
+        "description": "自用率展示下限系数",
+        "min": 0.7,
+        "max": 1.0
+      }
     }
   }
 }
