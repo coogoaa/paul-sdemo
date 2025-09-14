@@ -1,0 +1,318 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "description": "光伏系统计算默认参数配置",
+    "last_updated": "2024-09-14",
+    "author": "System"
+  },
+  "roof_analysis": {
+    "panel_area_m2": {
+      "value": 1.9,
+      "unit": "m²",
+      "description": "单块面板面积",
+      "min": 1.0,
+      "max": 3.0
+    },
+    "panel_power_kw": {
+      "value": 0.44,
+      "unit": "kW",
+      "description": "单块面板功率",
+      "min": 0.3,
+      "max": 0.6
+    },
+    "azimuth_exclusion_min": {
+      "value": 150,
+      "unit": "度",
+      "description": "南向排除方位角下限",
+      "min": 120,
+      "max": 180
+    },
+    "azimuth_exclusion_max": {
+      "value": 210,
+      "unit": "度", 
+      "description": "南向排除方位角上限",
+      "min": 180,
+      "max": 240
+    },
+    "min_facet_area_m2": {
+      "value": 10,
+      "unit": "m²",
+      "description": "最小有效坡面面积",
+      "min": 5,
+      "max": 20
+    }
+  },
+  "new_system_plans": {
+    "capacity_factors": {
+      "plan_a_capacity_factor": {
+        "value": 0.3,
+        "unit": "-",
+        "description": "方案A 容量系数",
+        "min": 0.1,
+        "max": 1.0
+      },
+      "plan_b_capacity_factor": {
+        "value": 0.5,
+        "unit": "-",
+        "description": "方案B 容量系数",
+        "min": 0.1,
+        "max": 1.0
+      },
+      "plan_c_capacity_factor": {
+        "value": 0.8,
+        "unit": "-",
+        "description": "方案C 容量系数",
+        "min": 0.1,
+        "max": 1.0
+      },
+      "plan_d_capacity_factor": {
+        "value": 0.9,
+        "unit": "-",
+        "description": "方案D 容量系数",
+        "min": 0.1,
+        "max": 1.0
+      }
+    },
+    "technical_params": {
+      "dc_ac_ratio": {
+        "value": 1.33,
+        "unit": "-",
+        "description": "容配比 (DC/AC)",
+        "min": 1.0,
+        "max": 2.0
+      },
+      "baseline_self_consumption_rate": {
+        "value": 0.3,
+        "unit": "-",
+        "description": "基线自用率 (无电池)",
+        "min": 0.1,
+        "max": 0.8
+      },
+      "battery_dod": {
+        "value": 0.9,
+        "unit": "-",
+        "description": "电池放电深度 DoD",
+        "min": 0.8,
+        "max": 0.95
+      },
+      "battery_rte": {
+        "value": 0.95,
+        "unit": "-",
+        "description": "电池往返效率 RTE",
+        "min": 0.85,
+        "max": 0.98
+      },
+      "yield_per_kw_per_year": {
+        "value": 1526,
+        "unit": "kWh/kW/yr",
+        "description": "每kW年发电量",
+        "min": 1000,
+        "max": 2000
+      }
+    },
+    "target_sc_rates": {
+      "plan_a_target_sc_rate": {
+        "value": 0.3,
+        "unit": "-",
+        "description": "方案A 目标自用率",
+        "min": 0.1,
+        "max": 1.0
+      },
+      "plan_b_target_sc_rate": {
+        "value": 0.5,
+        "unit": "-",
+        "description": "方案B 目标自用率",
+        "min": 0.1,
+        "max": 1.0
+      },
+      "plan_c_target_sc_rate": {
+        "value": 0.7,
+        "unit": "-",
+        "description": "方案C 目标自用率",
+        "min": 0.1,
+        "max": 1.0
+      },
+      "plan_d_target_sc_rate": {
+        "value": 0.9,
+        "unit": "-",
+        "description": "方案D 目标自用率",
+        "min": 0.1,
+        "max": 1.0
+      }
+    }
+  },
+  "cost_params": {
+    "equipment_costs": {
+      "panel_unit_cost": {
+        "value": 350,
+        "unit": "AUD/块",
+        "description": "单块面板成本",
+        "min": 200,
+        "max": 500
+      },
+      "inverter_unit_cost_per_kw": {
+        "value": 250,
+        "unit": "AUD/kW",
+        "description": "每kW逆变器成本",
+        "min": 150,
+        "max": 400
+      },
+      "battery_unit_cost_per_kwh_new": {
+        "value": 200,
+        "unit": "AUD/kWh",
+        "description": "电池每kWh成本 (新建)",
+        "min": 150,
+        "max": 300
+      }
+    },
+    "installation_costs": {
+      "install_base_cost": {
+        "value": 1000,
+        "unit": "AUD",
+        "description": "安装基础费用",
+        "min": 500,
+        "max": 2000
+      },
+      "install_cost_per_kw": {
+        "value": 150,
+        "unit": "AUD/kW",
+        "description": "安装每kW费用",
+        "min": 100,
+        "max": 250
+      }
+    },
+    "pricing_params": {
+      "profit_margin_rate": {
+        "value": 0.1,
+        "unit": "-",
+        "description": "利润率",
+        "min": 0.05,
+        "max": 0.3
+      },
+      "price_float_range": {
+        "value": 0.05,
+        "unit": "-",
+        "description": "报价浮动范围",
+        "min": 0.01,
+        "max": 0.15
+      }
+    }
+  },
+  "electricity_rates": {
+    "grid_buy_rate": {
+      "value": 0.3,
+      "unit": "AUD/kWh",
+      "description": "购电价",
+      "min": 0.1,
+      "max": 0.6
+    },
+    "grid_sell_rate": {
+      "value": 0.07,
+      "unit": "AUD/kWh",
+      "description": "售电/馈网价",
+      "min": 0.02,
+      "max": 0.2
+    }
+  },
+  "display_params": {
+    "annual_profit_range": {
+      "value": 0.05,
+      "unit": "-",
+      "description": "年度节省浮动展示区间",
+      "min": 0.01,
+      "max": 0.15
+    },
+    "sc_rate_display_range": {
+      "value": 0.05,
+      "unit": "-",
+      "description": "自用率展示浮动范围",
+      "min": 0.01,
+      "max": 0.15
+    }
+  },
+  "retrofit_params": {
+    "battery_capacities": {
+      "retrofit_plan_a_kwh": {
+        "value": 5,
+        "unit": "kWh",
+        "description": "Retrofit 方案A 电池容量",
+        "min": 3,
+        "max": 10
+      },
+      "retrofit_plan_b_kwh": {
+        "value": 10,
+        "unit": "kWh",
+        "description": "Retrofit 方案B 电池容量",
+        "min": 8,
+        "max": 15
+      },
+      "retrofit_plan_c_kwh": {
+        "value": 13.5,
+        "unit": "kWh",
+        "description": "Retrofit 方案C 电池容量",
+        "min": 10,
+        "max": 18
+      },
+      "retrofit_plan_d_kwh": {
+        "value": 20,
+        "unit": "kWh",
+        "description": "Retrofit 方案D 电池容量",
+        "min": 15,
+        "max": 30
+      }
+    },
+    "retrofit_costs": {
+      "battery_unit_cost_per_kwh_retrofit": {
+        "value": 500,
+        "unit": "AUD/kWh",
+        "description": "电池成本 (储能升级)",
+        "min": 300,
+        "max": 800
+      },
+      "battery_install_base_cost": {
+        "value": 500,
+        "unit": "AUD",
+        "description": "电池安装基础费",
+        "min": 300,
+        "max": 1000
+      },
+      "battery_install_cost_per_kwh": {
+        "value": 50,
+        "unit": "AUD/kWh",
+        "description": "电池安装每kWh费用",
+        "min": 30,
+        "max": 100
+      }
+    },
+    "system_params": {
+      "rooftop_use_factor": {
+        "value": 0.7,
+        "unit": "-",
+        "description": "屋顶理论最大容量使用系数",
+        "min": 0.5,
+        "max": 0.9
+      },
+      "annual_effective_days": {
+        "value": 300,
+        "unit": "天",
+        "description": "电池年度有效利用天数",
+        "min": 250,
+        "max": 350
+      },
+      "existing_sc_rate": {
+        "value": 0.3,
+        "unit": "-",
+        "description": "已有系统基线自用率",
+        "min": 0.1,
+        "max": 0.6
+      },
+      "existing_solar_annual_gen_kwh": {
+        "value": 8000,
+        "unit": "kWh/yr",
+        "description": "已有光伏系统年发电量理论最大值",
+        "min": 3000,
+        "max": 15000
+      }
+    }
+  }
+}
