@@ -274,99 +274,6 @@
                     <div id="resultsRetrofit"></div>
                   </div>
                 </div>
-
-                <!-- 简易校验计算器 -->
-                <div class="card mt-3">
-                  <div class="card-header py-2">
-                    <h6 class="mb-0">简易校验计算器</h6>
-                  </div>
-                  <div class="card-body" id="quickCalc" style="font-size:0.9rem;">
-                    <div class="row g-2 align-items-end">
-                      <div class="col-5">
-                        <label class="form-label mb-1">数值A</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_a" value="0">
-                      </div>
-                      <div class="col-2">
-                        <label class="form-label mb-1">运算</label>
-                        <select class="form-select form-select-sm" id="qc_op">
-                          <option value="+">+</option>
-                          <option value="-">-</option>
-                          <option value="*">×</option>
-                          <option value="/">÷</option>
-                        </select>
-                      </div>
-                      <div class="col-5">
-                        <label class="form-label mb-1">数值B</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_b" value="0">
-                      </div>
-                      <div class="col-12 d-flex gap-2">
-                        <button class="btn btn-sm btn-primary" onclick="calcBasic()">计算</button>
-                        <div class="align-self-center">结果：<strong id="qc_basic_out">-</strong></div>
-                      </div>
-                    </div>
-
-                    <hr>
-                    <div class="row g-2 align-items-end">
-                      <div class="col-4">
-                        <label class="form-label mb-1">基准报价 price_base</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_price_base" value="0">
-                      </div>
-                      <div class="col-4">
-                        <label class="form-label mb-1">年度节省 annual_savings</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_annual_savings" value="0">
-                      </div>
-                      <div class="col-4 d-flex gap-2">
-                        <button class="btn btn-sm btn-primary mt-auto" onclick="calcPayback()">回本周期</button>
-                        <div class="align-self-center">结果：<strong id="qc_payback_out">-</strong> 年</div>
-                      </div>
-                    </div>
-
-                    <div class="row g-2 align-items-end mt-2">
-                      <div class="col-4">
-                        <label class="form-label mb-1">光伏容量 solar_kw</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_solar_kw" value="0">
-                      </div>
-                      <div class="col-4">
-                        <label class="form-label mb-1">年发电量/每kW</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_yield" value="1526">
-                      </div>
-                      <div class="col-4 d-flex gap-2">
-                        <button class="btn btn-sm btn-primary mt-auto" onclick="calcAnnualGen()">兜底年发电量</button>
-                        <div class="align-self-center">结果：<strong id="qc_gen_out">-</strong> kWh</div>
-                      </div>
-                    </div>
-
-                    <div class="row g-2 align-items-end mt-2">
-                      <div class="col-4">
-                        <label class="form-label mb-1">基准报价 price_base</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_price_base2" value="0">
-                      </div>
-                      <div class="col-4">
-                        <label class="form-label mb-1">浮动范围 (0-1)</label>
-                        <input type="number" step="any" class="form-control form-control-sm" id="qc_float" value="0.05">
-                      </div>
-                      <div class="col-4 d-flex gap-2">
-                        <button class="btn btn-sm btn-primary mt-auto" onclick="calcPriceRange()">报价区间</button>
-                        <div class="align-self-center">下限：<strong id="qc_floor">-</strong> 上限：<strong id="qc_ceil">-</strong></div>
-                      </div>
-                    </div>
-
-                    <div class="row g-2 align-items-end mt-3">
-                      <div class="col-6">
-                        <label class="form-label mb-1">从方案预填</label>
-                        <div class="input-group input-group-sm">
-                          <select class="form-select" id="qc_plan_pick">
-                            <option value="A">方案A</option>
-                            <option value="B">方案B</option>
-                            <option value="C">方案C</option>
-                            <option value="D">方案D</option>
-                          </select>
-                          <button class="btn btn-outline-secondary" onclick="prefillFromPlan()">预填</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
             </div>
         </div>
     </div>
@@ -459,6 +366,9 @@
 
             // 逐方案计算（新建系统）
             const planResults = {};
+            const priceFloatRange = config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05;
+            const annualProfitRange = config?.display_params?.annual_profit_range?.value ?? 0.05;
+            const scDispRange = config?.display_params?.sc_rate_display_range?.value ?? 0.05;
             Object.entries(plans).forEach(([key, p]) => {
                 const solarKw = roofMaxPower * p.cf;
                 const panelCount = Math.floor(solarKw / panelPower);
@@ -475,10 +385,18 @@
                 const annualGridExport = annualGeneration - annualSelfConsumption;
                 const annualSavings = (annualSelfConsumption * gridBuyRate) + (annualGridExport * gridSellRate);
                 const paybackPeriod = annualSavings > 0 ? priceBase / annualSavings : Infinity;
+                // ranges
+                const priceFloor = priceBase * (1 - priceFloatRange);
+                const priceCeil = priceBase * (1 + priceFloatRange);
+                const savingsFloor = annualSavings * (1 - annualProfitRange);
+                const savingsCeil = annualSavings * (1 + annualProfitRange);
+                const scFloor = p.sc * (1 - scDispRange);
+                const scCeil = p.sc * (1 + scDispRange);
 
                 planResults[key] = {
                     solarKw, panelCount, inverterKw, batteryNominal, priceBase,
                     annualSelfConsumption, annualGridExport, annualSavings, paybackPeriod,
+                    priceFloor, priceCeil, savingsFloor, savingsCeil, scFloor, scCeil,
                     inputs: { roofMaxPower, cf: p.cf, sc: p.sc }
                 };
             });
@@ -630,16 +548,17 @@
                     <td>${r.panelCount}</td>
                     <td>${r.inverterKw.toFixed(1)}</td>
                     <td>${r.batteryNominal}</td>
-                    <td>$${r.priceBase.toFixed(0)}</td>
-                    <td>$${r.annualSavings.toFixed(0)}</td>
+                    <td>$${r.priceBase.toFixed(0)}<br><small class="text-muted">[$${r.priceFloor.toFixed(0)} ~ $${r.priceCeil.toFixed(0)}]</small></td>
+                    <td>$${r.annualSavings.toFixed(0)}<br><small class="text-muted">[$${r.savingsFloor.toFixed(0)} ~ $${r.savingsCeil.toFixed(0)}]</small></td>
                     <td>${isFinite(r.paybackPeriod)?r.paybackPeriod.toFixed(1):'∞'}</td>
+                    <td>${(r.inputs.sc*100).toFixed(0)}%<br><small class="text-muted">[${(r.scFloor*100).toFixed(0)}% ~ ${(r.scCeil*100).toFixed(0)}%]</small></td>
                 </tr>`;
             }).join('');
             container.innerHTML = `
                 <table class="table table-sm align-middle">
                     <thead>
                         <tr>
-                            <th>方案</th><th>光伏容量(kW)</th><th>面板数(块)</th><th>逆变器(kW)</th><th>电池(kWh)</th><th>基准报价</th><th>年度节省</th><th>回本(年)</th>
+                            <th>方案</th><th>光伏容量(kW)</th><th>面板数(块)</th><th>逆变器(kW)</th><th>电池(kWh)</th><th>报价(含区间)</th><th>年度节省(含区间)</th><th>回本(年)</th><th>自用率(含区间)</th>
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
@@ -659,6 +578,13 @@
             const profitRate = parseFloat(document.getElementById('battery_profit_margin_rate')?.value) || (config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1);
             const priceRange = parseFloat(document.getElementById('battery_price_range_percent')?.value) || (config?.retrofit_params?.pricing_params?.battery_price_range_percent?.value ?? 0.05);
             const annualDays = parseFloat(document.getElementById('annual_effective_days')?.value) || (config?.retrofit_params?.system_params?.annual_effective_days?.value ?? 300);
+            const batteryAnnualProfitRange = config?.retrofit_params?.display_params?.battery_annual_profit_range?.value ?? 0.05;
+            const scLowerLimit = config?.retrofit_params?.display_params?.sc_rate_lower_limit?.value ?? 0.9;
+            const rooftopUseFactor = config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7;
+            const existingScRate = config?.retrofit_params?.system_params?.existing_sc_rate?.value ?? 0.3;
+            const existingSolarAnnualGen = config?.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value ?? 8000;
+            const roofMaxPower = getInputValue('roof_max_power_kw');
+            const yieldPerKwYear = config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526;
 
             const calcOne = (cap) => {
                 const retrofitCost = (cap * costPerKwh) + installBase + (cap * installPerKwh);
@@ -666,8 +592,18 @@
                 const dailyDischarge = cap * ctx.batteryDod * ctx.batteryRte;
                 const annualSavings = dailyDischarge * (ctx.gridBuyRate - ctx.gridSellRate) * annualDays;
                 const payback = annualSavings > 0 ? priceBase / annualSavings : Infinity;
+                // 自用率提升与加装后自用率
+                const additionalSelf = Math.min(cap * ctx.batteryDod * ctx.batteryRte * annualDays, roofMaxPower * rooftopUseFactor * yieldPerKwYear);
+                const scImprove = (existingSolarAnnualGen * rooftopUseFactor) > 0 ? (additionalSelf / (existingSolarAnnualGen * rooftopUseFactor)) : 0;
+                const finalSc = Math.min(1, existingScRate + scImprove);
+                const scDispFloor = finalSc * scLowerLimit;
+                const scDispCeil = finalSc;
+                // 节省区间
+                const savFloor = annualSavings * (1 - batteryAnnualProfitRange);
+                const savCeil = annualSavings * (1 + batteryAnnualProfitRange);
                 return { cap, retrofitCost, priceBase, annualSavings, payback,
-                    priceFloor: priceBase * (1 - priceRange), priceCeil: priceBase * (1 + priceRange) };
+                    priceFloor: priceBase * (1 - priceRange), priceCeil: priceBase * (1 + priceRange),
+                    finalSc, scDispFloor, scDispCeil, savFloor, savCeil };
             };
             const arr = [calcOne(capA), calcOne(capB), calcOne(capC), calcOne(capD)];
             lastComputed.retrofit = arr;
@@ -688,17 +624,17 @@
                 return `<tr>
                     <td>储能${name}</td>
                     <td>${r.cap}</td>
-                    <td>$${r.priceBase.toFixed(0)}</td>
-                    <td>$${r.annualSavings.toFixed(0)}</td>
+                    <td>$${r.priceBase.toFixed(0)}<br><small class="text-muted">[$${r.priceFloor.toFixed(0)} ~ $${r.priceCeil.toFixed(0)}]</small></td>
+                    <td>$${r.annualSavings.toFixed(0)}<br><small class="text-muted">[$${r.savFloor.toFixed(0)} ~ $${r.savCeil.toFixed(0)}]</small></td>
                     <td>${isFinite(r.payback)?r.payback.toFixed(1):'∞'}</td>
-                    <td>$${r.priceFloor.toFixed(0)} - $${r.priceCeil.toFixed(0)}</td>
+                    <td>${(r.finalSc*100).toFixed(0)}%<br><small class="text-muted">[${(r.scDispFloor*100).toFixed(0)}% ~ ${(r.scDispCeil*100).toFixed(0)}%]</small></td>
                 </tr>`;
             }).join('');
             container.innerHTML = `
                 <table class="table table-sm align-middle">
                     <thead>
                         <tr>
-                            <th>方案</th><th>电池(kWh)</th><th>报价基准</th><th>年度节省</th><th>回本(年)</th><th>报价区间</th>
+                            <th>方案</th><th>电池(kWh)</th><th>报价(含区间)</th><th>年度节省(含区间)</th><th>回本(年)</th><th>加装后自用率(含区间)</th>
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
