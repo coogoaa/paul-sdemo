@@ -1,51 +1,3 @@
-                <!-- 储能扩容参数 (储能扩容) -->
-                <div class="config-section section-retrofit">
-                    <h6>储能扩容预设容量</h6>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label>储能A 电池(kWh)</label>
-                            <input type="number" id="retrofit_plan_a_kwh" class="form-control" value="5" step="0.5">
-                        </div>
-                        <div class="col-6">
-                            <label>储能B 电池(kWh)</label>
-                            <input type="number" id="retrofit_plan_b_kwh" class="form-control" value="10" step="0.5">
-                        </div>
-                        <div class="col-6">
-                            <label>储能C 电池(kWh)</label>
-                            <input type="number" id="retrofit_plan_c_kwh" class="form-control" value="13.5" step="0.5">
-                        </div>
-                        <div class="col-6">
-                            <label>储能D 电池(kWh)</label>
-                            <input type="number" id="retrofit_plan_d_kwh" class="form-control" value="20" step="0.5">
-                        </div>
-                    </div>
-                    <hr>
-                    <h6>储能扩容成本</h6>
-                    <div class="mb-2">
-                        <label>电池成本 (AUD/kWh)</label>
-                        <input type="number" id="battery_unit_cost_per_kwh_retrofit" class="form-control" value="500" step="10">
-                    </div>
-                    <div class="mb-2">
-                        <label>安装基础费 (AUD)</label>
-                        <input type="number" id="battery_install_base_cost" class="form-control" value="500" step="10">
-                    </div>
-                    <div class="mb-2">
-                        <label>安装每kWh (AUD/kWh)</label>
-                        <input type="number" id="battery_install_cost_per_kwh" class="form-control" value="50" step="1">
-                    </div>
-                    <div class="mb-2">
-                        <label>扩容利润率</label>
-                        <input type="number" id="battery_profit_margin_rate" class="form-control" value="0.1" step="0.01">
-                    </div>
-                    <div class="mb-2">
-                        <label>报价浮动范围</label>
-                        <input type="number" id="battery_price_range_percent" class="form-control" value="0.05" step="0.01">
-                    </div>
-                    <div class="mb-2">
-                        <label>有效利用天数 (天)</label>
-                        <input type="number" id="annual_effective_days" class="form-control" value="300" step="1">
-                    </div>
-                </div>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -89,23 +41,57 @@
             max-height: calc(100vh - 40px);
             overflow-y: auto;
         }
+        .resizable {
+            resize: horizontal;
+            overflow: auto;
+            min-width: 220px;
+            max-width: 480px;
+        }
+        /* 强制覆盖 Bootstrap 栅格对列宽和 flex 的限制，使原生 resize 生效 */
+        #leftPanel {
+            flex: 0 0 auto !important;
+            max-width: none !important;
+            width: 280px; /* 初始宽度，可拖拽 */
+        }
+        /* 左侧输入区域整体字体适当调小 */
+        #leftPanel { font-size: 0.9rem; }
+        #leftPanel h4 { font-size: 1.05rem; }
+        #leftPanel h6 { font-size: 0.95rem; }
+        #leftPanel label { font-size: 0.9rem; }
+        #leftPanel .form-control { font-size: 0.9rem; padding: .25rem .5rem; height: auto; }
+        #leftPanel .btn, #toggleSidebarBtn { font-size: 0.85rem; padding: .2rem .5rem; }
+        /* 收起按钮放入左侧面板标题行，不采用浮动固定定位 */
+        #toggleSidebarBtn { position: static; }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
             <!-- 左侧：输入参数 -->
-            <div class="col-md-3 sticky-top-custom">
-                <h4>输入参数</h4>
+            <div id="leftPanel" class="col-md-3 sticky-top-custom resizable" style="width: 280px;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h4 class="mb-0">输入参数</h4>
+                    <button id="toggleSidebarBtn" class="btn btn-outline-secondary btn-sm" onclick="toggleSidebar()">收起左侧</button>
+                </div>
                 <div class="alert alert-secondary py-2 px-3 mb-2">
-                    <div class="d-flex align-items-center gap-2">
-                        <strong>模式：</strong>
-                        <select id="modeSelector" class="form-select form-select-sm" style="width:auto">
-                            <option value="new">新建系统</option>
-                            <option value="retrofit">储能扩容</option>
-                        </select>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <strong>模式：</strong>
+                            <select id="modeSelector" class="form-select form-select-sm" style="width:auto">
+                                <option value="new">新建系统</option>
+                                <option value="retrofit">储能扩容</option>
+                            </select>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" id="showAllSwitch">
+                          <label class="form-check-label" for="showAllSwitch">显示全部参数</label>
+                        </div>
                     </div>
                     <div class="small text-muted mt-1">切换后仅显示相关输入，并在中间展示对应的计算过程</div>
+                </div>
+                <div class="px-2 pb-2 small text-muted">
+                    当前左侧宽度：<span id="leftWidth">-</span>
+                    <button class="btn btn-link btn-sm p-0 ms-1" onclick="saveDefaultLeftWidth()">设为默认</button>
                 </div>
                 
                 <!-- 配置文件管理 (共用) -->
@@ -239,7 +225,7 @@
             </div>
 
             <!-- 中间：计算过程 -->
-            <div class="col-md-5">
+            <div id="middlePanel" class="col-md-5">
                 <div class="d-flex align-items-center justify-content-between">
                     <h4 class="mb-0">计算过程详解</h4>
                     <div class="d-flex gap-2">
@@ -265,7 +251,7 @@
             </div>
 
             <!-- 右侧：结果展示 -->
-            <div class="col-md-4">
+            <div id="rightPanel" class="col-md-4">
                 <h4>计算结果</h4>
                 <ul class="nav nav-tabs" id="resultTabs" role="tablist">
                   <li class="nav-item" role="presentation">
@@ -738,22 +724,97 @@
                 calculate();
             });
             document.getElementById('stepsModeSelector').addEventListener('change', () => {
+                updateStepsSelectorsVisibility();
                 calculate();
             });
             document.getElementById('retrofitSelector').addEventListener('change', () => {
                 calculate();
             });
             document.getElementById('modeSelector').addEventListener('change', applyMode);
+            document.getElementById('showAllSwitch').addEventListener('change', applyMode);
             // 初始化：加载默认配置并计算
             loadDefaultConfig();
             applyMode();
+            updateStepsSelectorsVisibility();
+            // 应用默认左侧宽度（如有保存）
+            const savedWidth = localStorage.getItem('leftPanelWidth');
+            if (savedWidth) {
+                const panel = document.getElementById('leftPanel');
+                panel.style.width = savedWidth + 'px';
+            }
+            initLeftWidthObserver();
         });
+
+        function updateStepsSelectorsVisibility() {
+            const mode = document.getElementById('stepsModeSelector').value; // new | retrofit
+            const planSel = document.getElementById('planSelector');
+            const retroSel = document.getElementById('retrofitSelector');
+            if (mode === 'new') {
+                planSel.style.display = '';
+                retroSel.style.display = 'none';
+            } else {
+                planSel.style.display = 'none';
+                retroSel.style.display = '';
+            }
+        }
 
         function applyMode() {
             const mode = document.getElementById('modeSelector').value; // new | retrofit
-            document.querySelectorAll('.section-new').forEach(el => el.style.display = (mode === 'new') ? '' : 'none');
-            document.querySelectorAll('.section-retrofit').forEach(el => el.style.display = (mode === 'retrofit') ? '' : 'none');
-            document.querySelectorAll('.section-shared').forEach(el => el.style.display = '');
+            const showAll = document.getElementById('showAllSwitch').checked;
+            if (showAll) {
+                document.querySelectorAll('.section-new, .section-retrofit, .section-shared').forEach(el => el.style.display = '');
+            } else {
+                document.querySelectorAll('.section-new').forEach(el => el.style.display = (mode === 'new') ? '' : 'none');
+                document.querySelectorAll('.section-retrofit').forEach(el => el.style.display = (mode === 'retrofit') ? '' : 'none');
+                document.querySelectorAll('.section-shared').forEach(el => el.style.display = '');
+            }
+        }
+
+        function toggleSidebar() {
+            const panel = document.getElementById('leftPanel');
+            const btn = document.getElementById('toggleSidebarBtn');
+            const middle = document.getElementById('middlePanel');
+            const right = document.getElementById('rightPanel');
+            if (panel.style.display === 'none') {
+                panel.style.display = '';
+                btn.textContent = '收起左侧';
+                // 还原列宽
+                middle.classList.remove('col-md-7');
+                right.classList.remove('col-md-5');
+                if (!middle.classList.contains('col-md-5')) middle.classList.add('col-md-5');
+                if (!right.classList.contains('col-md-4')) right.classList.add('col-md-4');
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = '展开左侧';
+                // 扩展列宽填满
+                middle.classList.remove('col-md-5');
+                right.classList.remove('col-md-4');
+                middle.classList.add('col-md-7');
+                right.classList.add('col-md-5');
+            }
+        }
+
+        function initLeftWidthObserver() {
+            const panel = document.getElementById('leftPanel');
+            const widthSpan = document.getElementById('leftWidth');
+            if (!window.ResizeObserver) {
+                // 兼容：简单定时刷新
+                setInterval(() => {
+                    widthSpan.textContent = panel.offsetWidth + 'px';
+                }, 500);
+                return;
+            }
+            const ro = new ResizeObserver(() => {
+                widthSpan.textContent = panel.offsetWidth + 'px';
+            });
+            ro.observe(panel);
+            widthSpan.textContent = panel.offsetWidth + 'px';
+        }
+
+        function saveDefaultLeftWidth() {
+            const w = document.getElementById('leftPanel').offsetWidth;
+            localStorage.setItem('leftPanelWidth', String(w));
+            alert('已将左侧宽度 ' + w + 'px 设为默认');
         }
 
         // 文件上传处理
