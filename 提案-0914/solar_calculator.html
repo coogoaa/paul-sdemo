@@ -62,6 +62,11 @@
         #leftPanel .btn, #toggleSidebarBtn { font-size: 0.85rem; padding: .2rem .5rem; }
         /* 收起按钮放入左侧面板标题行，不采用浮动固定定位 */
         #toggleSidebarBtn { position: static; }
+
+        /* 中间与右侧面板字体与左侧保持一致 */
+        #middlePanel, #rightPanel { font-size: 0.9rem; }
+        #middlePanel h4, #rightPanel h4 { font-size: 1.05rem; }
+        #middlePanel .table, #rightPanel .table { font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -267,6 +272,99 @@
                   </div>
                   <div class="tab-pane fade p-2" id="retrofit" role="tabpanel">
                     <div id="resultsRetrofit"></div>
+                  </div>
+                </div>
+
+                <!-- 简易校验计算器 -->
+                <div class="card mt-3">
+                  <div class="card-header py-2">
+                    <h6 class="mb-0">简易校验计算器</h6>
+                  </div>
+                  <div class="card-body" id="quickCalc" style="font-size:0.9rem;">
+                    <div class="row g-2 align-items-end">
+                      <div class="col-5">
+                        <label class="form-label mb-1">数值A</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_a" value="0">
+                      </div>
+                      <div class="col-2">
+                        <label class="form-label mb-1">运算</label>
+                        <select class="form-select form-select-sm" id="qc_op">
+                          <option value="+">+</option>
+                          <option value="-">-</option>
+                          <option value="*">×</option>
+                          <option value="/">÷</option>
+                        </select>
+                      </div>
+                      <div class="col-5">
+                        <label class="form-label mb-1">数值B</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_b" value="0">
+                      </div>
+                      <div class="col-12 d-flex gap-2">
+                        <button class="btn btn-sm btn-primary" onclick="calcBasic()">计算</button>
+                        <div class="align-self-center">结果：<strong id="qc_basic_out">-</strong></div>
+                      </div>
+                    </div>
+
+                    <hr>
+                    <div class="row g-2 align-items-end">
+                      <div class="col-4">
+                        <label class="form-label mb-1">基准报价 price_base</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_price_base" value="0">
+                      </div>
+                      <div class="col-4">
+                        <label class="form-label mb-1">年度节省 annual_savings</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_annual_savings" value="0">
+                      </div>
+                      <div class="col-4 d-flex gap-2">
+                        <button class="btn btn-sm btn-primary mt-auto" onclick="calcPayback()">回本周期</button>
+                        <div class="align-self-center">结果：<strong id="qc_payback_out">-</strong> 年</div>
+                      </div>
+                    </div>
+
+                    <div class="row g-2 align-items-end mt-2">
+                      <div class="col-4">
+                        <label class="form-label mb-1">光伏容量 solar_kw</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_solar_kw" value="0">
+                      </div>
+                      <div class="col-4">
+                        <label class="form-label mb-1">年发电量/每kW</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_yield" value="1526">
+                      </div>
+                      <div class="col-4 d-flex gap-2">
+                        <button class="btn btn-sm btn-primary mt-auto" onclick="calcAnnualGen()">兜底年发电量</button>
+                        <div class="align-self-center">结果：<strong id="qc_gen_out">-</strong> kWh</div>
+                      </div>
+                    </div>
+
+                    <div class="row g-2 align-items-end mt-2">
+                      <div class="col-4">
+                        <label class="form-label mb-1">基准报价 price_base</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_price_base2" value="0">
+                      </div>
+                      <div class="col-4">
+                        <label class="form-label mb-1">浮动范围 (0-1)</label>
+                        <input type="number" step="any" class="form-control form-control-sm" id="qc_float" value="0.05">
+                      </div>
+                      <div class="col-4 d-flex gap-2">
+                        <button class="btn btn-sm btn-primary mt-auto" onclick="calcPriceRange()">报价区间</button>
+                        <div class="align-self-center">下限：<strong id="qc_floor">-</strong> 上限：<strong id="qc_ceil">-</strong></div>
+                      </div>
+                    </div>
+
+                    <div class="row g-2 align-items-end mt-3">
+                      <div class="col-6">
+                        <label class="form-label mb-1">从方案预填</label>
+                        <div class="input-group input-group-sm">
+                          <select class="form-select" id="qc_plan_pick">
+                            <option value="A">方案A</option>
+                            <option value="B">方案B</option>
+                            <option value="C">方案C</option>
+                            <option value="D">方案D</option>
+                          </select>
+                          <button class="btn btn-outline-secondary" onclick="prefillFromPlan()">预填</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
             </div>
