@@ -447,7 +447,7 @@
             </div>
             <div class="mt-3 space-y-2">
               <div class="rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
-                <img id="shareImg" src="Pic/share card.png" alt="share card" class="w-full h-auto">
+                <img id="shareImg" src="sales_agent_v1.1/Pic/share card.png" alt="share card" class="w-full h-auto">
               </div>
               <div class="flex items-center gap-2 text-[12px]">
                 <i data-lucide="link" class="w-4 h-4 text-gray-600"></i>
@@ -631,7 +631,7 @@
       shareNativeBtn?.addEventListener('click', () => {
         const pageUrl = urlSpan?.textContent || location.href;
         const shareImg = document.getElementById('shareImg');
-        const imgSrc = shareImg?.getAttribute('src') || 'Pic/share card.png';
+        const imgSrc = shareImg?.getAttribute('src') || 'sales_agent_v1.1/Pic/share card.png';
         
         if (navigator.share) {
           navigator.share({
@@ -652,15 +652,18 @@
         try { track('share_native', { scheme: state.scheme || 'smart' }); } catch {}
       });
       
-      // WhatsApp share button - share image only
+      // WhatsApp share button - share text and image
       shareWhatsAppBtn?.addEventListener('click', () => {
+        const shareText = "Scan for your Al-powered solar proposal tailored just for you.";
         const shareImg = document.getElementById('shareImg');
-        const imgSrc = shareImg?.getAttribute('src') || 'Pic/share card.png';
+        const imgSrc = shareImg?.getAttribute('src') || 'sales_agent_v1.1/Pic/share card.png';
         const imgUrl = new URL(imgSrc, location.href).href;
-        // Only share the image URL
-        const waUrl = 'https://wa.me/?text=' + encodeURIComponent(imgUrl);
+        
+        // 组合文案和图片链接
+        const fullMessage = shareText + '\n\n' + imgUrl;
+        const waUrl = 'https://wa.me/?text=' + encodeURIComponent(fullMessage);
         window.open(waUrl, '_blank');
-        try { track('share_whatsapp_image', { scheme: state.scheme || 'smart' }); } catch {}
+        try { track('share_whatsapp_text_and_image', { scheme: state.scheme || 'smart' }); } catch {}
       });
       shareCopyBtn?.addEventListener('click', async () => {
         const url = urlSpan?.textContent || location.href;
