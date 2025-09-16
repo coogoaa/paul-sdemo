@@ -63,6 +63,15 @@
         /* 收起按钮放入左侧面板标题行，不采用浮动固定定位 */
         #toggleSidebarBtn { position: static; }
 
+        /* 全局展开按钮：仅在左侧面板隐藏时显示 */
+        #expandSidebarBtn {
+            position: fixed;
+            top: 12px;
+            right: 12px; /* 右上角，避免与内容重叠 */
+            z-index: 99999;
+            display: none;
+        }
+
         /* 中间与右侧面板字体与左侧保持一致 */
         #middlePanel, #rightPanel { font-size: 0.9rem; }
         #middlePanel h4, #rightPanel h4 { font-size: 1.05rem; }
@@ -70,6 +79,7 @@
     </style>
 </head>
 <body>
+    <button id="expandSidebarBtn" class="btn btn-outline-secondary btn-sm" onclick="toggleSidebar()">展开左侧</button>
     <div class="container-fluid">
         <div class="row">
             <!-- 左侧：输入参数 -->
@@ -232,19 +242,24 @@
             <!-- 中间：计算过程 -->
             <div id="middlePanel" class="col-md-5">
                 <div class="d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">计算过程详解</h4>
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="mb-0">计算过程详解</h4>
+                        <button id="expandSidebarInline" class="btn btn-outline-secondary btn-sm" style="display:none" onclick="toggleSidebar()">展开左侧</button>
+                    </div>
                     <div class="d-flex gap-2">
+                        <!-- 左：步骤模式选择 -->
+                        <select id="stepsModeSelector" class="form-select form-select-sm" style="width:auto">
+                            <option value="new">新建系统步骤</option>
+                            <option value="retrofit">储能扩容步骤</option>
+                        </select>
+                        <!-- 右：方案选择（根据模式显示不同选项） -->
                         <select id="planSelector" class="form-select form-select-sm" style="width:auto">
                             <option value="A">方案A</option>
                             <option value="B">方案B</option>
                             <option value="C">方案C</option>
                             <option value="D">方案D</option>
                         </select>
-                        <select id="stepsModeSelector" class="form-select form-select-sm" style="width:auto">
-                            <option value="new">新建系统步骤</option>
-                            <option value="retrofit">储能扩容步骤</option>
-                        </select>
-                        <select id="retrofitSelector" class="form-select form-select-sm" style="width:auto">
+                        <select id="retrofitSelector" class="form-select form-select-sm" style="width:auto; display:none;">
                             <option value="A">储能A</option>
                             <option value="B">储能B</option>
                             <option value="C">储能C</option>
@@ -709,8 +724,138 @@
             `).join('');
         }
 
-        // 显示结果
-        // 结果展示已拆分为 displayResultsPV/displayResultsRetrofit
+        // 根据步骤模式切换方案选择器的显示
+        function updatePlanSelectorVisibility() {
+            const stepsMode = document.getElementById('stepsModeSelector').value;
+            const planSelector = document.getElementById('planSelector');
+            const retrofitSelector = document.getElementById('retrofitSelector');
+            
+            if (stepsMode === 'new') {
+                planSelector.style.display = '';
+                retrofitSelector.style.display = 'none';
+            } else {
+                planSelector.style.display = 'none';
+                retrofitSelector.style.display = '';
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化方案选择器显示状态
+            updatePlanSelectorVisibility();
+            
+            // 监听步骤模式变化
+            document.getElementById('stepsModeSelector').addEventListener('change', function() {
+                updatePlanSelectorVisibility();
+                // 模式切换后重新计算以更新显示
+                calculate();
+            });
+            
+            // 监听输入变化
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => input.addEventListener('input', calculate));
+            document.getElementById('planSelector').addEventListener('change', () => {
+                // 重新展示当前选择方案步骤
+                calculate();
+            });
+            document.getElementById('retrofitSelector').addEventListener('change', () => {
+                calculate();
+            });
+            document.getElementById('modeSelector').addEventListener('change', applyMode);
+            document.getElementById('showAllSwitch').addEventListener('change', applyMode);
+            // 配置文件上传处理
+            document.getElementById('configFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            config = JSON.parse(e.target.result);
+                            updateInputsFromConfig();
+                            calculate();
+                        } catch (error) {
+                            alert('配置文件格式错误');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            // 初始化：加载默认配置并计算
+            loadDefaultConfig();
+            applyMode();
+            // 应用默认左侧宽度（如有保存）
+            const savedWidth = localStorage.getItem('leftPanelWidth');
+            if (savedWidth) {
+                const panel = document.getElementById('leftPanel');
+                panel.style.width = savedWidth + 'px';
+            }
+            initLeftWidthObserver();
+        });
+
+        function applyMode() {
+            const mode = document.getElementById('modeSelector').value; // new | retrofit
+            const showAll = document.getElementById('showAllSwitch').checked;
+            if (showAll) {
+                document.querySelectorAll('.section-new, .section-retrofit, .section-shared').forEach(el => el.style.display = '');
+            } else {
+                document.querySelectorAll('.section-new').forEach(el => el.style.display = (mode === 'new') ? '' : 'none');
+                document.querySelectorAll('.section-retrofit').forEach(el => el.style.display = (mode === 'retrofit') ? '' : 'none');
+                document.querySelectorAll('.section-shared').forEach(el => el.style.display = '');
+            }
+        }
+
+        function toggleSidebar() {
+            const panel = document.getElementById('leftPanel');
+            const btn = document.getElementById('toggleSidebarBtn');
+            const middle = document.getElementById('middlePanel');
+            const right = document.getElementById('rightPanel');
+            const expandBtn = document.getElementById('expandSidebarBtn');
+            const expandInline = document.getElementById('expandSidebarInline');
+            if (panel.style.display === 'none') {
+                panel.style.display = '';
+                btn.textContent = '收起左侧';
+                expandBtn.style.display = 'none';
+                if (expandInline) expandInline.style.display = 'none';
+                // 还原列宽
+                middle.classList.remove('col-md-7');
+                right.classList.remove('col-md-5');
+                if (!middle.classList.contains('col-md-5')) middle.classList.add('col-md-5');
+                if (!right.classList.contains('col-md-4')) right.classList.add('col-md-4');
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = '展开左侧';
+                expandBtn.style.display = '';
+                if (expandInline) expandInline.style.display = '';
+                // 扩展列宽填满
+                middle.classList.remove('col-md-5');
+                right.classList.remove('col-md-4');
+                middle.classList.add('col-md-7');
+                right.classList.add('col-md-5');
+            }
+        }
+
+        function initLeftWidthObserver() {
+            const panel = document.getElementById('leftPanel');
+            const widthSpan = document.getElementById('leftWidth');
+            if (!window.ResizeObserver) {
+                // 兼容：简单定时刷新
+                setInterval(() => {
+                    widthSpan.textContent = panel.offsetWidth + 'px';
+                }, 500);
+                return;
+            }
+            const ro = new ResizeObserver(() => {
+                widthSpan.textContent = panel.offsetWidth + 'px';
+            });
+            ro.observe(panel);
+            widthSpan.textContent = panel.offsetWidth + 'px';
+        }
+
+        function saveDefaultLeftWidth() {
+            const w = document.getElementById('leftPanel').offsetWidth;
+            localStorage.setItem('leftPanelWidth', String(w));
+            alert('已将左侧宽度 ' + w + 'px 设为默认');
+        }
 
         // 导出配置
         function exportConfig() {
@@ -748,126 +893,6 @@
             a.click();
             URL.revokeObjectURL(url);
         }
-
-        // 监听输入变化
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputs = document.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => input.addEventListener('input', calculate));
-            document.getElementById('planSelector').addEventListener('change', () => {
-                // 重新展示当前选择方案步骤
-                calculate();
-            });
-            document.getElementById('stepsModeSelector').addEventListener('change', () => {
-                updateStepsSelectorsVisibility();
-                calculate();
-            });
-            document.getElementById('retrofitSelector').addEventListener('change', () => {
-                calculate();
-            });
-            document.getElementById('modeSelector').addEventListener('change', applyMode);
-            document.getElementById('showAllSwitch').addEventListener('change', applyMode);
-            // 初始化：加载默认配置并计算
-            loadDefaultConfig();
-            applyMode();
-            updateStepsSelectorsVisibility();
-            // 应用默认左侧宽度（如有保存）
-            const savedWidth = localStorage.getItem('leftPanelWidth');
-            if (savedWidth) {
-                const panel = document.getElementById('leftPanel');
-                panel.style.width = savedWidth + 'px';
-            }
-            initLeftWidthObserver();
-        });
-
-        function updateStepsSelectorsVisibility() {
-            const mode = document.getElementById('stepsModeSelector').value; // new | retrofit
-            const planSel = document.getElementById('planSelector');
-            const retroSel = document.getElementById('retrofitSelector');
-            if (mode === 'new') {
-                planSel.style.display = '';
-                retroSel.style.display = 'none';
-            } else {
-                planSel.style.display = 'none';
-                retroSel.style.display = '';
-            }
-        }
-
-        function applyMode() {
-            const mode = document.getElementById('modeSelector').value; // new | retrofit
-            const showAll = document.getElementById('showAllSwitch').checked;
-            if (showAll) {
-                document.querySelectorAll('.section-new, .section-retrofit, .section-shared').forEach(el => el.style.display = '');
-            } else {
-                document.querySelectorAll('.section-new').forEach(el => el.style.display = (mode === 'new') ? '' : 'none');
-                document.querySelectorAll('.section-retrofit').forEach(el => el.style.display = (mode === 'retrofit') ? '' : 'none');
-                document.querySelectorAll('.section-shared').forEach(el => el.style.display = '');
-            }
-        }
-
-        function toggleSidebar() {
-            const panel = document.getElementById('leftPanel');
-            const btn = document.getElementById('toggleSidebarBtn');
-            const middle = document.getElementById('middlePanel');
-            const right = document.getElementById('rightPanel');
-            if (panel.style.display === 'none') {
-                panel.style.display = '';
-                btn.textContent = '收起左侧';
-                // 还原列宽
-                middle.classList.remove('col-md-7');
-                right.classList.remove('col-md-5');
-                if (!middle.classList.contains('col-md-5')) middle.classList.add('col-md-5');
-                if (!right.classList.contains('col-md-4')) right.classList.add('col-md-4');
-            } else {
-                panel.style.display = 'none';
-                btn.textContent = '展开左侧';
-                // 扩展列宽填满
-                middle.classList.remove('col-md-5');
-                right.classList.remove('col-md-4');
-                middle.classList.add('col-md-7');
-                right.classList.add('col-md-5');
-            }
-        }
-
-        function initLeftWidthObserver() {
-            const panel = document.getElementById('leftPanel');
-            const widthSpan = document.getElementById('leftWidth');
-            if (!window.ResizeObserver) {
-                // 兼容：简单定时刷新
-                setInterval(() => {
-                    widthSpan.textContent = panel.offsetWidth + 'px';
-                }, 500);
-                return;
-            }
-            const ro = new ResizeObserver(() => {
-                widthSpan.textContent = panel.offsetWidth + 'px';
-            });
-            ro.observe(panel);
-            widthSpan.textContent = panel.offsetWidth + 'px';
-        }
-
-        function saveDefaultLeftWidth() {
-            const w = document.getElementById('leftPanel').offsetWidth;
-            localStorage.setItem('leftPanelWidth', String(w));
-            alert('已将左侧宽度 ' + w + 'px 设为默认');
-        }
-
-        // 文件上传处理
-        document.getElementById('configFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        config = JSON.parse(e.target.result);
-                        updateInputsFromConfig();
-                        calculate();
-                    } catch (error) {
-                        alert('配置文件格式错误');
-                    }
-                };
-                reader.readAsText(file);
-            }
-        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
