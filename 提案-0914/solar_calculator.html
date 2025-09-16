@@ -274,19 +274,14 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">运行假设与电价</label>
+                        <label class="form-label">运行假设</label>
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="form-text">年度有效天数 (天)</label>
                                 <input type="number" id="annual_effective_days" class="form-control form-control-sm" step="1">
                             </div>
                             <div class="col-6">
-                                <label class="form-text">购电价 (AUD/kWh)</label>
-                                <input type="number" id="grid_buy_rate" class="form-control form-control-sm" step="0.01">
-                            </div>
-                            <div class="col-6">
-                                <label class="form-text">售电价 (AUD/kWh)</label>
-                                <input type="number" id="grid_sell_rate" class="form-control form-control-sm" step="0.01">
+                                <small class="text-muted">电价请在上方“电价参数”中调整（全局共用）</small>
                             </div>
                         </div>
                     </div>
@@ -694,8 +689,8 @@
             const profitRate = parseFloat(document.getElementById('battery_profit_margin_rate')?.value) || (config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1);
             const priceRange = parseFloat(document.getElementById('battery_price_range_percent')?.value) || (config?.retrofit_params?.pricing_params?.battery_price_range_percent?.value ?? 0.05);
             const annualDays = parseFloat(document.getElementById('annual_effective_days')?.value) || (config?.retrofit_params?.system_params?.annual_effective_days?.value ?? 300);
-            const batteryAnnualProfitRange = config?.retrofit_params?.display_params?.battery_annual_profit_range?.value ?? 0.05;
-            const scLowerLimit = config?.retrofit_params?.display_params?.sc_rate_lower_limit?.value ?? 0.9;
+            const batteryAnnualProfitRange = parseFloat(document.getElementById('battery_annual_profit_range')?.value) || (config?.retrofit_params?.display_params?.battery_annual_profit_range?.value ?? 0.05);
+            const scLowerLimit = parseFloat(document.getElementById('sc_rate_lower_limit')?.value) || (config?.retrofit_params?.display_params?.sc_rate_lower_limit?.value ?? 0.9);
             const rooftopUseFactor = config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7;
             const existingScRate = config?.retrofit_params?.system_params?.existing_sc_rate?.value ?? 0.3;
             const existingSolarAnnualGen = config?.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value ?? 8000;
@@ -814,6 +809,42 @@
                     `payback_years = ${r.priceBase.toFixed(0)} / ${r.annualSavings.toFixed(0)} = ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
                 ],
                 result: `年度节省: $${r.annualSavings.toFixed(0)}, 回本: ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
+            });
+            // 步骤3：自用率提升（严格按文档 v2.0 展示过程）
+            const dailyDischargeKwh = r.cap * ctx.batteryDod * ctx.batteryRte; // kWh/天
+            const additionalSelfCandidate = dailyDischargeKwh * effectiveDays; // kWh/年
+            const rooftopPotential = getInputValue('roof_max_power_kw') * (parseFloat(document.getElementById('rooftop_use_factor')?.value) || (config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7)) * (config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526); // kWh/年
+            const additionalSelf = Math.min(additionalSelfCandidate, rooftopPotential); // kWh/年
+            const denom = (parseFloat(document.getElementById('existing_solar_annual_gen_kwh')?.value) || (config?.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value ?? 8000)) * (parseFloat(document.getElementById('rooftop_use_factor')?.value) || (config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7)); // kWh/年
+            const scImprove = denom > 0 ? (additionalSelf / denom) : 0;
+            const finalScCalc = Math.min(1, (parseFloat(document.getElementById('existing_sc_rate')?.value) || (config?.retrofit_params?.system_params?.existing_sc_rate?.value ?? 0.3)) + scImprove);
+            steps.push({
+                title: '储能步骤3: 自用率提升计算',
+                inputs: [
+                    `roof_max_power_kw = ${getInputValue('roof_max_power_kw')} kW (来自上游)`,
+                    `yield_per_kw_per_year = ${(config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526)} kWh/年/每kW (配置)`,
+                    `rooftop_use_factor = ${(parseFloat(document.getElementById('rooftop_use_factor')?.value) || (config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7))} (配置)`,
+                    `existing_sc_rate = ${(parseFloat(document.getElementById('existing_sc_rate')?.value) || (config?.retrofit_params?.system_params?.existing_sc_rate?.value ?? 0.3))} (配置)`,
+                    `existing_solar_annual_gen_kwh = ${(parseFloat(document.getElementById('existing_solar_annual_gen_kwh')?.value) || (config?.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value ?? 8000))} kWh/年 (配置)`,
+                    `annual_effective_days = ${effectiveDays} 天 (配置)`
+                ],
+                formula: [
+                    'additional_self_kwh = MIN(cap × DoD × RTE × annual_effective_days, roof_max_power_kw × rooftop_use_factor × yield_per_kw_per_year)',
+                    'sc_rate_improvement = additional_self_kwh / (existing_solar_annual_gen_kwh × rooftop_use_factor)',
+                    'retrofit_final_sc_rate = MIN(1, existing_sc_rate + sc_rate_improvement)',
+                    'retrofit_sc_display_floor = retrofit_final_sc_rate × sc_rate_lower_limit',
+                    'retrofit_sc_display_ceiling = retrofit_final_sc_rate'
+                ],
+                calculation: [
+                    `cap × DoD × RTE × days = ${r.cap} × ${ctx.batteryDod} × ${ctx.batteryRte} × ${effectiveDays} = ${additionalSelfCandidate.toFixed(0)} kWh/年`,
+                    `roof_max_power_kw × rooftop_use_factor × yield = ${getInputValue('roof_max_power_kw')} × ${(parseFloat(document.getElementById('rooftop_use_factor')?.value) || (config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7))} × ${(config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526)} = ${rooftopPotential.toFixed(0)} kWh/年`,
+                    `additional_self_kwh = MIN(${additionalSelfCandidate.toFixed(0)}, ${rooftopPotential.toFixed(0)}) = ${additionalSelf.toFixed(0)} kWh/年`,
+                    `denominator = existing_solar_annual_gen_kwh × rooftop_use_factor = ${(parseFloat(document.getElementById('existing_solar_annual_gen_kwh')?.value) || (config?.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value ?? 8000))} × ${(parseFloat(document.getElementById('rooftop_use_factor')?.value) || (config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7))} = ${denom.toFixed(0)} kWh/年`,
+                    `sc_rate_improvement = ${denom>0?`${additionalSelf.toFixed(0)} / ${denom.toFixed(0)} = ${(scImprove*100).toFixed(1)}%`:'N/A'}`,
+                    `retrofit_final_sc_rate = MIN(1, ${(parseFloat(document.getElementById('existing_sc_rate')?.value) || (config?.retrofit_params?.system_params?.existing_sc_rate?.value ?? 0.3))} + ${scImprove.toFixed(4)}) = ${(finalScCalc*100).toFixed(1)}% (≈ 当前展示 ${(r.finalSc*100).toFixed(1)}%)`,
+                    `display_floor/ceiling = [${(r.scDispFloor*100).toFixed(1)}% ~ ${(r.scDispCeil*100).toFixed(1)}%]`
+                ],
+                result: `加装后自用率: ${(r.finalSc*100).toFixed(1)}%（展示区间: ${(r.scDispFloor*100).toFixed(1)}% ~ ${(r.scDispCeil*100).toFixed(1)}%）`
             });
             // 在现有步骤后追加展示
             const container = document.getElementById('calculationSteps');
