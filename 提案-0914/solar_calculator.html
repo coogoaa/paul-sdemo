@@ -236,6 +236,89 @@
                     </div>
                 </div>
 
+                <!-- 储能扩容参数 (仅在储能扩容步骤显示；显示全部参数时始终显示) -->
+                <div class="config-section section-retrofit" style="display:none;">
+                    <h6>储能扩容参数</h6>
+                    <div class="mb-2">
+                        <label class="form-label">预设容量档位 (kWh)</label>
+                        <div class="row g-2">
+                            <div class="col-6"><div class="input-group input-group-sm"><span class="input-group-text">A</span><input type="number" id="retrofit_plan_a_kwh" class="form-control" step="0.1"></div></div>
+                            <div class="col-6"><div class="input-group input-group-sm"><span class="input-group-text">B</span><input type="number" id="retrofit_plan_b_kwh" class="form-control" step="0.1"></div></div>
+                            <div class="col-6"><div class="input-group input-group-sm"><span class="input-group-text">C</span><input type="number" id="retrofit_plan_c_kwh" class="form-control" step="0.1"></div></div>
+                            <div class="col-6"><div class="input-group input-group-sm"><span class="input-group-text">D</span><input type="number" id="retrofit_plan_d_kwh" class="form-control" step="0.1"></div></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">成本参数</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-text">电池单价 (AUD/kWh)</label>
+                                <input type="number" id="battery_unit_cost_per_kwh_retrofit" class="form-control form-control-sm" step="10">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-text">安装基础费 (AUD)</label>
+                                <input type="number" id="battery_install_base_cost" class="form-control form-control-sm" step="10">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-text">安装单价 (AUD/kWh)</label>
+                                <input type="number" id="battery_install_cost_per_kwh" class="form-control form-control-sm" step="5">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-text">利润率</label>
+                                <input type="number" id="battery_profit_margin_rate" class="form-control form-control-sm" step="0.01" min="0" max="1">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-text">报价浮动范围</label>
+                                <input type="number" id="battery_price_range_percent" class="form-control form-control-sm" step="0.01" min="0" max="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">运行假设与电价</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-text">年度有效天数 (天)</label>
+                                <input type="number" id="annual_effective_days" class="form-control form-control-sm" step="1">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-text">购电价 (AUD/kWh)</label>
+                                <input type="number" id="grid_buy_rate" class="form-control form-control-sm" step="0.01">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-text">售电价 (AUD/kWh)</label>
+                                <input type="number" id="grid_sell_rate" class="form-control form-control-sm" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#retrofitAdvanced" aria-expanded="false" aria-controls="retrofitAdvanced">高级参数</button>
+                        <div class="collapse mt-2" id="retrofitAdvanced">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-text">屋顶使用系数</label>
+                                    <input type="number" id="rooftop_use_factor" class="form-control form-control-sm" step="0.01" min="0" max="1">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-text">已有基线自用率</label>
+                                    <input type="number" id="existing_sc_rate" class="form-control form-control-sm" step="0.01" min="0" max="1">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-text">已有系统年发电量 (kWh)</label>
+                                    <input type="number" id="existing_solar_annual_gen_kwh" class="form-control form-control-sm" step="10" min="0">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-text">自用率下限系数</label>
+                                    <input type="number" id="sc_rate_lower_limit" class="form-control form-control-sm" step="0.01" min="0" max="1">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-text">年度节省浮动比例</label>
+                                    <input type="number" id="battery_annual_profit_range" class="form-control form-control-sm" step="0.01" min="0" max="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <button class="btn btn-primary w-100" onclick="calculate()">重新计算</button>
             </div>
 
@@ -336,7 +419,25 @@
                 'install_cost_per_kw': config.cost_params?.installation_costs?.install_cost_per_kw?.value,
                 'profit_margin_rate': config.cost_params?.pricing_params?.profit_margin_rate?.value,
                 'grid_buy_rate': config.electricity_rates?.grid_buy_rate?.value,
-                'grid_sell_rate': config.electricity_rates?.grid_sell_rate?.value
+                'grid_sell_rate': config.electricity_rates?.grid_sell_rate?.value,
+                // Retrofit: 容量档位
+                'retrofit_plan_a_kwh': config.retrofit_params?.battery_capacities?.retrofit_plan_a_kwh?.value,
+                'retrofit_plan_b_kwh': config.retrofit_params?.battery_capacities?.retrofit_plan_b_kwh?.value,
+                'retrofit_plan_c_kwh': config.retrofit_params?.battery_capacities?.retrofit_plan_c_kwh?.value,
+                'retrofit_plan_d_kwh': config.retrofit_params?.battery_capacities?.retrofit_plan_d_kwh?.value,
+                // Retrofit: 成本/报价
+                'battery_unit_cost_per_kwh_retrofit': config.retrofit_params?.retrofit_costs?.battery_unit_cost_per_kwh_retrofit?.value,
+                'battery_install_base_cost': config.retrofit_params?.retrofit_costs?.battery_install_base_cost?.value,
+                'battery_install_cost_per_kwh': config.retrofit_params?.retrofit_costs?.battery_install_cost_per_kwh?.value,
+                'battery_profit_margin_rate': config.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value,
+                'battery_price_range_percent': config.retrofit_params?.pricing_params?.battery_price_range_percent?.value,
+                // Retrofit: 运行与高级
+                'annual_effective_days': config.retrofit_params?.system_params?.annual_effective_days?.value,
+                'rooftop_use_factor': config.retrofit_params?.system_params?.rooftop_use_factor?.value,
+                'existing_sc_rate': config.retrofit_params?.system_params?.existing_sc_rate?.value,
+                'existing_solar_annual_gen_kwh': config.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value,
+                'battery_annual_profit_range': config.retrofit_params?.display_params?.battery_annual_profit_range?.value,
+                'sc_rate_lower_limit': config.retrofit_params?.display_params?.sc_rate_lower_limit?.value
             };
 
             Object.entries(updates).forEach(([id, value]) => {
@@ -447,7 +548,7 @@
             steps.push({
                 title: `步骤1: 计算方案${planKey}光伏容量`,
                 inputs: [
-                    `roof_max_power_kw = ${r.inputs.roofMaxPower} kW (手动输入)`,
+                    `roof_max_power_kw = ${r.inputs.roofMaxPower} kW (来自上游计算，手动输入)`,
                     `plan_${planKey.toLowerCase()}_capacity_factor = ${r.inputs.cf} (配置文件)`
                 ],
                 formula: 'solar_kw = roof_max_power_kw × plan_capacity_factor',
@@ -598,18 +699,24 @@
             const rooftopUseFactor = config?.retrofit_params?.system_params?.rooftop_use_factor?.value ?? 0.7;
             const existingScRate = config?.retrofit_params?.system_params?.existing_sc_rate?.value ?? 0.3;
             const existingSolarAnnualGen = config?.retrofit_params?.system_params?.existing_solar_annual_gen_kwh?.value ?? 8000;
-            const roofMaxPower = getInputValue('roof_max_power_kw');
-            const yieldPerKwYear = config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526;
 
             const calcOne = (cap) => {
                 const retrofitCost = (cap * costPerKwh) + installBase + (cap * installPerKwh);
                 const priceBase = retrofitCost * (1 + profitRate);
-                const dailyDischarge = cap * ctx.batteryDod * ctx.batteryRte;
-                const annualSavings = dailyDischarge * (ctx.gridBuyRate - ctx.gridSellRate) * annualDays;
+                const dailyDischarge = cap * ctx.batteryDod * ctx.batteryRte; // kWh/天
+                const annualSavings = dailyDischarge * (ctx.gridBuyRate - ctx.gridSellRate) * annualDays; // AUD/年
                 const payback = annualSavings > 0 ? priceBase / annualSavings : Infinity;
                 // 自用率提升与加装后自用率
-                const additionalSelf = Math.min(cap * ctx.batteryDod * ctx.batteryRte * annualDays, roofMaxPower * rooftopUseFactor * yieldPerKwYear);
-                const scImprove = (existingSolarAnnualGen * rooftopUseFactor) > 0 ? (additionalSelf / (existingSolarAnnualGen * rooftopUseFactor)) : 0;
+                // 逻辑：电池每年可提供的可用放电量（additionalSelfCandidate）
+                // 受限于“现有外送电量”的上限（exportAvailable），避免使用新系统的屋顶潜力作上限
+                const roofMaxPower = getInputValue('roof_max_power_kw');
+                const yieldPerKwYear = config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526;
+                const additionalSelfCandidate = dailyDischarge * annualDays; // kWh/年
+                const rooftopPotential = roofMaxPower * rooftopUseFactor * yieldPerKwYear; // kWh/年
+                const additionalSelf = Math.min(additionalSelfCandidate, rooftopPotential);
+                // 自用率提升：additional_self / (existing_solar_annual_gen_kwh × rooftop_use_factor)
+                const denom = existingSolarAnnualGen * rooftopUseFactor;
+                const scImprove = denom > 0 ? (additionalSelf / denom) : 0;
                 const finalSc = Math.min(1, existingScRate + scImprove);
                 const scDispFloor = finalSc * scLowerLimit;
                 const scDispCeil = finalSc;
@@ -659,6 +766,20 @@
 
         function displayRetrofitSteps(r, ctx) {
             const steps = [];
+            // 读取当前有效参数（与 calculateRetrofit 中的来源一致，仅用于展示，不影响计算）
+            const costPerKwh = parseFloat(document.getElementById('battery_unit_cost_per_kwh_retrofit')?.value) || (config?.retrofit_params?.retrofit_costs?.battery_unit_cost_per_kwh_retrofit?.value ?? 500);
+            const installBase = parseFloat(document.getElementById('battery_install_base_cost')?.value) || (config?.retrofit_params?.retrofit_costs?.battery_install_base_cost?.value ?? 500);
+            const installPerKwh = parseFloat(document.getElementById('battery_install_cost_per_kwh')?.value) || (config?.retrofit_params?.retrofit_costs?.battery_install_cost_per_kwh?.value ?? 50);
+            const profitRate = parseFloat(document.getElementById('battery_profit_margin_rate')?.value) || (config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1);
+            // 展示用：电价与有效天数（与 calculateRetrofit 相同优先级获取）
+            const gridBuyRate = parseFloat(document.getElementById('grid_buy_rate')?.value) || (config?.electricity_rates?.grid_buy_rate?.value ?? 0.3);
+            const gridSellRate = parseFloat(document.getElementById('grid_sell_rate')?.value) || (config?.electricity_rates?.grid_sell_rate?.value ?? 0.07);
+            const effectiveDays = parseFloat(document.getElementById('annual_effective_days')?.value) || (config?.retrofit_params?.system_params?.annual_effective_days?.value ?? 300);
+
+            const costBattery = r.cap * costPerKwh;
+            const costInstallVar = r.cap * installPerKwh;
+            const retrofitCost = costBattery + installBase + costInstallVar;
+            const priceBaseCalc = retrofitCost * (1 + profitRate);
             steps.push({
                 title: '储能步骤1: 扩容成本与报价',
                 inputs: ['参数来自配置文件: retrofit_costs, pricing_params'],
@@ -667,8 +788,11 @@
                     'retrofit_price_base = retrofit_battery_cost × (1 + profit_rate)'
                 ],
                 calculation: [
-                    `retrofit_battery_cost = ${r.cap} × ... = $${(r.priceBase/(1+ (config?.retrofit_params?.pricing_params?.battery_profit_margin_rate?.value ?? 0.1))).toFixed(0)}`,
-                    `retrofit_price_base = $${r.priceBase.toFixed(0)}`
+                    `cap × unit_cost = ${r.cap} × ${costPerKwh} = $${costBattery.toFixed(0)}`,
+                    `base = $${installBase.toFixed(0)}`,
+                    `cap × install_per_kwh = ${r.cap} × ${installPerKwh} = $${costInstallVar.toFixed(0)}`,
+                    `retrofit_battery_cost = ${costBattery.toFixed(0)} + ${installBase.toFixed(0)} + ${costInstallVar.toFixed(0)} = $${retrofitCost.toFixed(0)}`,
+                    `retrofit_price_base = ${retrofitCost.toFixed(0)} × (1 + ${profitRate}) = $${priceBaseCalc.toFixed(0)} (≈ 当前展示 $${r.priceBase.toFixed(0)})`
                 ],
                 result: `报价基准: $${r.priceBase.toFixed(0)}`
             });
@@ -681,8 +805,13 @@
                     'payback_years = price_base / annual_savings'
                 ],
                 calculation: [
-                    `annual_savings = $${r.annualSavings.toFixed(0)}`,
-                    `payback_years = ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
+                    `DoD = ${ctx.batteryDod}, RTE = ${ctx.batteryRte}`,
+                    `daily_discharge = ${r.cap} × ${ctx.batteryDod} × ${ctx.batteryRte} = ${(r.cap * ctx.batteryDod * ctx.batteryRte).toFixed(2)} kWh/天`,
+                    `buy_rate = ${gridBuyRate} AUD/kWh, sell_rate = ${gridSellRate} AUD/kWh`,
+                    `delta_rate = buy_rate - sell_rate = ${(gridBuyRate - gridSellRate).toFixed(2)} AUD/kWh`,
+                    `effective_days = ${effectiveDays} 天`,
+                    `annual_savings = ${ (r.cap * ctx.batteryDod * ctx.batteryRte).toFixed(2) } × ${(gridBuyRate - gridSellRate).toFixed(2)} × ${effectiveDays} = $${r.annualSavings.toFixed(0)}`,
+                    `payback_years = ${r.priceBase.toFixed(0)} / ${r.annualSavings.toFixed(0)} = ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
                 ],
                 result: `年度节省: $${r.annualSavings.toFixed(0)}, 回本: ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
             });
