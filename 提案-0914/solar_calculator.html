@@ -503,11 +503,14 @@
                 const savingsCeil = annualSavings * (1 + annualProfitRange);
                 const scFloor = p.sc * (1 - scDispRange);
                 const scCeil = p.sc * (1 + scDispRange);
+                const paybackFloor = savingsCeil > 0 ? (priceFloor / savingsCeil) : Infinity; // 最乐观：低价/高节省
+                const paybackCeil = savingsFloor > 0 ? (priceCeil / savingsFloor) : Infinity; // 最悲观：高价/低节省
 
                 planResults[key] = {
                     solarKw, panelCount, inverterKw, batteryNominal, priceBase,
                     annualSelfConsumption, annualGridExport, annualSavings, paybackPeriod,
                     priceFloor, priceCeil, savingsFloor, savingsCeil, scFloor, scCeil,
+                    paybackFloor, paybackCeil,
                     inputs: { roofMaxPower, cf: p.cf, sc: p.sc }
                 };
             });
@@ -636,15 +639,19 @@
                     'annual_self_consumption_kwh = annual_generation_kwh × target_sc_rate',
                     'annual_grid_export_kwh = annual_generation_kwh - annual_self_consumption_kwh',
                     'annual_savings_aud = (annual_self_consumption_kwh × grid_buy_rate) + (annual_grid_export_kwh × grid_sell_rate)',
-                    'payback_period_years = price_base / annual_savings_aud'
+                    'payback_period_years = price_base / annual_savings_aud',
+                    'payback_years_floor = price_floor / savings_ceil',
+                    'payback_years_ceil = price_ceil / savings_floor'
                 ],
                 calculation: [
                     `annual_self_consumption_kwh = ${ctx.annualGeneration} × ${r.inputs.sc} = ${annualSelfConsumption.toFixed(0)} kWh`,
                     `annual_grid_export_kwh = ${ctx.annualGeneration} - ${annualSelfConsumption.toFixed(0)} = ${annualGridExport.toFixed(0)} kWh`,
                     `annual_savings_aud = (${annualSelfConsumption.toFixed(0)} × ${ctx.gridBuyRate}) + (${annualGridExport.toFixed(0)} × ${ctx.gridSellRate}) = $${annualSavings.toFixed(0)}`,
-                    `payback_period_years = ${priceBase.toFixed(0)} / ${annualSavings.toFixed(0)} = ${paybackPeriod.toFixed(1)} 年`
+                    `payback_period_years = ${priceBase.toFixed(0)} / ${annualSavings.toFixed(0)} = ${paybackPeriod.toFixed(1)} 年`,
+                    `payback_years_floor = ${(priceBase * (1 - (config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05))).toFixed(0)} / ${(annualSavings * (1 + (config?.display_params?.annual_profit_range?.value ?? 0.05))).toFixed(0)} = ${ ( (priceBase*(1-(config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05))) / (annualSavings*(1+(config?.display_params?.annual_profit_range?.value ?? 0.05))) ).toFixed(1) } 年`,
+                    `payback_years_ceil = ${(priceBase * (1 + (config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05))).toFixed(0)} / ${(annualSavings * (1 - (config?.display_params?.annual_profit_range?.value ?? 0.05))).toFixed(0)} = ${ ( (priceBase*(1+(config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05))) / (annualSavings*(1-(config?.display_params?.annual_profit_range?.value ?? 0.05))) ).toFixed(1) } 年`
                 ],
-                result: `年度节省: $${annualSavings.toFixed(0)}, 回本周期: ${isFinite(paybackPeriod)?paybackPeriod.toFixed(1):'∞'} 年`
+                result: `年度节省: $${annualSavings.toFixed(0)}, 回本周期: ${isFinite(paybackPeriod)?paybackPeriod.toFixed(1):'∞'} 年（区间: ${ isFinite((priceBase*(1-(config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05)))/(annualSavings*(1+(config?.display_params?.annual_profit_range?.value ?? 0.05)))) ? ((priceBase*(1-(config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05)))/(annualSavings*(1+(config?.display_params?.annual_profit_range?.value ?? 0.05)))).toFixed(1) : '∞' } ~ ${ isFinite((priceBase*(1+(config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05)))/(annualSavings*(1-(config?.display_params?.annual_profit_range?.value ?? 0.05)))) ? ((priceBase*(1+(config?.cost_params?.pricing_params?.price_float_range?.value ?? 0.05)))/(annualSavings*(1-(config?.display_params?.annual_profit_range?.value ?? 0.05)))).toFixed(1) : '∞' } 年)`
             });
             displayCalculationSteps(steps);
         }
@@ -661,7 +668,7 @@
                     <td>${r.batteryNominal}</td>
                     <td>$${r.priceBase.toFixed(0)}<br><small class="text-muted">[$${r.priceFloor.toFixed(0)} ~ $${r.priceCeil.toFixed(0)}]</small></td>
                     <td>$${r.annualSavings.toFixed(0)}<br><small class="text-muted">[$${r.savingsFloor.toFixed(0)} ~ $${r.savingsCeil.toFixed(0)}]</small></td>
-                    <td>${isFinite(r.paybackPeriod)?r.paybackPeriod.toFixed(1):'∞'}</td>
+                    <td>${isFinite(r.paybackPeriod)?r.paybackPeriod.toFixed(1):'∞'}<br><small class="text-muted">[${isFinite(r.paybackFloor)?r.paybackFloor.toFixed(1):'∞'} ~ ${isFinite(r.paybackCeil)?r.paybackCeil.toFixed(1):'∞'}]</small></td>
                     <td>${(r.inputs.sc*100).toFixed(0)}%<br><small class="text-muted">[${(r.scFloor*100).toFixed(0)}% ~ ${(r.scCeil*100).toFixed(0)}%]</small></td>
                 </tr>`;
             }).join('');
@@ -718,9 +725,13 @@
                 // 节省区间
                 const savFloor = annualSavings * (1 - batteryAnnualProfitRange);
                 const savCeil = annualSavings * (1 + batteryAnnualProfitRange);
+                const paybackFloor = savCeil > 0 ? ( (priceBase * (1 - priceRange)) / savCeil ) : Infinity; // 最乐观：低价/高节省
+                const paybackCeil = savFloor > 0 ? ( (priceBase * (1 + priceRange)) / savFloor ) : Infinity; // 最悲观：高价/低节省
+
                 return { cap, retrofitCost, priceBase, annualSavings, payback,
                     priceFloor: priceBase * (1 - priceRange), priceCeil: priceBase * (1 + priceRange),
-                    finalSc, scDispFloor, scDispCeil, savFloor, savCeil };
+                    finalSc, scDispFloor, scDispCeil, savFloor, savCeil,
+                    paybackFloor, paybackCeil };
             };
             const arr = [calcOne(capA), calcOne(capB), calcOne(capC), calcOne(capD)];
             lastComputed.retrofit = arr;
@@ -743,7 +754,7 @@
                     <td>${r.cap}</td>
                     <td>$${r.priceBase.toFixed(0)}<br><small class="text-muted">[$${r.priceFloor.toFixed(0)} ~ $${r.priceCeil.toFixed(0)}]</small></td>
                     <td>$${r.annualSavings.toFixed(0)}<br><small class="text-muted">[$${r.savFloor.toFixed(0)} ~ $${r.savCeil.toFixed(0)}]</small></td>
-                    <td>${isFinite(r.payback)?r.payback.toFixed(1):'∞'}</td>
+                    <td>${isFinite(r.payback)?r.payback.toFixed(1):'∞'}<br><small class="text-muted">[${isFinite(r.paybackFloor)?r.paybackFloor.toFixed(1):'∞'} ~ ${isFinite(r.paybackCeil)?r.paybackCeil.toFixed(1):'∞'}]</small></td>
                     <td>${(r.finalSc*100).toFixed(0)}%<br><small class="text-muted">[${(r.scDispFloor*100).toFixed(0)}% ~ ${(r.scDispCeil*100).toFixed(0)}%]</small></td>
                 </tr>`;
             }).join('');
@@ -797,7 +808,9 @@
                 formula: [
                     'daily_discharge = cap × DoD × RTE',
                     'annual_savings = daily_discharge × (buy_rate - sell_rate) × effective_days',
-                    'payback_years = price_base / annual_savings'
+                    'payback_years = price_base / annual_savings',
+                    'payback_years_floor = price_floor / savings_ceil',
+                    'payback_years_ceil = price_ceil / savings_floor'
                 ],
                 calculation: [
                     `DoD = ${ctx.batteryDod}, RTE = ${ctx.batteryRte}`,
@@ -806,9 +819,11 @@
                     `delta_rate = buy_rate - sell_rate = ${(gridBuyRate - gridSellRate).toFixed(2)} AUD/kWh`,
                     `effective_days = ${effectiveDays} 天`,
                     `annual_savings = ${ (r.cap * ctx.batteryDod * ctx.batteryRte).toFixed(2) } × ${(gridBuyRate - gridSellRate).toFixed(2)} × ${effectiveDays} = $${r.annualSavings.toFixed(0)}`,
-                    `payback_years = ${r.priceBase.toFixed(0)} / ${r.annualSavings.toFixed(0)} = ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
+                    `payback_years = ${r.priceBase.toFixed(0)} / ${r.annualSavings.toFixed(0)} = ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`,
+                    `payback_years_floor = ${r.priceFloor.toFixed(0)} / ${r.savCeil.toFixed(0)} = ${isFinite(r.paybackFloor)?r.paybackFloor.toFixed(1):'∞'} 年`,
+                    `payback_years_ceil = ${r.priceCeil.toFixed(0)} / ${r.savFloor.toFixed(0)} = ${isFinite(r.paybackCeil)?r.paybackCeil.toFixed(1):'∞'} 年`
                 ],
-                result: `年度节省: $${r.annualSavings.toFixed(0)}, 回本: ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年`
+                result: `年度节省: $${r.annualSavings.toFixed(0)}, 回本: ${isFinite(r.payback)?r.payback.toFixed(1):'∞'} 年（区间: ${isFinite(r.paybackFloor)?r.paybackFloor.toFixed(1):'∞'} ~ ${isFinite(r.paybackCeil)?r.paybackCeil.toFixed(1):'∞'} 年)`
             });
             // 步骤3：自用率提升（严格按文档 v2.0 展示过程）
             const dailyDischargeKwh = r.cap * ctx.batteryDod * ctx.batteryRte; // kWh/天
