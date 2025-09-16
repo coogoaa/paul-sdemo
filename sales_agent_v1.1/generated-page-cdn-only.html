@@ -4,23 +4,16 @@
   <meta name="theme-color" content="#22C55E">
   <title>Home Solar Potential Explorer | Prototype</title>
   <!-- Fonts: Inter (local first, CDN fallback). If vendor/inter/inter.css is missing, uses CDN. -->
-  <link id="interCss" href="vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link id="interCss" href="https://rsms.me/inter/inter.css" rel="stylesheet">
 
-  <!-- TailwindCSS: Local-first (cached CDN script) with CDN fallback -->
-  <script src="vendor/tailwind/tailwind.cdn.min.js"></script>
-  <script>
-    if (!window.tailwind) {
-      var s = document.createElement('script');
-      s.src = 'https://cdn.tailwindcss.com';
-      document.head.appendChild(s);
-    }
-  </script>
+  <!-- TailwindCSS: CDN only for this file -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Lucide icons: local first, CDN fallback -->
-  <script src="vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <!-- Lucide icons: CDN only for this file -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Model Viewer (UMD, non-module): local first, CDN fallback. Works over file:// -->
-  <script src="vendor/model-viewer/model-viewer-umd.min.js" onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/@google/model-viewer@1.12.1/dist/model-viewer-umd.min.js'"></script>
+  <!-- Model Viewer (UMD, non-module): CDN only for this file -->
+  <script src="https://cdn.jsdelivr.net/npm/@google/model-viewer@1.12.1/dist/model-viewer-umd.min.js"></script>
   <style>
     @keyframes roofPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16,185,129,0.0)); } 50% { transform: scale(1.015); filter: drop-shadow(0 0 6px rgba(16,185,129,0.25)); } 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(16,185,129,0.0)); } }
     #roofOverlay .roof-pulse { animation: roofPulse 2.6s ease-in-out infinite; transition: opacity .2s ease; }
@@ -28,7 +21,7 @@
     #viewer3d model-viewer { transition: opacity .22s ease, transform .22s ease; }
   </style>
 </head>
-<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'InterVariable', 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
   <!-- Safe area and app container -->
   <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
     <!-- Top bar -->
@@ -1703,15 +1696,8 @@
     }
   </script>
 
-<!-- html2canvas for image export (Local-first + CDN fallback) -->
-<script src="vendor/html2canvas/html2canvas.min.js"></script>
-<script>
-  if (!window.html2canvas) {
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-    document.head.appendChild(s);
-  }
-</script>
+<!-- html2canvas for image export -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     try { boot(); } catch (e) { console.error('boot failed', e); }
