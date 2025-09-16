@@ -899,16 +899,35 @@
             }
         }
 
+        // 同步左侧模式、步骤模式、右侧结果Tab与左侧显示区
+        function syncAll(mode) {
+            const modeSel = document.getElementById('modeSelector');
+            const stepsSel = document.getElementById('stepsModeSelector');
+            if (modeSel && modeSel.value !== mode) modeSel.value = mode;
+            if (stepsSel && stepsSel.value !== mode) stepsSel.value = mode;
+            // 同步左侧显示
+            applyMode();
+            // 步骤区方案选择器显示
+            updatePlanSelectorVisibility();
+            // 右侧结果Tab
+            if (mode === 'new') {
+                document.getElementById('pv-tab')?.click();
+            } else {
+                document.getElementById('retrofit-tab')?.click();
+            }
+            // 重新计算，驱动中间计算过程与右侧结果刷新
+            calculate();
+        }
+
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 初始化方案选择器显示状态
-            updatePlanSelectorVisibility();
+            // 同步左侧模式、步骤模式、右侧结果Tab与左侧显示区
+            syncAll(document.getElementById('modeSelector')?.value || 'new');
             
             // 监听步骤模式变化
-            document.getElementById('stepsModeSelector').addEventListener('change', function() {
-                updatePlanSelectorVisibility();
-                // 模式切换后重新计算以更新显示
-                calculate();
+            document.getElementById('stepsModeSelector').addEventListener('change', function(e) {
+                const stepsMode = e.target.value; // 'new' | 'retrofit'
+                syncAll(stepsMode);
             });
             
             // 监听输入变化
@@ -921,7 +940,10 @@
             document.getElementById('retrofitSelector').addEventListener('change', () => {
                 calculate();
             });
-            document.getElementById('modeSelector').addEventListener('change', applyMode);
+            document.getElementById('modeSelector').addEventListener('change', function(e){
+                const mode = e.target.value; // 'new' | 'retrofit'
+                syncAll(mode);
+            });
             document.getElementById('showAllSwitch').addEventListener('change', applyMode);
             // 配置文件上传处理
             document.getElementById('configFile').addEventListener('change', function(e) {
@@ -942,7 +964,6 @@
             });
             // 初始化：加载默认配置并计算
             loadDefaultConfig();
-            applyMode();
             // 应用默认左侧宽度（如有保存）
             const savedWidth = localStorage.getItem('leftPanelWidth');
             if (savedWidth) {
