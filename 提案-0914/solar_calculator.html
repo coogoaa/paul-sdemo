@@ -122,11 +122,11 @@
                     <h6>手动输入数据</h6>
                     <div class="mb-2">
                         <label>屋顶最大装机容量 (kW)</label>
-                        <input type="number" id="roof_max_power_kw" class="form-control" value="15.5" step="0.1">
+                        <input type="number" id="roof_max_power_kw" class="form-control" step="0.1">
                     </div>
                     <div class="mb-2">
                         <label>年发电量 (kWh)</label>
-                        <input type="number" id="annual_generation_pvlib_kwh" class="form-control" value="7109" step="1">
+                        <input type="number" id="annual_generation_pvlib_kwh" class="form-control" step="1">
                     </div>
                 </div>
 
@@ -441,6 +441,8 @@
                     if (element) element.value = value;
                 }
             });
+            // 配置加载后尝试动态计算一次（若用户未手动覆盖）
+            computeDefaultAnnualGeneration();
         }
 
         // 获取输入值
@@ -451,6 +453,8 @@
 
         // 计算函数（多方案 + 储能扩容）
         function calculate() {
+            // 计算前尝试动态刷新一次（若用户未手动覆盖）
+            computeDefaultAnnualGeneration();
             // 通用输入
             const roofMaxPower = getInputValue('roof_max_power_kw');
             const annualGeneration = getInputValue('annual_generation_pvlib_kwh');
@@ -1089,6 +1093,47 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+
+        // 动态计算默认年发电量：仅当用户未手动输入时生效
+        function computeDefaultAnnualGeneration() {
+            const annualEl = document.getElementById('annual_generation_pvlib_kwh');
+            if (!annualEl) return;
+            // 若用户手动输入过，不再覆盖
+            if (annualEl.dataset.userEdited === '1') return;
+
+            const roofMaxPower = getInputValue('roof_max_power_kw');
+            const planA = getInputValue('plan_a_capacity_factor');
+            const yieldPerKw = (config?.new_system_plans?.technical_params?.yield_per_kw_per_year?.value ?? 1526);
+            const solarKw = roofMaxPower * planA;
+            const gen = Math.round(solarKw * yieldPerKw);
+            if (!Number.isNaN(gen) && gen > 0) {
+                annualEl.value = gen;
+                annualEl.dataset.autoFilled = '1';
+            }
+        }
+
+        // 页面初始化：绑定联动监听与用户输入标记
+        window.addEventListener('DOMContentLoaded', () => {
+            const annualEl = document.getElementById('annual_generation_pvlib_kwh');
+            if (annualEl) {
+                // 一旦用户手动编辑年发电量，后续不再自动覆盖
+                annualEl.addEventListener('input', () => {
+                    annualEl.dataset.userEdited = '1';
+                    annualEl.dataset.autoFilled = '';
+                });
+            }
+            // 当屋顶最大装机容量或方案A容量系数变化时，联动计算年发电量
+            const roofEl = document.getElementById('roof_max_power_kw');
+            const planAEl = document.getElementById('plan_a_capacity_factor');
+            const onLinkage = () => {
+                computeDefaultAnnualGeneration();
+            };
+            if (roofEl) roofEl.addEventListener('input', onLinkage);
+            if (planAEl) planAEl.addEventListener('input', onLinkage);
+
+            // 首次进入页面时尝试计算一次
+            computeDefaultAnnualGeneration();
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
