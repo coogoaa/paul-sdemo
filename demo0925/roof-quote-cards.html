@@ -49,6 +49,369 @@
     <!-- 内容 -->
     <main class="flex-1 px-3 pb-24">
       <div id="cards" class="space-y-4 mt-4">
+        <!-- New System (3D model + 3-scheme strip + detail panel) -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+                <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+                <span>Analysis complete</span>
+              </div>
+            </div>
+            <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Your 3D roof model</h3>
+
+            <!-- 3D viewer -->
+            <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 22vh;">
+              <model-viewer
+                src="../sales_agent_v1.1/3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
+                camera-controls
+                auto-rotate
+                disable-zoom
+                ar
+                style="width:100%;height:100%;background:transparent"
+                class="absolute inset-0"
+              ></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+            </div>
+
+            <!-- Schemes strip: A/B/C -->
+            <div class="mt-3">
+              <div class="text-[12px] text-gray-600 mb-2">Our top 3 recommendations (battery included)</div>
+              <div id="nsSchemesStrip" class="flex gap-2 overflow-x-auto no-scrollbar">
+                <!-- A -->
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="A">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">The Rebate Maximiser</div>
+                    <i data-lucide="star" class="w-4.5 h-4.5 text-amber-500"></i>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-1">Maximum Value · Go big for the biggest rewards</div>
+                </button>
+                <!-- B -->
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="B">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">The High Performer</div>
+                    <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-1">Most Installed · The proven choice for Australian homes</div>
+                </button>
+                <!-- C -->
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="C">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">The Smart Starter</div>
+                    <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-1">Optimal Fit · Smart, simple, and effective</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Detail panel -->
+            <section id="nsDetailPanel" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-[13px] font-semibold text-gray-900">New System — Plan details</h3>
+                <span id="nsSchemeTag" class="text-[12px] text-gray-600">Select a plan</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Estimated system size</div>
+                  <div id="nsSize" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Recommended battery capacity</div>
+                  <div id="nsBatt" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Annual bill savings</div>
+                  <div id="nsSavings" class="text-[12px] font-semibold text-[#22C55E]">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Estimated subsidy</div>
+                  <div id="nsSubsidy" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+              </div>
+
+              <div class="text-[11px] text-gray-600 leading-5 mb-1">
+                Ready for a detailed quote? Click below to connect with an installer.<br>
+                Estimates are based on automated analysis. Final pricing and rebates are subject to the installer's official quote.
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <button id="nsCopyBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+                <button id="nsShareBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+                <button id="nsSaveImgBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" title="Save image">
+                  <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                  <span>Save image</span>
+                </button>
+                <button id="nsRefineBtn" class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Storage Add-on (3D model + 3-scheme strip + detail panel) -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+                <i data-lucide="battery-charging" class="w-4.5 h-4.5"></i>
+                <span>Storage Add-on</span>
+              </div>
+            </div>
+            <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Battery expansion for independence</h3>
+
+            <!-- 3D viewer -->
+            <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 22vh;">
+              <model-viewer
+                src="../sales_agent_v1.1/3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
+                camera-controls
+                auto-rotate
+                disable-zoom
+                ar
+                style="width:100%;height:100%;background:transparent"
+                class="absolute inset-0"
+              ></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+            </div>
+
+            <!-- Schemes strip: A/B/C -->
+            <div class="mt-3">
+              <div class="text-[12px] text-gray-600 mb-2">Choose your battery upgrade</div>
+              <div id="essSchemesStrip" class="flex gap-2 overflow-x-auto no-scrollbar">
+                <!-- A -->
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="A">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Max Independence</div>
+                    <i data-lucide="diamond" class="w-4.5 h-4.5 text-emerald-600"></i>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-1">Maximum Value · Maximise your battery, maximise your cash.</div>
+                </button>
+                <!-- B -->
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="B">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">The Daily Powerhouse</div>
+                    <i data-lucide="sun" class="w-4.5 h-4.5 text-amber-500"></i>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-1">Most Popular · Power your nights, own your energy.</div>
+                </button>
+                <!-- C -->
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="C">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">The Smart Upgrade</div>
+                    <i data-lucide="shield-check" class="w-4.5 h-4.5 text-emerald-600"></i>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-1">Custom Fit · Simple, practical, and secure</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Detail panel -->
+            <section id="essDetailPanel" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-[13px] font-semibold text-gray-900">Storage Add-on — Plan details</h3>
+                <span id="essSchemeTag" class="text-[12px] text-gray-600">Select a plan</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Recommended battery capacity</div>
+                  <div id="essBatt" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Annual bill savings</div>
+                  <div id="essSavings" class="text-[12px] font-semibold text-[#22C55E]">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Estimated subsidy</div>
+                  <div id="essSubsidy" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2 col-span-2">
+                  <div class="text-[10px] text-gray-500">Backup power duration</div>
+                  <div id="essBackup" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+              </div>
+
+              <div class="text-[11px] text-gray-600 leading-5 mb-1">
+                Ready for a detailed quote? Click below to connect with an installer.<br>
+                Estimates are based on automated analysis. Final pricing and rebates are subject to the installer's official quote.
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <button id="essCopyBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+                <button id="essShareBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+                <button id="essSaveImgBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" title="Save image">
+                  <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                  <span>Save image</span>
+                </button>
+                <button id="essRefineBtn" class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Inline script: interaction for the two new cards -->
+        <script>
+          // New System configurations (A/B/C)
+          const NS_CFG = {
+            A: {
+              name: 'The Rebate Maximiser',
+              tag: 'Maximum Value · Go big for the biggest rewards',
+              size: '13.2 kW (≈ 30 panels)',
+              batt: '23.4 kWh',
+              savings: '$4,500 – $5,500',
+              subsidy: '$6,000 – $7,500'
+            },
+            B: {
+              name: 'The High Performer',
+              tag: 'Most Installed · The proven choice for Australian homes',
+              size: '9.9 kW (≈ 22 panels)',
+              batt: '15.0 kWh',
+              savings: '$3,600 – $4,400',
+              subsidy: '$4,800 – $6,200'
+            },
+            C: {
+              name: 'The Smart Starter',
+              tag: 'Optimal Fit · Smart, simple, and effective',
+              size: '6.6 kW (≈ 16 panels)',
+              batt: '10.0 kWh',
+              savings: '$2,400 – $3,000',
+              subsidy: '$3,200 – $4,100'
+            }
+          };
+
+          function updateNS(key) {
+            const c = NS_CFG[key]; if (!c) return;
+            document.getElementById('nsSchemeTag').textContent = `${c.name}`;
+            document.getElementById('nsSize').textContent = c.size;
+            document.getElementById('nsBatt').textContent = c.batt;
+            document.getElementById('nsSavings').textContent = c.savings;
+            document.getElementById('nsSubsidy').textContent = c.subsidy;
+            // highlight selected button
+            const strip = document.getElementById('nsSchemesStrip');
+            const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+            buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
+            buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
+          }
+
+          // Storage Add-on configurations (A/B/C)
+          const ESS_CFG = {
+            A: {
+              name: 'Max Independence',
+              tag: 'Maximum Value · Maximise your battery, maximise your cash.',
+              batt: '13.8 kWh',
+              savings: '$1,500 – $1,900',
+              subsidy: '$2,000 – $2,500',
+              backup: '≈ 6 hours'
+            },
+            B: {
+              name: 'The Daily Powerhouse',
+              tag: 'Most Popular · Power your nights, own your energy.',
+              batt: '10.2 kWh',
+              savings: '$1,200 – $1,600',
+              subsidy: '$1,600 – $2,200',
+              backup: '≈ 4 hours'
+            },
+            C: {
+              name: 'The Smart Upgrade',
+              tag: 'Custom Fit · Simple, practical, and secure',
+              batt: '7.0 kWh',
+              savings: '$900 – $1,200',
+              subsidy: '$1,200 – $1,500',
+              backup: '≈ 2.5 hours'
+            }
+          };
+
+          function updateESS(key) {
+            const c = ESS_CFG[key]; if (!c) return;
+            document.getElementById('essSchemeTag').textContent = `${c.name}`;
+            document.getElementById('essBatt').textContent = c.batt;
+            document.getElementById('essSavings').textContent = c.savings;
+            document.getElementById('essSubsidy').textContent = c.subsidy;
+            document.getElementById('essBackup').textContent = c.backup;
+            const strip = document.getElementById('essSchemesStrip');
+            const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+            buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
+            buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
+          }
+
+          // Bind interactions
+          (function bindNewCards() {
+            // New System
+            const nsStrip = document.getElementById('nsSchemesStrip');
+            nsStrip?.addEventListener('click', (e) => {
+              const btn = e.target.closest('.scheme-card-mini'); if (!btn) return;
+              updateNS(btn.dataset.scheme);
+            });
+            updateNS('A'); // default select A
+
+            // Storage Add-on
+            const essStrip = document.getElementById('essSchemesStrip');
+            essStrip?.addEventListener('click', (e) => {
+              const btn = e.target.closest('.scheme-card-mini'); if (!btn) return;
+              updateESS(btn.dataset.scheme);
+            });
+            updateESS('A'); // default select A
+
+            // Actions - copy/share/save/refine
+            function toast(message, type = 'success', duration = 1400) {
+              const styles = {
+                success: 'bg-emerald-600 text-white border-emerald-700',
+                info: 'bg-gray-900 text-white border-gray-800',
+                error: 'bg-red-600 text-white border-red-700'
+              };
+              const t = document.createElement('div');
+              t.className = `fixed bottom-16 left-1/2 -translate-x-1/2 z-[70] px-3 py-2 rounded-lg border shadow-lg ${styles[type] || styles.success}`;
+              t.innerHTML = `<div class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i><span>${message}</span></div>`;
+              document.body.appendChild(t);
+              setTimeout(() => { t.style.transition = 'opacity .25s ease'; t.style.opacity = '0'; setTimeout(() => t.remove(), 340); }, duration);
+            }
+
+            async function savePanelImage(targetId) {
+              const el = document.getElementById(targetId);
+              if (!el || !window.html2canvas) { toast('Save failed', 'error'); return; }
+              try {
+                const canvas = await window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                const url = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = url; a.download = `card_${targetId}_${Date.now()}.png`;
+                document.body.appendChild(a); a.click(); a.remove();
+                toast('Image saved');
+              } catch { toast('Save failed', 'error'); }
+            }
+
+            // NS actions
+            document.getElementById('nsCopyBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('nsDetailPanel').innerText.trim();
+              try { await navigator.clipboard.writeText(text); toast('Copied'); } catch { toast('Copy failed', 'error'); }
+            });
+            document.getElementById('nsShareBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('nsDetailPanel').innerText.trim();
+              const shareData = { title: 'New System plan', text, url: location.href };
+              try {
+                if (navigator.share) { await navigator.share(shareData); toast('Share opened', 'info'); }
+                else { await navigator.clipboard.writeText(text + '\\n' + location.href); toast('Copied for share'); }
+              } catch { toast('Share canceled', 'info'); }
+            });
+            document.getElementById('nsSaveImgBtn')?.addEventListener('click', () => savePanelImage('nsDetailPanel'));
+            document.getElementById('nsRefineBtn')?.addEventListener('click', () => toast('Connect with installer for detailed quote', 'info', 1800));
+
+            // ESS actions
+            document.getElementById('essCopyBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('essDetailPanel').innerText.trim();
+              try { await navigator.clipboard.writeText(text); toast('Copied'); } catch { toast('Copy failed', 'error'); }
+            });
+            document.getElementById('essShareBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('essDetailPanel').innerText.trim();
+              const shareData = { title: 'Storage add-on plan', text, url: location.href };
+              try {
+                if (navigator.share) { await navigator.share(shareData); toast('Share opened', 'info'); }
+                else { await navigator.clipboard.writeText(text + '\\n' + location.href); toast('Copied for share'); }
+              } catch { toast('Share canceled', 'info'); }
+            });
+            document.getElementById('essSaveImgBtn')?.addEventListener('click', () => savePanelImage('essDetailPanel'));
+            document.getElementById('essRefineBtn')?.addEventListener('click', () => toast('Connect with installer for detailed quote', 'info', 1800));
+          })();
+        </script>
         <!-- 3D 屋顶模型 · 3 方案滑块 · 方案详情（参考 Your 3D roof model） -->
         <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
           <div class="p-3">
