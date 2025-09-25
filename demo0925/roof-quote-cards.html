@@ -26,6 +26,8 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
+  <!-- Model Viewer (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@google/model-viewer@1.12.1/dist/model-viewer-umd.min.js"></script>
 </head>
 <body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial;">
   <div class="mx-auto max-w-md min-h-screen flex flex-col">
@@ -47,6 +49,68 @@
     <!-- 内容 -->
     <main class="flex-1 px-3 pb-24">
       <div id="cards" class="space-y-4 mt-4">
+        <!-- 整体卡片：地图 + 3D 屋顶模型 -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="inline-flex items-center gap-2 text-[12px] text-gray-600">
+                <i data-lucide="map" class="w-4 h-4 text-emerald-600"></i>
+                <span>屋顶定位与3D模型</span>
+              </div>
+              <button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20">
+                <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+                <span>交互演示</span>
+              </button>
+            </div>
+
+            <!-- 地图区 -->
+            <div class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 28vh;">
+              <div class="absolute inset-0">
+                <img src="../sales_agent_v1.1/Pic/map_sc.png" alt="屋顶定位地图" class="w-full h-full object-cover select-none">
+              </div>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">拖拽/缩放以查看屋顶</div>
+              <div class="absolute top-2 right-2 flex flex-col gap-1">
+                <button class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                <button class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                <button class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+              </div>
+            </div>
+
+            <!-- 3D 模型区 -->
+            <div class="mt-3 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 22vh;">
+              <model-viewer
+                src="../sales_agent_v1.1/3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
+                camera-controls
+                auto-rotate
+                disable-zoom
+                ar
+                style="width:100%;height:100%;background:transparent"
+                class="absolute inset-0"
+              ></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">拖动旋转查看</div>
+            </div>
+
+            <!-- 操作面板 -->
+            <section id="panel-map3d" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-[13px] font-semibold text-gray-900">地图 + 3D 模型预览</h3>
+                <span class="text-[12px] text-gray-600">参考演示</span>
+              </div>
+              <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+                具体系统报价和更详细的补贴金额，请联系安装商获取。
+              </p>
+              <div class="flex items-center gap-1.5">
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="copy" data-target="panel-map3d">Copy</button>
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="share" data-target="panel-map3d">Share</button>
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" data-act="save" data-target="panel-map3d" title="Save image">
+                  <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                  <span>Save image</span>
+                </button>
+                <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition" data-act="refine">Refine info</button>
+              </div>
+            </section>
+          </div>
+        </div>
         <!-- 卡片A：新建系统 -->
         <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
           <div class="p-3">
@@ -60,12 +124,12 @@
 
             <!-- 方案条带（3项） -->
             <div id="strip-new" class="flex gap-2 overflow-x-auto no-scrollbar">
-              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns1">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns3">
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">快速回本</div>
-                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                  <div class="text-[14px] font-medium text-gray-800">独立用电</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">面板较少，投入低</div>
+                <div class="text-[12px] text-gray-600 mt-1">含电池备用</div>
               </button>
               <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns2">
                 <div class="flex items-center justify-between">
@@ -74,12 +138,12 @@
                 </div>
                 <div class="text-[12px] text-gray-600 mt-1">提升自发自用</div>
               </button>
-              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns3">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns1">
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">独立用电</div>
-                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                  <div class="text-[14px] font-medium text-gray-800">快速回本</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">含电池备用</div>
+                <div class="text-[12px] text-gray-600 mt-1">面板较少，投入低</div>
               </button>
             </div>
 
@@ -136,12 +200,12 @@
 
             <!-- 方案条带（3项） -->
             <div id="strip-ess" class="flex gap-2 overflow-x-auto no-scrollbar">
-              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es1">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es3">
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">入门容量</div>
-                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                  <div class="text-[14px] font-medium text-gray-800">大容量</div>
+                  <i data-lucide="battery-full" class="w-4.5 h-4.5 text-emerald-500"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">适合夜间基本负载</div>
+                <div class="text-[12px] text-gray-600 mt-1">保障更长应急时长</div>
               </button>
               <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es2">
                 <div class="flex items-center justify-between">
@@ -150,12 +214,12 @@
                 </div>
                 <div class="text-[12px] text-gray-600 mt-1">兼顾节省与备用</div>
               </button>
-              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es3">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es1">
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">大容量</div>
-                  <i data-lucide="battery-full" class="w-4.5 h-4.5 text-emerald-500"></i>
+                  <div class="text-[14px] font-medium text-gray-800">入门容量</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">保障更长应急时长</div>
+                <div class="text-[12px] text-gray-600 mt-1">适合夜间基本负载</div>
               </button>
             </div>
 
@@ -219,21 +283,21 @@
       ns1: {
         label: '快速回本',
         sys: '约 4.0 kW · 10 块面板',
-        batt: '不含电池',
+        batt: '含电池（约 8 kWh）',
         save: { low: 3600, high: 4800 },
         subsidy: { low: 1800, high: 2400 }
       },
       ns2: {
         label: '高发电',
         sys: '约 6.5 kW · 16 块面板',
-        batt: '不含电池',
+        batt: '含电池（约 10 kWh）',
         save: { low: 5200, high: 6800 },
         subsidy: { low: 2400, high: 3000 }
       },
       ns3: {
         label: '独立用电',
         sys: '约 8.0 kW · 20 块面板',
-        batt: '含电池（约 10 kWh）',
+        batt: '含电池（约 13 kWh）',
         save: { low: 8400, high: 10800 },
         subsidy: { low: 3200, high: 4000 }
       }
@@ -244,21 +308,21 @@
         cap: '约 5 kWh',
         save: { low: 800, high: 1400 },
         subsidy: { low: 600, high: 1000 },
-        hours: '约 4–6 小时（基础负载）'
+        hours: '约 5 小时+（基础负载）'
       },
       es2: {
         label: '均衡容量',
         cap: '约 10 kWh',
         save: { low: 1500, high: 2400 },
         subsidy: { low: 1200, high: 1800 },
-        hours: '约 8–12 小时（典型负载）'
+        hours: '约 10 小时+（典型负载）'
       },
       es3: {
         label: '大容量',
         cap: '约 15 kWh',
         save: { low: 2200, high: 3400 },
         subsidy: { low: 1600, high: 2400 },
-        hours: '约 12–18 小时（更长应急）'
+        hours: '约 15 小时+（更长应急）'
       }
     };
 
