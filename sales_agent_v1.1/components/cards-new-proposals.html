@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>新建系统与储能扩容（3方案卡片示例）</title>
+  <!-- 保持与组件示例一致的资源引用 -->
+  <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <style>
+    body { font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; }
+  </style>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans">
+  <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
+    <div class="px-3 pt-4 pb-2">
+      <div class="text-[18px] font-semibold tracking-tight">Cards · 新建系统 & 储能扩容（3方案）</div>
+      <div class="text-[12px] text-gray-600">样式沿用 generated-page / components 现有卡片布局</div>
+    </div>
+
+    <main class="flex-1 px-3 pb-20 space-y-4">
+
+      <!-- 新建系统（3 方案版） -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+              <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+              <span>分析完成</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg border border-gray-200">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> 返回
+            </div>
+          </div>
+          <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">您的 3D 屋顶模型</h3>
+
+          <!-- 3D 预览/占位，保持与 Step4 风格一致 -->
+          <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0 flex items-center justify-center text-[12px] text-gray-500">3D/2D viewer placeholder</div>
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+          </div>
+
+          <!-- 仅展示三个方案 -->
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">基于分析结果，推荐以下 3 套方案</div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Smart Saver</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">面板较少 · 回本更快</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">High Efficiency</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">发电更多 · 自用更高</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">配备电池 · 停电可用</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 信息面板：不再展示系统总额，仅展示指定字段 -->
+          <section class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm" id="nsCardBody">
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">推荐系统配置</div>
+                <div id="nsSysCfg" class="text-[12px] font-semibold text-gray-900">—</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">推荐电池配置</div>
+                <div id="nsBatCfg" class="text-[12px] font-semibold text-gray-900">—</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">年度节省金额（区间）</div>
+                <div id="nsAnnualSave" class="text-[12px] font-semibold text-[#22C55E]">—</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">补贴金额（区间）</div>
+                <div id="nsSubsidy" class="text-[12px] font-semibold text-gray-900">—</div>
+              </div>
+            </div>
+            <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+              具体系统报价和更详细的补贴金额，请联系安装商获取。
+            </p>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+              <button class="btn-export px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" data-target="#nsCardBody" title="Save image">
+                <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                <span>Save image</span>
+              </button>
+              <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 储能扩容（3 方案版） -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+              <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+              <span>分析完成</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg border border-gray-200">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> 返回
+            </div>
+          </div>
+          <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">您的 3D 屋顶模型</h3>
+
+          <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0 flex items-center justify-center text-[12px] text-gray-500">Battery add-on visualization</div>
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Preview</div>
+          </div>
+
+          <!-- 仅展示三个方案（容量示例） -->
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">基于分析结果，推荐以下 3 套储能扩容方案</div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">基础储能扩容</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">电池容量 · 5 kWh</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">标准储能扩容</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">电池容量 · 10 kWh</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">能源独立</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">电池容量 · 13.5 kWh</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 信息面板：不展示系统总额，仅展示指定字段 -->
+          <section class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm" id="beCardBody">
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">推荐电池容量</div>
+                <div id="beRecCapacity" class="text-[12px] font-semibold text-gray-900">—</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">年度节省金额（区间）</div>
+                <div id="beAnnualSave" class="text-[12px] font-semibold text-[#22C55E]">—</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">补贴金额（区间）</div>
+                <div id="beSubsidy" class="text-[12px] font-semibold text-gray-900">—</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">备用电源可用电时长</div>
+                <div id="beBackupHours" class="text-[12px] font-semibold text-gray-900">—</div>
+              </div>
+            </div>
+            <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+              具体系统报价和更详细的补贴金额，请联系安装商获取。
+            </p>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+              <button class="btn-export px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" data-target="#beCardBody" title="Save image">
+                <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                <span>Save image</span>
+              </button>
+              <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 导出图片工具：与组件示例一致 -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    (function(){
+      function bindExportButtons(){
+        const buttons = document.querySelectorAll('.btn-export[data-target]');
+        buttons.forEach(btn => {
+          if (btn.__bound) return; btn.__bound = true;
+          btn.addEventListener('click', async () => {
+            const sel = btn.getAttribute('data-target');
+            const node = document.querySelector(sel);
+            if (!node) return;
+            const old = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span>Generating...</span>';
+            try {
+              const canvas = await html2canvas(node, { backgroundColor: '#ffffff', useCORS: true, scale: 2 });
+              const a = document.createElement('a');
+              const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+              a.href = canvas.toDataURL('image/png');
+              a.download = `solar-summary-${ts}.png`;
+              document.body.appendChild(a); a.click(); a.remove();
+            } catch(err){
+              console.error(err); alert('Failed to generate image. Please try again.');
+            } finally {
+              btn.disabled = false; btn.innerHTML = old;
+            }
+          });
+        });
+      }
+      function init(){ try{ bindExportButtons(); if (window.lucide && lucide.createIcons) lucide.createIcons(); }catch(e){} }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    })();
+  </script>
+</body>
+</html>
