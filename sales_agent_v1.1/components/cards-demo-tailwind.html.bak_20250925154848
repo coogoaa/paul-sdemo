@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Cards Demo (Tailwind, H5) - v1.2</title>
+  <!-- Use same resources as generated-page-v1.4_en.html -->
+  <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+  <link rel="stylesheet" href="../vendor/tailwind/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    
+    /* Map container styles */
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 75%; /* 4:3 aspect ratio */
+      overflow: hidden;
+      touch-action: none;
+      background-color: #f9fafb;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .map-viewport {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: grab;
+    }
+    
+    .map-viewport:active {
+      cursor: grabbing;
+    }
+    
+    .map-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      will-change: transform;
+      transition: transform 0.15s ease-out;
+      max-width: none;
+      height: auto;
+      touch-action: none;
+      user-select: none;
+    }
+    
+    .map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    /* Toolbar styles */
+    .map-toolbar {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+    
+    .map-toolbar button {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    
+    .map-toolbar button:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+    
+    .map-toolbar button:active {
+      transform: scale(0.95);
+    }
+    
+    .map-toolbar button.active {
+      background: #10b981;
+      border-color: #10b981;
+      color: white;
+    }
+    
+    /* Roof selection pulse animation */
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 0.3;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+    }
+    
+    .roof-pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    /* Coordinate label */
+    .coord-label {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      font-family: 'Roboto Mono', monospace;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+      z-index: 10;
+      pointer-events: none;
+    }
+    
+    /* Back button */
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #374151;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    
+    .back-button:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+    
+    .back-button:active {
+      transform: scale(0.98);
+    }
+    
+    /* Loading animation for AI analysis */
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .map-toolbar {
+        bottom: 0.75rem;
+        right: 0.75rem;
+      }
+      
+      .map-toolbar button {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.5rem;
+      }
+      
+      .coord-label {
+        font-size: 0.6875rem;
+        padding: 0.125rem 0.5rem;
+      }
+      
+      .back-button {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.8125rem;
+      }
+    }
+  </style>
+  <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=68c2a297e9a9a694b16bc081&product=sop' async='async'></script>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+  <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
+    <div class="px-3 pt-4 pb-2">
+      <div class="text-[18px] font-semibold tracking-tight">Cards Demo · Tailwind (H5)</div>
+      <div class="text-[12px] text-gray-600">Strictly aligned to generated-page-v1.4_en.html styles</div>
+    </div>
+
+    <main class="flex-1 px-3 pb-20 space-y-4">
+
+      <!-- MAP_CARD: Step 2 roof confirmation demo (with image) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="mb-2 flex items-center justify-between">
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <i data-lucide="map" class="w-4 h-4"></i>
+              <span>Map card (Step 2)</span>
+            </div>
+            <div class="text-[11px] text-gray-500">Demo · Tap to place marker</div>
+          </div>
+          <div class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 45vh;">
+            <!-- Map viewport -->
+            <div id="demoMapViewport" class="absolute inset-0 touch-pan-y touch-pan-x cursor-grab active:cursor-grabbing">
+              <img id="demoMapImage" src="../Pic/point_523_high.jpg" class="select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="transform: translate(-50%, -50%) scale(1.6); transform-origin: center center; width: 160%; height: auto;">
+              <!-- Roof highlight / marker overlay -->
+              <svg id="demoRoofOverlay" class="absolute inset-0 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+              <!-- Map HUD -->
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag/zoom map, then tap your roof</div>
+              <div class="absolute top-2 right-2 flex flex-col gap-1">
+                <button id="demoZoomIn" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                <button id="demoZoomOut" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                <button id="demoResetView" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+              </div>
+            </div>
+            <!-- Confirm bar -->
+            <div class="absolute bottom-0 inset-x-0 p-2 bg-gradient-to-t from-gray-100 to-transparent">
+              <div class="flex items-center gap-2">
+                <div id="demoRoofHint" class="flex-1 text-[12px] text-gray-600">Tap your roof on the map</div>
+                <button id="demoConfirmRoof" class="shrink-0 inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                  <i data-lucide="check" class="w-4 h-4"></i> Confirm roof
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S5_COMPOSITE_CARD: 3D/2D + Plans + Value + CTA -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>Analysis complete</span>
+              </div>
+              <div class="hidden sm:block text-[12px] text-gray-600">Usable area 82 m² · Max ~ 10.8 kW</div>
+            </div>
+            <div class="text-[11px] text-gray-500">Source: Satellite + Estimation</div>
+          </div>
+
+          <!-- Model placeholder (match Step4 aesthetics) -->
+          <div class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0 flex items-center justify-center text-[12px] text-gray-500">3D/2D viewer placeholder</div>
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+          </div>
+
+          <!-- Horizontal mini plan strip -->
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">Tailored plans</div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Smart Saver</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">6.6 kW · ¥X1–Y1</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">High Efficiency</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">8.2 kW · ¥X2–Y2</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">10.0 kW · ¥X3–Y3</div>
+              </button>
+              <button class="shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Ultimate Energy</div>
+                  <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">12.0 kW · ¥X4–Y4</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Budget/value panel -->
+          <section class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-[13px] font-semibold text-gray-900">System budget (incl. tax)</h3>
+              <span class="text-[16px] font-bold text-[#22C55E]">$0 – $0</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Estimated system size</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Payback period</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Self-consumption</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Annual bill savings</div>
+                <div class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+              <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Get subsidy-inclusive quote</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- SHARE_CARD: Shareable summary card (for copy/share) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="text-[13px] font-semibold text-gray-900">Shareable summary</div>
+              <span class="hidden sm:inline text-[11px] text-gray-500">Preview</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white hover:bg-gray-50 inline-flex items-center gap-1.5">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span>Copy</span>
+              </button>
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white hover:bg-gray-50 inline-flex items-center gap-1.5">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                <span>Share</span>
+              </button>
+              <button id="waShare1" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-[#25D366] text-white hover:bg-[#1ebe57] inline-flex items-center gap-1.5">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                <span>WhatsApp</span>
+              </button>
+              <button class="btn-export px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white hover:bg-gray-50 inline-flex items-center gap-1.5" data-target="#shareCard">
+                <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                <span>Save image</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card body that can be exported as image later -->
+          <div id="shareCard" class="rounded-xl border border-green-200 bg-white overflow-hidden">
+            <!-- Top banner / optional image -->
+            <div class="relative bg-gray-50 border-b border-green-100" style="aspect-ratio: 16/9;">
+              <img src="../Pic/point_523_high.jpg" alt="roof" class="w-full h-full object-cover">
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-white/90 border border-gray-200 inline-flex items-center gap-1.5">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                <span id="shareAddr">Sample address, City</span>
+              </div>
+              <div class="absolute top-2 right-2 text-[11px] px-2 py-1 rounded-md bg-white/90 border border-gray-200">
+                <span id="shareDate"></span>
+              </div>
+            </div>
+
+            <div class="p-3">
+              <div class="flex items-center justify-between">
+                <div class="text-[16px] font-semibold text-gray-900" id="sharePlan">High Efficiency</div>
+                <div class="text-[11px] text-gray-500">Solar Estimation</div>
+              </div>
+
+              <div class="mt-2 grid grid-cols-2 gap-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">System size</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareSize">6.5 kW (≈ 16 panels)</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Budget (incl. tax)</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareBudget">$X – $Y</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Payback</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareROI">4–5 years</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Self-consumption</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareSelfUse">60% – 72%</div>
+                </div>
+              </div>
+
+              <div class="mt-2 flex items-center gap-2">
+                <div class="flex-1 text-[11px] text-gray-600">
+                  Scan for your AI-powered solar proposal tailored just for you.
+                </div>
+                <!-- QR/link placeholder -->
+                <div class="shrink-0 h-16 w-16 rounded-md border border-gray-200 bg-white grid place-items-center">
+                  <i data-lucide="qr-code" class="w-6 h-6 text-gray-500"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BATTERY_EXPANSION: 电池扩容卡片（保持与 Step4 风格一致） -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+              <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+              <span>Analysis complete</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg border border-gray-200">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> Back
+            </div>
+          </div>
+          <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Your 3D roof model</h3>
+
+          <!-- 视觉占位：与 Step4 一致的预览框（非必须交互，仅风格对齐） -->
+          <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0 flex items-center justify-center text-[12px] text-gray-500">Battery add-on visualization</div>
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Preview</div>
+          </div>
+
+          <!-- 四个方案（水平滑动），严格沿用 Step4 mini 卡片风格 -->
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">Based on the analysis, here are 4 tailored plans</div>
+            <div id="batterySchemesStrip" class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="battery-scheme-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="A" data-capacity="5">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Basic Storage Add-on</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Battery capacity · 5 kWh</div>
+              </button>
+              <button class="battery-scheme-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="B" data-capacity="10">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Standard Storage Add-on</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Battery capacity · 10 kWh</div>
+              </button>
+              <button class="battery-scheme-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="C" data-capacity="13.5">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Battery capacity · 13.5 kWh</div>
+              </button>
+              <button class="battery-scheme-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="D" data-capacity="20">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">All-Weather Energy Assurance</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Battery capacity · 20 kWh</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 预算与指标面板：系统预算区间 + 四项指标（容量/自用率/回本/年度节省） -->
+          <section class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-[13px] font-semibold text-gray-900">System budget (incl. tax)</h3>
+              <span id="bBudgetRange" class="text-[16px] font-bold text-[#22C55E]">$0 – $0</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Estimated system size</div>
+                <div id="bSizeText" class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Payback period</div>
+                <div id="bPaybackRange" class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Self-consumption</div>
+                <div id="bSelfUseRange" class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+              <div class="rounded-xl border border-gray-100 p-2">
+                <div class="text-[10px] text-gray-500">Annual bill savings</div>
+                <div id="bAnnualSavingRange" class="text-[12px] font-semibold text-gray-900">–</div>
+              </div>
+            </div>
+            <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+              Ranges shown use demo fluctuation for display only. Actual quotes depend on site specifics and tariffs.
+            </p>
+            <div class="flex items-center gap-1.5">
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+              <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+              <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Get subsidy-inclusive quote</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- SHARE_CARD_ALT: Split satellite + 3D preview card -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="text-[13px] font-semibold text-gray-900">Shareable summary</div>
+            </div>
+            
+          </div>
+
+          <div id="shareCard2" class="rounded-xl border border-green-200 bg-white overflow-hidden">
+            <!-- Split banner -->
+            <div class="grid grid-cols-2 border-b border-green-100">
+              <!-- Satellite -->
+              <div class="relative bg-gray-50" style="aspect-ratio: 16/9;">
+                <img src="../Pic/weixing.png" alt="satellite" class="w-full h-full object-cover">
+                <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-white/90 border border-gray-200 inline-flex items-center gap-1.5">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                  <span id="shareAddr2">Sample address, City</span>
+                </div>
+              </div>
+              <!-- 3D model preview (image placeholder) -->
+              <div class="relative bg-gray-50" style="aspect-ratio: 16/9;">
+                <img src="../Pic/3d.png" alt="3D model" class="w-full h-full object-cover">
+                <div class="absolute top-2 right-2 text-[11px] px-2 py-1 rounded-md bg-white/90 border border-gray-200">3D preview</div>
+              </div>
+            </div>
+
+            <div class="p-3">
+              <div class="flex items-center justify-between">
+                <div class="text-[16px] font-semibold text-gray-900" id="sharePlan2">High Efficiency</div>
+                <div class="text-[11px] text-gray-500" id="shareDate2"></div>
+              </div>
+              <div class="mt-2 grid grid-cols-2 gap-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">System size</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareSize2">6.5 kW (≈ 16 panels)</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Budget (incl. tax)</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareBudget2">$X – $Y</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Payback</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareROI2">4–5 years</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">Self-consumption</div>
+                  <div class="text-[12px] font-semibold text-gray-900" id="shareSelfUse2">60% – 72%</div>
+                </div>
+              </div>
+              <div class="mt-2 flex items-center gap-2">
+                <div class="flex-1 text-[11px] text-gray-600">
+                  Scan for your AI-powered solar proposal tailored just for you.
+                </div>
+                <!-- QR/link placeholder -->
+                <div class="shrink-0 h-16 w-16 rounded-md border border-gray-200 bg-white grid place-items-center">
+                  <i data-lucide="qr-code" class="w-6 h-6 text-gray-500"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYSIS_COMPLETE: duplicated from v1.5 for demo -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+              <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+              <span>Analysis complete</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg border border-gray-200">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> Back
+            </div>
+          </div>
+          <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Your 3D roof model</h3>
+          <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0">
+              <model-viewer src="3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb" camera-controls auto-rotate disable-zoom ar style="width:100%;height:100%;background:transparent" class="absolute inset-0"></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">Based on the analysis, here are 4 tailored plans</div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Smart Saver</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Fewer panels, quick payback</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">High Efficiency</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">More generation, higher self-use</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Battery backup for outages</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Ultimate Energy</div>
+                  <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Max panels, maximum savings</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYSIS_COMPLETE_WITH_HELP: 3D card variant with Help CTA for map issues -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+              <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+              <span>Analysis complete</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="inline-flex items-center gap-1.5 text-[12px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition">
+                <i data-lucide="life-buoy" class="w-4 h-4"></i>
+                <span>Need help?</span>
+              </button>
+              <div class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg border border-gray-200">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i> Back
+              </div>
+            </div>
+          </div>
+          <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Your 3D roof model</h3>
+          <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
+            <div class="absolute inset-0">
+              <model-viewer src="3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb" camera-controls auto-rotate disable-zoom ar style="width:100%;height:100%;background:transparent" class="absolute inset-0"></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+              <div class="absolute top-2 right-2 text-[11px] px-2 py-1 rounded-md bg-white/90 border border-gray-200">
+                Roof wrong / not found? Tap “Need help?”
+              </div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div class="text-[12px] text-gray-600 mb-2">Based on the analysis, here are 4 tailored plans</div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Smart Saver</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Fewer panels, quick payback</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">High Efficiency</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">More generation, higher self-use</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Battery backup for outages</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">Ultimate Energy</div>
+                  <i data-lucide="stars" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">Max panels, maximum savings</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- L1 Large area lead card -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[13px] font-semibold text-gray-900">Large roof – custom design</div>
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">Area &gt; 450 m²</div>
+          </div>
+          <ul class="list-disc pl-5 text-[12px] text-gray-600 space-y-1">
+            <li>Dedicated engineer assessment</li>
+            <li>Grid & export strategy</li>
+            <li>Subsidy & policy review</li>
+          </ul>
+          <div class="mt-3 space-y-2">
+            <div class="relative">
+              <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input placeholder="Name" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input type="email" placeholder="Email" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input inputmode="tel" placeholder="Phone" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center justify-end gap-2">
+            <button class="px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-[12px] hover:bg-gray-100 inline-flex items-center gap-1.5">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              <span>Re-evaluate</span>
+            </button>
+            <button class="px-4 py-2.5 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Submit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- L1B Large area lead card (Lead-ready, aligned to Step 7 fields) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[13px] font-semibold text-gray-900">Large roof – custom design (Lead-ready)</div>
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">Area &gt; 450 m²</div>
+          </div>
+
+          <ul class="list-disc pl-5 text-[12px] text-gray-600 space-y-1">
+            <li>Dedicated engineer assessment</li>
+            <li>Grid & export strategy</li>
+            <li>Subsidy & policy review</li>
+          </ul>
+
+          <div class="mt-3 space-y-2">
+            <div class="relative">
+              <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input id="leadName" placeholder="Full name" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input id="leadPhone" inputmode="tel" placeholder="Phone" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input id="leadEmail" type="email" placeholder="Email" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <div class="relative">
+              <i data-lucide="map-pin" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <input id="leadPostcode" inputmode="numeric" maxlength="4" placeholder="Postcode (4 digits)" class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition"/>
+            </div>
+            <label class="mt-1.5 flex items-start gap-2 text-[12px] text-gray-600 select-none">
+              <input id="leadConsent" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#22C55E] focus:ring-[#22C55E]"/>
+              <span>I agree to the privacy policy and to be contacted for a final quote.</span>
+            </label>
+          </div>
+
+          <div class="mt-3 flex items-center justify-end gap-2">
+            <button class="px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-[12px] hover:bg-gray-100 inline-flex items-center gap-1.5">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              <span>Re-evaluate</span>
+            </button>
+            <button id="leadSubmitBtn" class="px-4 py-2.5 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Submit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- F1 Address fallback -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3 space-y-2">
+          <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            <span>Address not found or low quality</span>
+          </div>
+          <div class="text-[12px] text-gray-600">Try a different spelling or a nearby landmark, or drag the map manually.</div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Retry locate</button>
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Manual drag</button>
+            <button class="ml-auto px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Contact human assessment</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- F3 Small area (no upload) -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3 space-y-2">
+          <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+            <i data-lucide="triangle-alert" class="w-4 h-4"></i>
+            <span>Installable area may be too small</span>
+          </div>
+          <div class="text-[12px] text-gray-600">Zoom in and reselect your roof, or leave contact for free manual check.</div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-2 rounded-xl bg-white border border-gray-200 text-[12px]">Reselect roof</button>
+            <button class="ml-auto px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Free manual assessment</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- F4 Analysis timeout -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3 space-y-2">
+          <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+            <i data-lucide="timer" class="w-4 h-4"></i>
+            <span>Analysis timeout</span>
+          </div>
+          <div class="text-[12px] text-gray-600">Proceeding with conservative parameters. Will auto-refresh when ready.</div>
+          <div class="flex items-center justify-end">
+            <button class="px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition text-[12px]">Continue</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- S8 Lead form (generic) removed per request -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="mb-2 flex items-center justify-between">
+            <button id="backBtn" class="inline-flex items-center gap-1.5 text-[12px] text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100 border border-gray-200">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> Back
+            </button>
+            <div id="coordLabel" class="text-[12px] text-gray-600 truncate max-w-[65%]">Lat/Lng 30.4804, 104.0351</div>
+          </div>
+          
+          <div id="mapViewport" class="relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 52vw; max-height: 360px; touch-action: none;">
+            <img id="mapImage" src="../Pic/point_523_high.jpg" alt="map" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none" style="transform: translate(-50%, -50%) scale(1.6); transform-origin: center center; width: 160%; height: auto; max-width: none;">
+            
+            <svg id="roofOverlay" class="absolute inset-0 pointer-events-none w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+            
+            <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100/90 border border-gray-200">Drag/zoom map, then tap your roof</div>
+            <div class="absolute top-2 right-2 flex flex-col gap-1">
+              <button id="zoomIn" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+              <button id="zoomOut" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="minus" class="w-4 h-4"></i>
+              </button>
+              <button id="rectSelect" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="crop" class="w-4 h-4"></i>
+              </button>
+              <button id="resetView" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              </button>
+              <button id="undoAction" class="h-8 w-8 rounded-lg bg-white/90 border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50">
+                <i data-lucide="undo-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="mt-2 flex items-center justify-between">
+            <div id="roofHint" class="text-[12px] text-gray-600">Tap your roof on the map</div>
+            <button id="confirmRoofBtn" class="shrink-0 inline-flex items-center gap-1.5 text-[12px] px-3 py-2 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+              <i data-lucide="check" class="w-4 h-4"></i> Confirm roof
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4_AI_ANALYSIS: Integrated with animation -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center gap-2 text-[12px] text-gray-600">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+            <span>Analyzing</span>
+          </div>
+          <h3 class="mt-1 text-[18px] tracking-tight font-semibold text-gray-800">Smart analysis for your roof</h3>
+          <p class="text-[12px] text-gray-600 mt-1">It's like magic!</p>
+          
+          <!-- Animation placeholder with system works image -->
+          <div class="mt-3 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
+            <div class="w-full" style="aspect-ratio: 16/9;">
+              <img src="../Pic/ How the System Works.png" alt="system analysis" class="w-full h-full object-cover">
+            </div>
+          </div>
+          
+          <div class="mt-3 space-y-2 text-[13px]">
+            <div class="flex items-center gap-2 text-gray-600">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+              <span>Analyzing roof area</span>
+            </div>
+            <div class="flex items-center gap-2 text-gray-600">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+              <span>Evaluating sun exposure</span>
+            </div>
+            <div class="flex items-center gap-2 text-gray-600">
+              <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-amber-500"></i>
+              <span>Scanning high-consumption devices</span>
+            </div>
+          </div>
+          <div class="mt-2 text-[12px] text-gray-500">This typically takes 5–15 seconds depending on imagery quality.</div>
+        </div>
+      </section>
+
+      <!-- 电池扩容卡片 -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[13px] font-semibold text-gray-900">电池扩容方案</div>
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">选择您的电池扩容方案</div>
+          </div>
+
+          <ul class="list-disc pl-5 text-[12px] text-gray-600 space-y-1">
+            <li>方案A：5kWh</li>
+            <li>方案B：10kWh</li>
+            <li>方案C：13.5kWh</li>
+            <li>方案D：20kWh</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- QUEUE_SIMPLE: Busy notice with refresh CTA -->
+      <section class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+        <div class="p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+              <i data-lucide="flame" class="w-4 h-4"></i>
+              <span>活动火爆</span>
+            </div>
+            <span class="text-[11px] text-gray-500">为确保服务质量</span>
+          </div>
+          <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">活动太火爆了，请稍后重试</h3>
+          <p class="mt-1 text-[12px] text-gray-600">稍等片刻后再试，或点击下方按钮刷新页面。</p>
+          <div class="mt-3 flex items-center justify-end gap-2">
+            <button class="px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-[12px] hover:bg-gray-100 inline-flex items-center gap-1.5" onclick="window.location.reload()">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              <span>刷新</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+  <!-- Battery expansion demo calculations (kept local to this component page) -->
+  <script>
+    (function(){
+      const battery_dod = 0.9;            // 放电深度
+      const battery_rte = 0.92;           // 循环效率
+      const annual_effective_days = 300;  // 年有效天数
+      const grid_buy_rate_aud = 0.30;     // 购电价 (AUD/kWh)
+      const grid_sell_rate_aud = 0.08;    // 售电价 (AUD/kWh)
+      const fluctuation = 0.12;           // 展示浮动比例 ±12%
+
+      // 成本估算（演示用）
+      const install_base_fee = 1200;      // 基础费 AUD
+      const cost_per_kwh = 800;           // 每kWh电池成本 AUD
+      const power_install_per_kw = 150;   // 每kW安装费（近似按标称容量） AUD
+      const profit_rate = 0.25;           // 扩容利润率（演示）
+      const budget_range_fluct = 0.10;    // 报价浮动展示（±10% 演示）
+
+      // 自用率相关预设
+      const existing_sc_rate = 0.30;                // 预设已有自用率 30%
+      const existing_solar_annual_gen_kwh = 7000;   // 预设已有光伏年发电量（示例）
+      const theoretical_usage_ratio = 0.70;         // 屋顶理论使用系数 70%
+
+      function calc(capacityKwh){
+        const daily_effective_discharge = capacityKwh * battery_dod * battery_rte; // kWh/day
+        const annual_saving = daily_effective_discharge * (grid_buy_rate_aud - grid_sell_rate_aud) * annual_effective_days;
+        const saving_low = annual_saving * (1 - fluctuation);
+        const saving_high = annual_saving * (1 + fluctuation);
+
+        const system_cost = capacityKwh * cost_per_kwh + install_base_fee + capacityKwh * power_install_per_kw;
+        const quote_base = system_cost * (1 + profit_rate); // 报价基准
+        const budget_low = quote_base * (1 - budget_range_fluct);
+        const budget_high = quote_base * (1 + budget_range_fluct);
+        const payback_low = system_cost / Math.max(saving_high, 1e-6); // 下限：更快
+        const payback_high = system_cost / Math.max(saving_low, 1e-6);  // 上限：更慢
+
+        const added_selfuse_kwh = capacityKwh * battery_dod * battery_rte * annual_effective_days;
+        const selfuse_increase = added_selfuse_kwh / (existing_solar_annual_gen_kwh * theoretical_usage_ratio);
+        const after_selfuse = existing_sc_rate + selfuse_increase;
+        const selfuse_low = Math.max(after_selfuse * (1 - fluctuation), 0);
+        const selfuse_high = Math.min(after_selfuse * (1 + fluctuation), 0.98);
+
+        return { saving_low, saving_high, payback_low, payback_high, selfuse_low, selfuse_high, budget_low, budget_high };
+      }
+
+      function fmtCurrency(v){ return `$${v.toFixed(0)}`; }
+      function fmtRangeCurrency(a,b){ return `${fmtCurrency(a)} – ${fmtCurrency(b)}`; }
+      function fmtYears(v){ return `${v.toFixed(2)} years`; }
+      function fmtRangeYears(a,b){ return `${fmtYears(a)} – ${fmtYears(b)}`; }
+      function fmtPct(v){ return `${Math.round(v*100)}%`; }
+      function fmtRangePct(a,b){ return `${fmtPct(a)} – ${fmtPct(b)}`; }
+
+      const els = {
+        capacity: document.getElementById('batteryCapacityLabel'),
+        saving: document.getElementById('bAnnualSavingRange'),
+        payback: document.getElementById('bPaybackRange'),
+        selfuse: document.getElementById('bSelfUseRange'),
+        tag: document.getElementById('bPlanTag'),
+        budget: document.getElementById('bBudgetRange'),
+        size: document.getElementById('bSizeText')
+      };
+
+      function applyPlan(planKey, capacity){
+        const r = calc(capacity);
+        if (!els.payback) return;
+        if (els.capacity) els.capacity.textContent = `Capacity ${capacity} kWh`;
+        if (els.budget) els.budget.textContent = `${fmtCurrency(r.budget_low)} – ${fmtCurrency(r.budget_high)}`;
+        if (els.size) els.size.textContent = `${capacity} kWh`;
+        els.saving.textContent = fmtRangeCurrency(r.saving_low, r.saving_high);
+        els.payback.textContent = fmtRangeYears(r.payback_low, r.payback_high);
+        els.selfuse.textContent = fmtRangePct(r.selfuse_low, r.selfuse_high);
+        if (els.tag) els.tag.textContent = `Plan ${planKey}`;
+      }
+
+      function bindBatteryCards(){
+        document.querySelectorAll('.battery-scheme-mini').forEach(btn => {
+          if (btn.__bound) return; btn.__bound = true;
+          btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-scheme') || '';
+            const capacity = parseFloat(btn.getAttribute('data-capacity') || '0');
+            applyPlan(key, capacity);
+          });
+        });
+      }
+
+      function init(){
+        bindBatteryCards();
+        // 默认显示方案A
+        const first = document.querySelector('.battery-scheme-mini');
+        if (first) {
+          const key = first.getAttribute('data-scheme') || 'A';
+          const capacity = parseFloat(first.getAttribute('data-capacity') || '5');
+          applyPlan(key, capacity);
+        }
+        // 渲染图标
+        try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch(e){}
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+  <!-- Utilities: export share cards as image -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    (function(){
+      function bindExportButtons(){
+        const buttons = document.querySelectorAll('.btn-export[data-target]');
+        buttons.forEach(btn => {
+          if (btn.__bound) return; btn.__bound = true;
+          btn.addEventListener('click', async () => {
+            const sel = btn.getAttribute('data-target');
+            const node = document.querySelector(sel);
+            if (!node) return;
+            const old = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span>Generating...</span>';
+            try {
+              const canvas = await html2canvas(node, { backgroundColor: '#ffffff', useCORS: true, scale: 2 });
+              const a = document.createElement('a');
+              const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+              a.href = canvas.toDataURL('image/png');
+              a.download = `solar-summary-${ts}.png`;
+              document.body.appendChild(a); a.click(); a.remove();
+            } catch(err){
+              console.error(err); alert('Failed to generate image. Please try again.');
+            } finally {
+              btn.disabled = false; btn.innerHTML = old;
+            }
+          });
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => { try{ bindExportButtons(); if (window.lucide && lucide.createIcons) lucide.createIcons(); }catch(e){} });
+      } else { try{ bindExportButtons(); if (window.lucide && lucide.createIcons) lucide.createIcons(); }catch(e){} }
+    })();
+  </script>
+  <!-- WhatsApp share helper for Shareable summary -->
+  <script>
+    (function(){
+      function getText(el){ return (el && el.textContent ? el.textContent : '').trim(); }
+      function buildShareText(suffix){
+        const addr = getText(document.getElementById('shareAddr' + suffix));
+        const plan = getText(document.getElementById('sharePlan' + suffix));
+        const size = getText(document.getElementById('shareSize' + suffix));
+        const budget = getText(document.getElementById('shareBudget' + suffix));
+        const roi = getText(document.getElementById('shareROI' + suffix));
+        const selfUse = getText(document.getElementById('shareSelfUse' + suffix));
+        const date = getText(document.getElementById('shareDate' + suffix));
+        const url = window.location.href;
+        const lines = [
+          'Solar Estimation — Shareable Summary',
+          addr && ('Address: ' + addr),
+          plan && ('Plan: ' + plan),
+          size && ('System size: ' + size),
+          budget && ('Budget: ' + budget),
+          roi && ('Payback: ' + roi),
+          selfUse && ('Self-consumption: ' + selfUse),
+          date && ('Date: ' + date),
+          url && ('Link: ' + url)
+        ].filter(Boolean);
+        return encodeURIComponent(lines.join('\n'));
+      }
+
+      function initDates(){
+        try{
+          const d = new Date();
+          const localeDate = d.toLocaleDateString();
+          const el1 = document.getElementById('shareDate');
+          const el2 = document.getElementById('shareDate2');
+          if (el1 && !el1.textContent) el1.textContent = localeDate;
+          if (el2 && !el2.textContent) el2.textContent = localeDate;
+        }catch(e){}
+      }
+
+      function bindWA(){
+        const btn1 = document.getElementById('waShare1');
+        if (btn1 && !btn1.__bound) {
+          btn1.__bound = true;
+          btn1.addEventListener('click', () => {
+            const text = buildShareText('');
+            const wa = 'https://wa.me/?text=' + text;
+            window.open(wa, '_blank');
+          });
+        }
+        const btn2 = document.getElementById('waShare2');
+        if (btn2 && !btn2.__bound) {
+          btn2.__bound = true;
+          btn2.addEventListener('click', () => {
+            const text = buildShareText('2');
+            const wa = 'https://wa.me/?text=' + text;
+            window.open(wa, '_blank');
+          });
+        }
+        try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch(e){}
+      }
+
+      function init(){ initDates(); bindWA(); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+  <!-- Bottom Share Buttons -->
+  <div class="px-3 pb-6">
+    <div class="sharethis-inline-share-buttons"></div>
+  </div>
+</body>
+</html>

@@ -7,7 +7,7 @@
   },
   "roof_analysis": {
     "panel_area_m2": {
-      "value": 1.9,
+      "value": 2.0,
       "unit": "m²",
       "description": "单块面板面积",
       "min": 1.0,

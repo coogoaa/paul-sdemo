@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#22C55E">
+  <title>3D屋顶模型报价卡片（Demo0925）</title>
+
+  <!-- TailwindCSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { DEFAULT: '#22C55E' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial;">
+  <div class="mx-auto max-w-md min-h-screen flex flex-col">
+    <!-- 顶部栏（简化） -->
+    <div class="sticky top-0 z-50 backdrop-blur bg-white/90 border-b border-green-100">
+      <div class="px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+            <span class="text-[15px] font-semibold text-[#22C55E]">S</span>
+          </div>
+          <div class="flex-1">
+            <div class="text-[18px] font-semibold text-gray-800">屋顶3D模型 · 报价卡片</div>
+            <div class="text-[12px] text-gray-600">参考既有页面布局，仅新增两类卡片展示</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 内容 -->
+    <main class="flex-1 px-3 pb-24">
+      <div id="cards" class="space-y-4 mt-4">
+        <!-- 卡片A：新建系统 -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="inline-flex items-center gap-2 text-[12px] text-gray-600">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+                <span>新建系统</span>
+              </div>
+              <div class="text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">推荐 3 个方案</div>
+            </div>
+
+            <!-- 方案条带（3项） -->
+            <div id="strip-new" class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns1">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">快速回本</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">面板较少，投入低</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns2">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">高发电</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">提升自发自用</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="ns3">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">独立用电</div>
+                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">含电池备用</div>
+              </button>
+            </div>
+
+            <!-- 信息面板（不展示系统总额） -->
+            <section id="panel-new" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-[13px] font-semibold text-gray-900">方案信息（不含系统总额）</h3>
+                <span id="new-sel" class="text-[12px] text-gray-600">未选择</span>
+              </div>
+              <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">推荐系统配置</div>
+                  <div id="new-sys" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">推荐电池配置</div>
+                  <div id="new-batt" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">年度节省金额区间</div>
+                  <div id="new-save" class="text-[12px] font-semibold text-[#22C55E]">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">补贴金额区间</div>
+                  <div id="new-subsidy" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+              </div>
+              <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+                具体系统报价和更详细的补贴金额，请联系安装商获取。
+              </p>
+              <div class="flex items-center gap-1.5">
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="copy" data-target="panel-new">Copy</button>
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="share" data-target="panel-new">Share</button>
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" data-act="save" data-target="panel-new" title="Save image">
+                  <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                  <span>Save image</span>
+                </button>
+                <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition" data-act="refine">Refine info</button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- 卡片B：储能扩容 -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="inline-flex items-center gap-2 text-[12px] text-gray-600">
+                <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-600"></i>
+                <span>储能扩容</span>
+              </div>
+              <div class="text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">推荐 3 个方案</div>
+            </div>
+
+            <!-- 方案条带（3项） -->
+            <div id="strip-ess" class="flex gap-2 overflow-x-auto no-scrollbar">
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es1">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">入门容量</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">适合夜间基本负载</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es2">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">均衡容量</div>
+                  <i data-lucide="battery" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">兼顾节省与备用</div>
+              </button>
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-key="es3">
+                <div class="flex items-center justify-between">
+                  <div class="text-[14px] font-medium text-gray-800">大容量</div>
+                  <i data-lucide="battery-full" class="w-4.5 h-4.5 text-emerald-500"></i>
+                </div>
+                <div class="text-[12px] text-gray-600 mt-1">保障更长应急时长</div>
+              </button>
+            </div>
+
+            <!-- 信息面板（不展示系统总额） -->
+            <section id="panel-ess" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-[13px] font-semibold text-gray-900">扩容信息（不含系统总额）</h3>
+                <span id="ess-sel" class="text-[12px] text-gray-600">未选择</span>
+              </div>
+              <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">推荐电池容量</div>
+                  <div id="ess-cap" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">年度节省金额区间</div>
+                  <div id="ess-save" class="text-[12px] font-semibold text-[#22C55E]">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">补贴金额区间</div>
+                  <div id="ess-subsidy" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">备用电源可用电时长</div>
+                  <div id="ess-hours" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+              </div>
+              <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+                具体系统报价和更详细的补贴金额，请联系安装商获取。
+              </p>
+              <div class="flex items-center gap-1.5">
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="copy" data-target="panel-ess">Copy</button>
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="share" data-target="panel-ess">Share</button>
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" data-act="save" data-target="panel-ess" title="Save image">
+                  <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                  <span>Save image</span>
+                </button>
+                <button class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition" data-act="refine">Refine info</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 底部阴影 -->
+    <div class="pointer-events-none fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-100 to-transparent z-40"></div>
+  </div>
+
+  <!-- 脚本：图标与交互 -->
+  <script>
+    function refreshIcons() {
+      if (window.lucide) {
+        try { window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } }); } catch {}
+      }
+    }
+    document.addEventListener('DOMContentLoaded', refreshIcons);
+
+    // 简单数据（示例范围）
+    const NEW_SYSTEM = {
+      ns1: {
+        label: '快速回本',
+        sys: '约 4.0 kW · 10 块面板',
+        batt: '不含电池',
+        save: { low: 3600, high: 4800 },
+        subsidy: { low: 1800, high: 2400 }
+      },
+      ns2: {
+        label: '高发电',
+        sys: '约 6.5 kW · 16 块面板',
+        batt: '不含电池',
+        save: { low: 5200, high: 6800 },
+        subsidy: { low: 2400, high: 3000 }
+      },
+      ns3: {
+        label: '独立用电',
+        sys: '约 8.0 kW · 20 块面板',
+        batt: '含电池（约 10 kWh）',
+        save: { low: 8400, high: 10800 },
+        subsidy: { low: 3200, high: 4000 }
+      }
+    };
+    const ESS_EXPAND = {
+      es1: {
+        label: '入门容量',
+        cap: '约 5 kWh',
+        save: { low: 800, high: 1400 },
+        subsidy: { low: 600, high: 1000 },
+        hours: '约 4–6 小时（基础负载）'
+      },
+      es2: {
+        label: '均衡容量',
+        cap: '约 10 kWh',
+        save: { low: 1500, high: 2400 },
+        subsidy: { low: 1200, high: 1800 },
+        hours: '约 8–12 小时（典型负载）'
+      },
+      es3: {
+        label: '大容量',
+        cap: '约 15 kWh',
+        save: { low: 2200, high: 3400 },
+        subsidy: { low: 1600, high: 2400 },
+        hours: '约 12–18 小时（更长应急）'
+      }
+    };
+
+    function fmtCurrency(n){ return '¥' + Number(n).toLocaleString('zh-CN'); }
+    function setText(id, text){ const el = document.getElementById(id); if (el) el.textContent = text; }
+
+    function bindStrips() {
+      const stripNew = document.getElementById('strip-new');
+      const stripEss = document.getElementById('strip-ess');
+      stripNew?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.scheme-card-mini');
+        if (!btn) return;
+        const key = btn.dataset.key;
+        const conf = NEW_SYSTEM[key];
+        if (!conf) return;
+        document.querySelectorAll('#strip-new .scheme-card-mini').forEach(b => {
+          b.classList.toggle('ring-2', b === btn);
+          b.classList.toggle('ring-emerald-300', b === btn);
+        });
+        setText('new-sel', conf.label);
+        setText('new-sys', conf.sys);
+        setText('new-batt', conf.batt);
+        setText('new-save', `${fmtCurrency(conf.save.low)} – ${fmtCurrency(conf.save.high)}`);
+        setText('new-subsidy', `${fmtCurrency(conf.subsidy.low)} – ${fmtCurrency(conf.subsidy.high)}`);
+        refreshIcons();
+      });
+      stripEss?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.scheme-card-mini');
+        if (!btn) return;
+        const key = btn.dataset.key;
+        const conf = ESS_EXPAND[key];
+        if (!conf) return;
+        document.querySelectorAll('#strip-ess .scheme-card-mini').forEach(b => {
+          b.classList.toggle('ring-2', b === btn);
+          b.classList.toggle('ring-emerald-300', b === btn);
+        });
+        setText('ess-sel', conf.label);
+        setText('ess-cap', conf.cap);
+        setText('ess-save', `${fmtCurrency(conf.save.low)} – ${fmtCurrency(conf.save.high)}`);
+        setText('ess-subsidy', `${fmtCurrency(conf.subsidy.low)} – ${fmtCurrency(conf.subsidy.high)}`);
+        setText('ess-hours', conf.hours);
+        refreshIcons();
+      });
+    }
+
+    function bindActions() {
+      document.body.addEventListener('click', async (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const act = btn.getAttribute('data-act');
+        if (!act) return;
+        if (act === 'copy') {
+          const targetId = btn.getAttribute('data-target');
+          const panel = document.getElementById(targetId);
+          if (!panel) return;
+          const text = panel.innerText.trim();
+          try { await navigator.clipboard.writeText(text); toast('已复制'); }
+          catch { toast('复制失败', 'error'); }
+        } else if (act === 'share') {
+          const targetId = btn.getAttribute('data-target');
+          const panel = document.getElementById(targetId);
+          if (!panel) return;
+          const text = panel.innerText.trim();
+          const shareData = { title: '报价卡片', text, url: location.href };
+          try {
+            if (navigator.share) { await navigator.share(shareData); toast('系统分享已打开', 'info'); }
+            else { await navigator.clipboard.writeText(text + '\n' + location.href); toast('内容已复制，可自行分享'); }
+          } catch { toast('分享取消', 'info'); }
+        } else if (act === 'save') {
+          const targetId = btn.getAttribute('data-target');
+          savePanelImage(targetId);
+        } else if (act === 'refine') {
+          toast('请联系安装商以完善信息', 'info', 1800);
+        }
+      });
+    }
+
+    function toast(message, type = 'success', duration = 1400) {
+      const styles = {
+        success: 'bg-emerald-600 text-white border-emerald-700',
+        info: 'bg-gray-900 text-white border-gray-800',
+        error: 'bg-red-600 text-white border-red-700'
+      };
+      const klass = styles[type] || styles.success;
+      const t = document.createElement('div');
+      t.className = `fixed bottom-16 left-1/2 -translate-x-1/2 z-[70] px-3 py-2 rounded-lg border shadow-lg ${klass}`;
+      t.innerHTML = `<div class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i><span>${message}</span></div>`;
+      document.body.appendChild(t);
+      refreshIcons();
+      setTimeout(() => { t.style.transition = 'opacity .25s ease'; t.style.opacity = '0'; setTimeout(() => t.remove(), 340); }, duration);
+    }
+
+    async function savePanelImage(targetId) {
+      const el = document.getElementById(targetId);
+      if (!el) { toast('未找到面板', 'error'); return; }
+      if (!window.html2canvas) { toast('图片导出库未就绪', 'error'); return; }
+      try {
+        const canvas = await window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        const dataUrl = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        const ts = new Date().toISOString().replace(/[:.]/g, '-');
+        a.href = dataUrl;
+        a.download = `quote_${targetId}_${ts}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        toast('图片已保存');
+      } catch (e) {
+        console.error('savePanelImage failed', e);
+        toast('保存失败', 'error');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      bindStrips();
+      bindActions();
+      refreshIcons();
+    });
+  </script>
+
+  <!-- html2canvas（CDN） -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</body>
+</html>
