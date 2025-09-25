@@ -49,6 +49,86 @@
     <!-- 内容 -->
     <main class="flex-1 px-3 pb-24">
       <div id="cards" class="space-y-4 mt-4">
+        <!-- 财务最优引导 + 旗舰方案（Installer's Pick） -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <!-- 预期设定文案 -->
+            <div class="mb-2">
+              <div class="text-[18px] font-semibold text-gray-800">Your Smartest Solar Investment Path</div>
+              <div class="mt-1 text-[12px] text-gray-600">
+                Our recommendations are engineered for the best financial outcome. Based on current government rebates and installer data, the largest systems often deliver the highest return. We present our top recommendation first.
+                <span class="ml-1 text-gray-700">(我们的推荐为实现最佳财务成果而设计：在当前补贴与安装商数据下，最大化配置通常带来最高回报。以下首先展示我们的首选方案。)</span>
+              </div>
+            </div>
+
+            <!-- 旗舰卡片：补贴最大化方案 -->
+            <div class="rounded-xl border-2 border-emerald-300 bg-emerald-50/40 p-3">
+              <div class="flex items-center justify-between">
+                <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">
+                  <i data-lucide="star" class="w-3.5 h-3.5"></i> Installer's Pick
+                </div>
+                <div class="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md bg-amber-100 text-amber-700 border border-amber-200">
+                  <i data-lucide="badge-dollar-sign" class="w-3.5 h-3.5"></i> Best Financial Return
+                </div>
+              </div>
+
+              <div class="mt-2">
+                <div class="text-[16px] font-bold tracking-tight text-gray-900">THE REBATE MAXIMISER</div>
+                <p class="mt-1 text-[12px] text-gray-700">
+                  Engineered to maximise rebates and deliver the strongest long-term investment.
+                  <span class="ml-1 text-gray-700">（为最大化补贴与长期投资回报而设计）</span>
+                </p>
+              </div>
+
+              <div class="my-2 border-t border-green-200"></div>
+
+              <!-- 关键参数行 -->
+              <div class="grid grid-cols-2 gap-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">☀️ System</div>
+                  <div class="text-[12px] font-semibold text-gray-900">13.2 kW Solar</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">🔋 Battery</div>
+                  <div class="text-[12px] font-semibold text-gray-900">19.2 kWh</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">💰 Savings</div>
+                  <div class="text-[12px] font-semibold text-[#22C55E]">$3,800 – $4,700 / yr</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">🎁 Rebates (Upfront)</div>
+                  <div class="text-[12px] font-semibold text-gray-900">$7,000 – $8,200</div>
+                </div>
+              </div>
+
+              <div class="my-2 border-t border-green-200"></div>
+
+              <!-- 操作按钮 -->
+              <div class="flex items-center gap-1.5">
+                <button class="px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Get My Detailed Quote</button>
+                <span class="text-[10px] text-gray-500 ml-1">具体系统报价与更详细补贴，请联系安装商。</span>
+                <div class="ml-auto flex items-center gap-1.5">
+                  <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="copy" data-target="panel-flagship">Copy</button>
+                  <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white" data-act="share" data-target="panel-flagship">Share</button>
+                  <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" data-act="save" data-target="panel-flagship" title="Save image">
+                    <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                    <span>Save image</span>
+                  </button>
+                  <button class="px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition" data-act="refine">Refine info</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 隐藏的复制目标面板（用于 Copy/Share/Save） -->
+            <section id="panel-flagship" class="sr-only">
+              Installer's Pick · Best Financial Return — THE REBATE MAXIMISER
+              System: 13.2 kW | Battery: 19.2 kWh
+              Savings: $3,800 – $4,700 /yr | Rebates (Upfront): $7,000 – $8,200
+              Note: Contact installer for detailed quote and subsidy breakdown.
+            </section>
+          </div>
+        </div>
         <!-- 安装商快获客 · 大电池优先方案 -->
         <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
           <div class="p-3">
