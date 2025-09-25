@@ -16,8 +16,8 @@
 <body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans">
   <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
     <div class="px-3 pt-4 pb-2">
-      <div class="text-[18px] font-semibold tracking-tight">Cards · 新建系统 & 储能扩容（3方案）</div>
-      <div class="text-[12px] text-gray-600">样式沿用 generated-page / components 现有卡片布局</div>
+      <div class="text-[18px] font-semibold tracking-tight">Your Smartest Solar Investment Path</div>
+      <div class="text-[12px] text-gray-600 mt-2 leading-relaxed">我们的推荐是为实现最佳财务成果而设计的。基于当前的政府补贴和安装商数据，最大化的系统通常能带来最高的回报。我们首先为您展示我们的首选推荐。</div>
     </div>
 
     <main class="flex-1 px-3 pb-20 space-y-4">
@@ -42,30 +42,36 @@
             <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
           </div>
 
-          <!-- 仅展示三个方案 -->
+          <!-- 三个方案：从最大化配置开始 -->
           <div class="mt-3">
-            <div class="text-[12px] text-gray-600 mb-2">基于分析结果，推荐以下 3 套方案</div>
+            <div class="text-[12px] text-gray-600 mb-2">基于财务最优策略，我们的推荐顺序：</div>
             <div class="flex gap-2 overflow-x-auto no-scrollbar">
-              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+              <!-- 第一档：旗舰推荐 -->
+              <button class="scheme-card-mini shrink-0 rounded-xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50 hover:from-amber-100 hover:to-yellow-100 transition p-3 text-left min-w-[46%] relative">
+                <div class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium">⭐️ 安装商精选</div>
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">Smart Saver</div>
-                  <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                  <div class="text-[14px] font-medium text-gray-800">The Rebate Maximiser</div>
+                  <i data-lucide="trophy" class="w-4.5 h-4.5 text-amber-600"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">面板较少 · 回本更快</div>
+                <div class="text-[11px] text-gray-600 mt-1 leading-tight">最大化补贴利用，最强长期投资回报</div>
+                <div class="text-[10px] text-amber-700 mt-1 font-medium">Best Financial Return</div>
               </button>
-              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
+              <!-- 第二档：主流选择 -->
+              <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%] relative">
+                <div class="absolute -top-1 -right-1 bg-blue-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium">Most Popular</div>
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">High Efficiency</div>
-                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                  <div class="text-[14px] font-medium text-gray-800">The High Performer</div>
+                  <i data-lucide="gauge" class="w-4.5 h-4.5 text-blue-600"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">发电更多 · 自用更高</div>
+                <div class="text-[11px] text-gray-600 mt-1 leading-tight">高性能与前期价值的完美平衡</div>
               </button>
+              <!-- 第三档：入门选择 -->
               <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]">
                 <div class="flex items-center justify-between">
-                  <div class="text-[14px] font-medium text-gray-800">Energy Independence</div>
-                  <i data-lucide="battery-charging" class="w-4.5 h-4.5 text-emerald-500"></i>
+                  <div class="text-[14px] font-medium text-gray-800">The Smart Starter</div>
+                  <i data-lucide="zap" class="w-4.5 h-4.5 text-green-600"></i>
                 </div>
-                <div class="text-[12px] text-gray-600 mt-1">配备电池 · 停电可用</div>
+                <div class="text-[11px] text-gray-600 mt-1 leading-tight">满足核心需求，快速回报</div>
               </button>
             </div>
           </div>
@@ -74,24 +80,24 @@
           <section class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm" id="nsCardBody">
             <div class="grid grid-cols-2 gap-1.5 mb-1.5">
               <div class="rounded-xl border border-gray-100 p-2">
-                <div class="text-[10px] text-gray-500">推荐系统配置</div>
-                <div id="nsSysCfg" class="text-[12px] font-semibold text-gray-900">—</div>
+                <div class="text-[10px] text-gray-500">☀️ 推荐系统配置</div>
+                <div id="nsSysCfg" class="text-[12px] font-semibold text-gray-900">13.2 kW Solar</div>
               </div>
               <div class="rounded-xl border border-gray-100 p-2">
-                <div class="text-[10px] text-gray-500">推荐电池配置</div>
-                <div id="nsBatCfg" class="text-[12px] font-semibold text-gray-900">—</div>
+                <div class="text-[10px] text-gray-500">🔋 推荐电池配置</div>
+                <div id="nsBatCfg" class="text-[12px] font-semibold text-gray-900">19.2 kWh</div>
               </div>
               <div class="rounded-xl border border-gray-100 p-2">
-                <div class="text-[10px] text-gray-500">年度节省金额（区间）</div>
-                <div id="nsAnnualSave" class="text-[12px] font-semibold text-[#22C55E]">—</div>
+                <div class="text-[10px] text-gray-500">💰 年度节省金额（区间）</div>
+                <div id="nsAnnualSave" class="text-[12px] font-semibold text-[#22C55E]">$3,800 – $4,700</div>
               </div>
               <div class="rounded-xl border border-gray-100 p-2">
-                <div class="text-[10px] text-gray-500">补贴金额（区间）</div>
-                <div id="nsSubsidy" class="text-[12px] font-semibold text-gray-900">—</div>
+                <div class="text-[10px] text-gray-500">🎁 补贴金额（区间）</div>
+                <div id="nsSubsidy" class="text-[12px] font-semibold text-amber-600">$7,000 – $8,200</div>
               </div>
             </div>
             <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
-              具体系统报价和更详细的补贴金额，请联系安装商获取。
+              这是我们顶级安装商为精明房主推荐的系统。它的设计不仅旨在削减您的账单，更是为了最大化利用每一分钱的政府补贴，从而实现最强劲的长期投资。
             </p>
             <div class="flex items-center gap-1.5">
               <button class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
