@@ -49,6 +49,194 @@
     <!-- 内容 -->
     <main class="flex-1 px-3 pb-24">
       <div id="cards" class="space-y-4 mt-4">
+        <!-- 3D 屋顶模型 · 3 方案滑块 · 方案详情（参考 Your 3D roof model） -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2 text-[12px] text-emerald-600">
+                <i data-lucide="check-circle-2" class="w-4.5 h-4.5"></i>
+                <span>分析完成</span>
+              </div>
+            </div>
+            <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">您的 3D 屋顶模型</h3>
+
+            <!-- 3D 模型区 -->
+            <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 22vh;">
+              <model-viewer
+                src="../sales_agent_v1.1/3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
+                camera-controls
+                auto-rotate
+                disable-zoom
+                ar
+                style="width:100%;height:100%;background:transparent"
+                class="absolute inset-0"
+              ></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">拖动旋转查看</div>
+            </div>
+
+            <!-- 方案滑块（3项） -->
+            <div class="mt-3">
+              <div class="text-[12px] text-gray-600 mb-2">基于分析，以下为 3 个优先推荐方案</div>
+              <div id="schemesStripDemo" class="flex gap-2 overflow-x-auto no-scrollbar">
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="flagship">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Rebate Maximiser</div>
+                    <i data-lucide="star" class="w-4.5 h-4.5 text-amber-500"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">补贴最大化 · 含电池</div>
+                </button>
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="popular">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">High Performer</div>
+                    <i data-lucide="gauge" class="w-4.5 h-4.5 text-gray-600"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">高性能均衡 · 含电池</div>
+                </button>
+                <button class="scheme-card-mini shrink-0 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-3 text-left min-w-[46%]" data-scheme="starter">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[14px] font-medium text-gray-800">Smart Starter</div>
+                    <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
+                  </div>
+                  <div class="text-[12px] text-gray-600 mt-1">精明起步 · 含电池</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 方案详情面板 -->
+            <section id="demoBudgetPanel" class="mt-3 p-2.5 rounded-2xl bg-white border border-green-200 shadow-sm">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-[13px] font-semibold text-gray-900">方案详情（不展示系统总额）</h3>
+                <span id="demoSchemeTag" class="text-[12px] text-gray-600">未选择</span>
+              </div>
+              <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">推荐系统配置</div>
+                  <div id="demoSysCfg" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">推荐电池配置</div>
+                  <div id="demoBattCfg" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">年度节省金额区间</div>
+                  <div id="demoSaveRange" class="text-[12px] font-semibold text-[#22C55E]">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2">
+                  <div class="text-[10px] text-gray-500">补贴金额区间</div>
+                  <div id="demoSubsidyRange" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+                <div class="rounded-xl border border-gray-100 p-2 col-span-2">
+                  <div class="text-[10px] text-gray-500">备用电源可用电时长</div>
+                  <div id="demoBackupHours" class="text-[12px] font-semibold text-gray-900">–</div>
+                </div>
+              </div>
+              <p class="text-[10px] text-gray-500 leading-snug mb-1.5">
+                具体系统报价和更详细的补贴金额，请联系安装商获取。
+              </p>
+              <div class="flex items-center gap-1.5">
+                <button id="demoCopyBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+                <button id="demoShareBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+                <button id="demoSaveImgBtn" class="px-2.5 py-1.5 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" title="Save image">
+                  <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                  <span>Save image</span>
+                </button>
+                <button id="demoRefineBtn" class="ml-auto px-2.5 py-1.5 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Refine info</button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- 脚本：方案配置与交互 -->
+        <script>
+          // 方案配置（均含电池；时长为“X 小时+”）
+          const DEMO_SCHEMES = {
+            flagship: {
+              name: 'Rebate Maximiser',
+              sysKW: 13.2,
+              panels: 32,
+              battKWh: 19.2,
+              save: { low: 3800, high: 4700 },
+              subsidy: { low: 7000, high: 8200 },
+              backupHoursPlus: '30 小时+'
+            },
+            popular: {
+              name: 'High Performer',
+              sysKW: 9.9,
+              panels: 24,
+              battKWh: 13.5,
+              save: { low: 3000, high: 3800 },
+              subsidy: { low: 5600, high: 6800 },
+              backupHoursPlus: '20 小时+'
+            },
+            starter: {
+              name: 'Smart Starter',
+              sysKW: 6.6,
+              panels: 16,
+              battKWh: 10.0,
+              save: { low: 2200, high: 2800 },
+              subsidy: { low: 4200, high: 5200 },
+              backupHoursPlus: '12 小时+'
+            }
+          };
+
+          function fmtCurrencyAUD(n){ return '$' + Number(n).toLocaleString('en-AU'); }
+
+          function updateDemoPanel(key) {
+            const conf = DEMO_SCHEMES[key];
+            if (!conf) return;
+            // 标签高亮
+            const strip = document.getElementById('schemesStripDemo');
+            const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+            buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
+            buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
+            // 文案更新
+            const sysText = `约 ${conf.sysKW.toFixed(1)} kW · ${conf.panels} 块面板`;
+            const battText = `约 ${conf.battKWh} kWh 电池`;
+            document.getElementById('demoSchemeTag').textContent = conf.name;
+            document.getElementById('demoSysCfg').textContent = sysText;
+            document.getElementById('demoBattCfg').textContent = battText;
+            document.getElementById('demoSaveRange').textContent = `${fmtCurrencyAUD(conf.save.low)} – ${fmtCurrencyAUD(conf.save.high)}`;
+            document.getElementById('demoSubsidyRange').textContent = `${fmtCurrencyAUD(conf.subsidy.low)} – ${fmtCurrencyAUD(conf.subsidy.high)}`;
+            document.getElementById('demoBackupHours').textContent = conf.backupHoursPlus;
+
+            // 轻微高亮提示
+            const panel = document.getElementById('demoBudgetPanel');
+            panel.classList.add('ring-2','ring-emerald-300');
+            setTimeout(() => panel.classList.remove('ring-2','ring-emerald-300'), 420);
+
+            // 刷新图标
+            if (window.lucide) { try { window.lucide.createIcons({ attrs: { 'stroke-width': 1.5 } }); } catch {} }
+          }
+
+          // 事件绑定
+          (function bindDemoCard(){
+            const strip = document.getElementById('schemesStripDemo');
+            strip?.addEventListener('click', (e) => {
+              const btn = e.target.closest('.scheme-card-mini');
+              if (!btn) return;
+              const key = btn.dataset.scheme;
+              updateDemoPanel(key);
+            });
+            // 默认选中旗舰
+            updateDemoPanel('flagship');
+
+            // 按钮功能
+            document.getElementById('demoCopyBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('demoBudgetPanel').innerText.trim();
+              try { await navigator.clipboard.writeText(text); toast('已复制'); } catch { toast('复制失败', 'error'); }
+            });
+            document.getElementById('demoShareBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('demoBudgetPanel').innerText.trim();
+              const shareData = { title: '方案详情', text, url: location.href };
+              try {
+                if (navigator.share) { await navigator.share(shareData); toast('系统分享已打开', 'info'); }
+                else { await navigator.clipboard.writeText(text + '\\n' + location.href); toast('内容已复制，可自行分享'); }
+              } catch { toast('分享取消', 'info'); }
+            });
+            document.getElementById('demoSaveImgBtn')?.addEventListener('click', () => savePanelImage('demoBudgetPanel'));
+            document.getElementById('demoRefineBtn')?.addEventListener('click', () => toast('请联系安装商以完善信息', 'info', 1800));
+          })();
+        </script>
         <!-- 财务最优引导 + 旗舰方案（Installer's Pick） -->
         <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
           <div class="p-3">
