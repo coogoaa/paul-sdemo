@@ -115,7 +115,7 @@
                   </div>
                   <div class="mt-3">
                     <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Estimated Upfront Investment</h4>
-                    <div id="nsUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">–</div>
+                    <div id="nsUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">$20,000 – $25,000</div>
                   </div>
                 </div>
               </div>
@@ -128,7 +128,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="badge-dollar" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="nsReturnSavings" class="text-[18px] font-semibold text-emerald-600 leading-none">–</div>
+                          <div id="nsReturnSavings" class="text-[18px] font-semibold text-emerald-600 leading-none">$4,500 – $5,500</div>
                           <p class="mt-1 text-[11px] text-gray-600">Annual Bill Savings</p>
                         </div>
                       </div>
@@ -137,7 +137,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="nsReturnIRR" class="text-[18px] font-semibold text-emerald-600 leading-none">–</div>
+                          <div id="nsReturnIRR" class="text-[18px] font-semibold text-emerald-600 leading-none">≈ 22%</div>
                           <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
                         </div>
                       </div>
@@ -146,7 +146,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="nsReturnPayback" class="text-[18px] font-semibold text-emerald-600 leading-none">–</div>
+                          <div id="nsReturnPayback" class="text-[18px] font-semibold text-emerald-600 leading-none">3 ～ 4 yaars</div>
                           <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
                         </div>
                       </div>
@@ -156,9 +156,9 @@
               </div>
 
               <div class="rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-gray-700 leading-5">
-                <div id="nsSummarySize">System size: –</div>
-                <div id="nsSummaryBattery">Battery capacity: –</div>
-                <div id="nsSummarySelf">Self-consumption: –</div>
+                <div id="nsSummarySize">System size: 13.2 kW (≈ 28 panels)</div>
+                <div id="nsSummaryBattery">Battery capacity: 23.4 kWh</div>
+                <div id="nsSummarySelf">Self-consumption: 75% – 85%</div>
               </div>
 
               <div class="flex flex-wrap items-center gap-2">
@@ -245,7 +245,7 @@
                   </div>
                   <div class="mt-3">
                     <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Battery Upgrade Investment</h4>
-                    <div id="essUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">–</div>
+                    <div id="essUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">$10,000</div>
                   </div>
                 </div>
               </div>
@@ -258,7 +258,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="badge-dollar" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="essReturnSavings" class="text-[18px] font-semibold text-emerald-600 leading-none">–</div>
+                          <div id="essReturnSavings" class="text-[18px] font-semibold text-emerald-600 leading-none">$1,500 – $1,900</div>
                           <p class="mt-1 text-[11px] text-gray-600">Annual Bill Savings</p>
                         </div>
                       </div>
@@ -267,7 +267,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="essReturnIRR" class="text-[18px] font-semibold text-emerald-600 leading-none">–</div>
+                          <div id="essReturnIRR" class="text-[18px] font-semibold text-emerald-600 leading-none">≈ 16%</div>
                           <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
                         </div>
                       </div>
@@ -276,7 +276,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="essReturnPayback" class="text-[18px] font-semibold text-emerald-600 leading-none">–</div>
+                          <div id="essReturnPayback" class="text-[18px] font-semibold text-emerald-600 leading-none">3 ～ 4 yaars</div>
                           <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
                         </div>
                       </div>
@@ -286,8 +286,8 @@
               </div>
 
               <div class="rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-gray-700 leading-5">
-                <div id="essSummaryBattery">Battery capacity: –</div>
-                <div id="essSummarySelf">Self-consumption: –</div>
+                <div id="essSummaryBattery">Battery capacity: 13.8 kWh</div>
+                <div id="essSummarySelf">Self-consumption: 82% – 88%</div>
               </div>
 
               <div class="flex flex-wrap items-center gap-2">
@@ -354,9 +354,6 @@
             const c = NS_CFG[key]; if (!c) return;
             document.getElementById('nsSchemeTag').textContent = `${c.name}`;
             document.getElementById('nsUpfront').textContent = c.upfront;
-            document.getElementById('nsSize').textContent = c.size;
-            document.getElementById('nsBatt').textContent = c.batt;
-            document.getElementById('nsSelfConsumption').textContent = c.selfConsumption;
             document.getElementById('nsReturnSavings').textContent = c.returnSavings;
             document.getElementById('nsReturnPayback').textContent = c.payback;
             document.getElementById('nsReturnIRR').textContent = c.irr;
