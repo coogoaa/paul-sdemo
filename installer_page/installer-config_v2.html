@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installer Workspace Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Noto Sans", sans-serif; }
+    .glass-card { backdrop-filter: blur(18px); background: rgba(255, 255, 255, 0.92); }
+    .shadow-soft { box-shadow: 0 18px 45px -24px rgba(34, 197, 94, 0.35); }
+  </style>
+</head>
+<body class="bg-[#F4FFFB] text-gray-800 min-h-screen">
+  <div class="relative min-h-screen flex">
+    <!-- Gradient accent panel -->
+    <div class="hidden xl:flex xl:w-[34%] bg-gradient-to-br from-[#22C55E] via-[#16A34A] to-[#0EA5E9] text-white p-12 flex-col justify-between">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/25 text-xs uppercase tracking-wide">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span>Installer admin</span>
+        </div>
+        <h1 class="mt-6 text-4xl font-semibold leading-snug">Manage how customers reach you and how your preliminary quotes appear.</h1>
+        <p class="mt-5 text-base text-white/85 leading-7">
+          Before homeowners interact with the AI Sales Agent, flexibly update contact points, fine-tune preliminary pricing strategies, and set incentives to route high-quality sales leads directly to your team.
+        </p>
+      </div>
+      <div class="space-y-4 text-sm text-white/80">
+        <div class="flex items-start gap-3">
+          <i data-lucide="phone-forwarded" class="w-4.5 h-4.5 mt-0.5"></i>
+          <p>Keep your lead phone number current so call-to-actions in the quote cards route to your crew instantly.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <i data-lucide="sliders-horizontal" class="w-4.5 h-4.5 mt-0.5"></i>
+          <p>Apply a margin band whenever onsite conditions or promotions require quick pricing adjustments.</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <i data-lucide="badge-dollar" class="w-4.5 h-4.5 mt-0.5"></i>
+          <p>Offer time-limited incentives to accelerate homeowner decisions without impacting base margins.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main application area -->
+    <div class="flex-1 flex flex-col items-center justify-center py-12 px-6 lg:px-12">
+      <div class="w-full max-w-5xl">
+        <!-- Login view -->
+        <section id="loginView" class="glass-card shadow-soft rounded-3xl p-10 border border-white/60">
+          <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex-1">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 text-xs uppercase tracking-wide">Secure access</div>
+              <h2 class="mt-4 text-3xl font-semibold text-gray-900">Installer workspace login</h2>
+              <p class="mt-3 text-sm text-gray-600 leading-6">
+                Use your installer email and password to unlock configuration controls. Only authorised team members should access this page.
+              </p>
+              <ul class="mt-6 space-y-3 text-sm text-gray-600">
+                <li class="flex items-start gap-3">
+                  <i data-lucide="check-circle-2" class="text-[#22C55E] w-4.5 h-4.5 mt-0.5"></i>
+                  <span>Centralise contact information displayed on customer-facing quote cards.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i data-lucide="check-circle-2" class="text-[#22C55E] w-4.5 h-4.5 mt-0.5"></i>
+                  <span>Control +/- adjustment bands for automated preliminary quote figures.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i data-lucide="check-circle-2" class="text-[#22C55E] w-4.5 h-4.5 mt-0.5"></i>
+                  <span>Set optional rebate allowances surfaced in the deal summary.</span>
+                </li>
+              </ul>
+            </div>
+            <form id="loginForm" class="flex-1 bg-white rounded-2xl border border-gray-100 shadow-inner px-8 py-10 space-y-6">
+              <div>
+                <label for="loginEmail" class="block text-sm font-medium text-gray-700">Installer email</label>
+                <input id="loginEmail" type="email" required placeholder="name@installer.com.au" class="mt-2 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+              </div>
+              <div>
+                <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                <input id="loginPassword" type="password" required placeholder="••••••••" class="mt-2 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+              </div>
+              <div class="flex items-center justify-between text-sm text-gray-600">
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" class="rounded border-gray-300 text-[#22C55E] focus:ring-[#22C55E]/50" />
+                  <span>Remember device</span>
+                </label>
+                <a href="#" class="text-[#0EA5E9] hover:text-[#0284C7]">Need access?</a>
+              </div>
+              <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#22C55E] hover:bg-[#16A34A] text-white py-3 text-sm font-semibold transition">
+                <i data-lucide="log-in" class="w-4.5 h-4.5"></i>
+                <span>Sign in</span>
+              </button>
+              <p id="loginError" class="hidden text-sm text-red-500 rounded-lg bg-red-50 border border-red-100 px-3 py-2"></p>
+            </form>
+          </div>
+        </section>
+
+        <!-- Dashboard view -->
+        <section id="dashboardView" class="hidden">
+          <header class="glass-card shadow-soft rounded-3xl border border-white/60 px-9 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 text-xs uppercase tracking-wide">Installer settings</div>
+              <h2 class="mt-3 text-3xl font-semibold text-gray-900">Adjust customer touchpoints and how preliminary quotes are presented</h2>
+              <p class="mt-2 text-sm text-gray-600 leading-6">Fine-tune the details surfaced inside `demo0925/roof-quote-cards_v5.html` and future V5 layouts.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button id="previewBtn" class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
+                <i data-lucide="view" class="w-4 h-4"></i>
+                Preview card impact
+              </button>
+              <button id="logoutBtn" class="inline-flex items-center gap-2 rounded-xl bg-gray-900 hover:bg-black text-white px-4 py-2 text-sm font-medium">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                Sign out
+              </button>
+            </div>
+          </header>
+
+          <div class="mt-10 grid grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-8">
+            <!-- Form column -->
+            <form id="settingsForm" class="glass-card shadow-soft rounded-3xl border border-white/60 px-9 py-8 space-y-7">
+              <div>
+                <label for="phoneInput" class="block text-sm font-semibold text-gray-800">Customer service phone number</label>
+                <p class="mt-1 text-xs text-gray-500">Displayed on customer-facing preliminary quote cards as the quickest contact channel. Use an international format (e.g. +61 4XX XXX XXX) so customers can reach your team promptly.</p>
+                <div class="mt-3 flex gap-3">
+                  <input id="phoneInput" type="tel" inputmode="tel" placeholder="+61 400 123 456" class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+                  <button type="button" id="testCallBtn" class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100">
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                    Test call
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label for="emailInput" class="block text-sm font-semibold text-gray-800">Lead submission email</label>
+                <p class="mt-1 text-xs text-gray-500">Customer lead submissions will be forwarded here. Choose an inbox actively monitored during business hours so no homeowner enquiry is missed.</p>
+                <div class="mt-3 flex gap-3">
+                  <input id="emailInput" type="email" placeholder="leads@your-solar.com" class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+                  <button type="button" id="testEmailBtn" class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    Test send
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label for="adjustmentInput" class="block text-sm font-semibold text-gray-800">Preliminary quote adjustment range (%)</label>
+                <p class="mt-1 text-xs text-gray-500">Applies an overall percentage adjustment to preliminary quote figures generated by the AI Sales Agent. Use negative values to offer a discount and positive values to increase pricing. Final quotes remain subject to onsite inspection.</p>
+                <div class="mt-3 flex items-center gap-3">
+                  <input id="adjustmentInput" type="number" step="0.5" min="-20" max="20" value="0" class="w-36 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+                  <div class="flex-1">
+                    <input id="adjustmentRange" type="range" min="-20" max="20" step="0.5" value="0" class="w-full accent-[#22C55E]" />
+                  </div>
+                  <span id="adjustmentBadge" class="inline-flex items-center gap-1.5 rounded-full bg-[#22C55E]/10 text-[#22C55E] px-3 py-1 text-xs font-medium">0.0%</span>
+                </div>
+              </div>
+
+              <div>
+                <label for="rebateInput" class="block text-sm font-semibold text-gray-800">Additional customer incentive (A$)</label>
+                <p class="mt-1 text-xs text-gray-500">Offer a fixed monetary incentive to accelerate decisions. Negative values provide extra savings during promotions. This amount appears in the customer's preliminary quote summary and does not alter your base margin calculations.</p>
+                <div class="mt-3 flex items-center gap-3">
+                  <span class="text-sm text-gray-500">A$</span>
+                  <input id="rebateInput" type="number" min="-2000" max="2000" step="50" value="0" class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+                  <span id="rebateBadge" class="inline-flex items-center gap-1.5 rounded-full bg-[#22C55E]/10 text-[#22C55E] px-3 py-1 text-xs font-medium">A$0</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-4">
+                <button type="button" id="resetBtn" class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                  Reset to defaults
+                </button>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-[#22C55E] hover:bg-[#16A34A] text-white px-6 py-2.5 text-sm font-semibold">
+                  <i data-lucide="save" class="w-4 h-4"></i>
+                  Save configuration
+                </button>
+              </div>
+              <p id="saveMessage" class="hidden text-sm rounded-xl border px-3 py-2"></p>
+            </form>
+
+            <!-- Preview / guidance column -->
+            <aside class="glass-card shadow-soft rounded-3xl border border-white/60 px-8 py-8 space-y-6">
+              <div class="flex items-center gap-3">
+                <i data-lucide="gauge" class="w-5 h-5 text-[#22C55E]"></i>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800">Customer preliminary quote card preview</h3>
+                  <p class="text-xs text-gray-500">Live preview of how settings flow into customer-facing preliminary cards.</p>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-green-200 bg-white/90 p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs font-medium text-gray-500 uppercase">Primary contact</p>
+                    <p id="previewPhone" class="text-sm font-semibold text-gray-800">+61 400 123 456</p>
+                  </div>
+                  <div class="inline-flex items-center gap-1 rounded-full bg-[#22C55E]/10 text-[#22C55E] px-3 py-1 text-xs font-medium">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    Live
+                  </div>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase">Lead inbox</p>
+                  <p id="previewEmail" class="text-sm font-semibold text-gray-800">leads@your-solar.com</p>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase">Quote adjustment</p>
+                  <p class="text-sm font-semibold text-gray-800"><span id="previewAdjustment">0.0%</span> applied to preliminary automated metrics.</p>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase">Additional incentive</p>
+                  <p class="text-sm font-semibold text-gray-800">A$<span id="previewRebate">0</span> highlighted in preliminary summary.</p>
+                </div>
+                <div class="border-t border-dashed border-gray-200 pt-4">
+                  <p class="text-xs text-gray-500 leading-5">Preview also shows sample AI-generated system size, savings, and payback period so you can visualise context when homeowners receive the preliminary proposal.</p>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-dashed border-[#22C55E]/40 bg-[#22C55E]/5 p-5 space-y-4 text-sm text-gray-600">
+                <div class="flex items-start gap-3">
+                  <i data-lucide="info" class="w-4 h-4 text-[#22C55E] mt-1"></i>
+                  <p>These values override the defaults inside V5 quote cards whenever the AI Sales Agent generates a new preliminary proposal.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-[#22C55E] mt-1"></i>
+                  <p>Coming soon: upload installer logos, add company profiles, define service regions, and attach compliance documents for faster onboarding.</p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const settingsForm = document.getElementById('settingsForm');
+    const previewBtn = document.getElementById('previewBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const saveMessage = document.getElementById('saveMessage');
+
+    const phoneInput = document.getElementById('phoneInput');
+    const emailInput = document.getElementById('emailInput');
+    const adjustmentInput = document.getElementById('adjustmentInput');
+    const adjustmentRange = document.getElementById('adjustmentRange');
+    const adjustmentBadge = document.getElementById('adjustmentBadge');
+    const rebateInput = document.getElementById('rebateInput');
+    const rebateBadge = document.getElementById('rebateBadge');
+
+    const previewPhone = document.getElementById('previewPhone');
+    const previewEmail = document.getElementById('previewEmail');
+    const previewAdjustment = document.getElementById('previewAdjustment');
+    const previewRebate = document.getElementById('previewRebate');
+
+    const testCallBtn = document.getElementById('testCallBtn');
+    const testEmailBtn = document.getElementById('testEmailBtn');
+
+    const DEFAULTS = {
+      phone: '+61 400 123 456',
+      email: 'leads@your-solar.com',
+      adjustment: 0,
+      rebate: 0,
+    };
+
+    function setSession(value) {
+      sessionStorage.setItem('installer-authenticated', JSON.stringify(value));
+    }
+
+    function isAuthenticated() {
+      try {
+        return JSON.parse(sessionStorage.getItem('installer-authenticated')) === true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function loadState() {
+      try {
+        const state = JSON.parse(localStorage.getItem('installer-settings'));
+        if (!state) return { ...DEFAULTS };
+        return { ...DEFAULTS, ...state };
+      } catch (e) {
+        return { ...DEFAULTS };
+      }
+    }
+
+    function persistState(state) {
+      localStorage.setItem('installer-settings', JSON.stringify(state));
+    }
+
+    function applyStateToForm(state) {
+      phoneInput.value = state.phone;
+      emailInput.value = state.email;
+      adjustmentInput.value = state.adjustment;
+      adjustmentRange.value = state.adjustment;
+      rebateInput.value = state.rebate;
+      updatePreview(state);
+    }
+
+    function updatePreview(state) {
+      previewPhone.textContent = state.phone || 'Not set';
+      previewEmail.textContent = state.email || 'Not set';
+      previewAdjustment.textContent = `${Number(state.adjustment).toFixed(1)}%`;
+      previewRebate.textContent = Number(state.rebate).toFixed(0);
+      adjustmentBadge.textContent = `${Number(state.adjustment).toFixed(1)}%`;
+      rebateBadge.textContent = `A$${Number(state.rebate).toFixed(0)}`;
+    }
+
+    function showDashboard() {
+      loginView.classList.add('hidden');
+      dashboardView.classList.remove('hidden');
+    }
+
+    function showLogin() {
+      dashboardView.classList.add('hidden');
+      loginView.classList.remove('hidden');
+    }
+
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = loginForm.loginEmail.value.trim();
+      const password = loginForm.loginPassword.value.trim();
+
+      if (email.length < 5 || password.length < 4) {
+        loginError.textContent = 'Enter a valid installer email and password to continue.';
+        loginError.classList.remove('hidden');
+        return;
+      }
+
+      loginError.classList.add('hidden');
+      setSession(true);
+      applyStateToForm(loadState());
+      showDashboard();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      setSession(false);
+      showLogin();
+    });
+
+    function updateState(partial) {
+      const state = {
+        phone: phoneInput.value,
+        email: emailInput.value,
+        adjustment: adjustmentInput.value,
+        rebate: rebateInput.value,
+        ...partial,
+      };
+      updatePreview(state);
+    }
+
+    adjustmentInput.addEventListener('input', () => {
+      const value = clamp(adjustmentInput.value, -20, 20);
+      adjustmentInput.value = value;
+      adjustmentRange.value = value;
+      updateState({ adjustment: value });
+    });
+
+    adjustmentRange.addEventListener('input', () => {
+      adjustmentInput.value = adjustmentRange.value;
+      updateState({ adjustment: adjustmentRange.value });
+    });
+
+    rebateInput.addEventListener('input', () => {
+      const value = clamp(rebateInput.value, -2000, 2000);
+      rebateInput.value = value;
+      updateState({ rebate: value });
+    });
+
+    phoneInput.addEventListener('blur', () => updateState({ phone: phoneInput.value }));
+    emailInput.addEventListener('blur', () => updateState({ email: emailInput.value }));
+
+    function clamp(value, min, max) {
+      const num = Number(value);
+      if (Number.isNaN(num)) return 0;
+      return Math.min(Math.max(num, min), max);
+    }
+
+    settingsForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const state = {
+        phone: phoneInput.value.trim() || DEFAULTS.phone,
+        email: emailInput.value.trim() || DEFAULTS.email,
+        adjustment: clamp(adjustmentInput.value, -20, 20),
+        rebate: clamp(rebateInput.value, -2000, 2000),
+      };
+
+      persistState(state);
+      updatePreview(state);
+      showMessage('Configuration saved. New preliminary quotes will apply these values.', 'success');
+    });
+
+    resetBtn.addEventListener('click', () => {
+      persistState(DEFAULTS);
+      applyStateToForm(DEFAULTS);
+      showMessage('Defaults restored.', 'info');
+    });
+
+    previewBtn.addEventListener('click', () => {
+      showMessage('Preview your public card in another tab once values are saved.', 'info');
+    });
+
+    testCallBtn.addEventListener('click', () => {
+      if (!phoneInput.value) {
+        showMessage('Enter a phone number before testing the call link.', 'error');
+        return;
+      }
+      window.open(`tel:${phoneInput.value.replace(/\s+/g, '')}`);
+    });
+
+    testEmailBtn.addEventListener('click', () => {
+      if (!emailInput.value) {
+        showMessage('Enter an email before testing the send link.', 'error');
+        return;
+      }
+      window.open(`mailto:${emailInput.value}?subject=Test%20lead&body=This%20is%20a%20test%20lead%20from%20your%20installer%20portal.`);
+    });
+
+    function showMessage(message, type) {
+      const styles = {
+        success: 'border-emerald-100 bg-emerald-50 text-emerald-700',
+        info: 'border-sky-100 bg-sky-50 text-sky-600',
+        error: 'border-red-100 bg-red-50 text-red-600',
+      };
+      saveMessage.textContent = message;
+      saveMessage.className = `text-sm rounded-xl border px-3 py-2 transition ${styles[type] || styles.info}`;
+      saveMessage.classList.remove('hidden');
+      clearTimeout(showMessage._timeout);
+      showMessage._timeout = setTimeout(() => saveMessage.classList.add('hidden'), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (isAuthenticated()) {
+        applyStateToForm(loadState());
+        showDashboard();
+      } else {
+        showLogin();
+      }
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
