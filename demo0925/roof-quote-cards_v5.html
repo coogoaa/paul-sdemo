@@ -116,6 +116,7 @@
                   <div class="mt-3">
                     <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Estimated Upfront Investment</h4>
                     <div id="nsUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">$20,000 – $25,000</div>
+                    <p id="nsRebateNote" class="mt-1 text-[11px] text-gray-600">Includes estimated Government Subsidies & Installer Limited-time Rebate of <span id="nsRebateAmount" class="font-semibold text-red-500">$3,500</span></p>
                   </div>
                 </div>
               </div>
@@ -137,7 +138,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="nsReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 9.5%</div>
+                          <div id="nsReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 15.8%</div>
                           <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
                         </div>
                       </div>
@@ -146,7 +147,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="nsReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3-4 years</div>
+                          <div id="nsReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3.2 – 3.8 years</div>
                           <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
                         </div>
                       </div>
@@ -249,7 +250,8 @@
                   </div>
                   <div class="mt-3">
                     <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Battery Upgrade Investment</h4>
-                    <div id="essUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">$10,000</div>
+                    <div id="essUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">$10,000 – $12,000</div>
+                    <p id="essRebateNote" class="mt-1 text-[11px] text-gray-600">Includes estimated Government Subsidies & Installer Limited-time Rebate of <span id="essRebateAmount" class="font-semibold text-red-500">$1,500</span></p>
                   </div>
                 </div>
               </div>
@@ -271,7 +273,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="essReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 8.5%</div>
+                          <div id="essReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 14.8%</div>
                           <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
                         </div>
                       </div>
@@ -280,7 +282,7 @@
                       <div class="flex items-center gap-2">
                         <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
                         <div>
-                          <div id="essReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3-4 years</div>
+                          <div id="essReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3.4 – 4.2 years</div>
                           <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
                         </div>
                       </div>
@@ -325,36 +327,39 @@
               tag: 'Maximum Value · Go big for the biggest rewards',
               quote: '$20,000 – $24,000',
               upfront: '$20,000 – $25,000',
+              rebate: '$3,500',
               size: '13.2 kW (≈ 28 panels)',
               batt: '23.4 kWh',
               selfConsumption: '75% – 85%',
               returnSavings: '$2,800 – $3,500',
-              payback: '3-4 years',
-              irr: '≈ 9.5%'
+              payback: '3.2 – 3.8 years',
+              irr: '≈ 15.8%'
             },
             B: {
               name: 'The High Performer',
               tag: 'Most Installed · The proven choice for Australian homes',
               quote: '$16,000 – $19,000',
               upfront: '$16,000 – $19,000',
+              rebate: '$2,600',
               size: '9.9 kW (≈ 22 panels)',
               batt: '15.0 kWh',
               selfConsumption: '70% – 80%',
               returnSavings: '$2,100 – $2,700',
-              payback: '3-4 years',
-              irr: '≈ 8.8%'
+              payback: '3.4 – 4.1 years',
+              irr: '≈ 14.6%'
             },
             C: {
               name: 'The Smart Starter',
               tag: 'Optimal Fit · Smart, simple, and effective',
               quote: '$12,000 – $15,000',
               upfront: '$12,000 – $15,000',
+              rebate: '$1,800',
               size: '6.6 kW (≈ 16 panels)',
               batt: '10.0 kWh',
               selfConsumption: '65% – 75%',
               returnSavings: '$1,500 – $1,900',
-              payback: '3-4 years',
-              irr: '≈ 8.0%'
+              payback: '3.6 – 4.5 years',
+              irr: '≈ 14.1%'
             }
           };
 
@@ -368,6 +373,8 @@
             document.getElementById('nsSummarySize').textContent = `System size: ${c.size}`;
             document.getElementById('nsSummaryBattery').textContent = `Battery capacity: ${c.batt}`;
             document.getElementById('nsSummarySelf').textContent = `Self-consumption: ${c.selfConsumption}`;
+            const nsRebateAmount = document.getElementById('nsRebateAmount');
+            if (nsRebateAmount) nsRebateAmount.textContent = c.rebate;
             // highlight selected button
             const strip = document.getElementById('nsSchemesStrip');
             const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
@@ -382,10 +389,11 @@
               tag: 'Maximum Value · Maximise your battery, maximise your cash.',
               quote: '$10,500 – $12,000',
               batt: '13.8 kWh',
-              upfront: '$10,000',
+              upfront: '$10,000 – $12,000',
+              rebate: '$1,500',
               addSavings: '$1,000 – $1,300',
-              irr: '≈ 8.5%',
-              payback: '3-4 years',
+              irr: '≈ 14.8%',
+              payback: '3.1 – 3.9 years',
               selfConsumption: '85% – 95%'
             },
             B: {
@@ -393,10 +401,11 @@
               tag: 'Most Popular · Power your nights, own your energy.',
               quote: '$8,800 – $10,200',
               batt: '10.2 kWh',
-              upfront: '$9,200',
+              upfront: '$8,800 – $10,200',
+              rebate: '$1,100',
               addSavings: '$900 – $1,200',
-              irr: '≈ 8.0%',
-              payback: '3-4 years',
+              irr: '≈ 14.3%',
+              payback: '3.4 – 4.3 years',
               selfConsumption: '80% – 88%'
             },
             C: {
@@ -404,10 +413,11 @@
               tag: 'Custom Fit · Simple, practical, and secure',
               quote: '$6,900 – $8,200',
               batt: '7.0 kWh',
-              upfront: '$7,400',
+              upfront: '$6,900 – $8,200',
+              rebate: '$800',
               addSavings: '$600 – $800',
-              irr: '≈ 7.2%',
-              payback: '3-4 years',
+              irr: '≈ 14.0%',
+              payback: '3.7 – 4.6 years',
               selfConsumption: '78% – 84%'
             }
           };
@@ -422,6 +432,8 @@
             document.getElementById('essReturnSelf').textContent = c.selfConsumption;
             document.getElementById('essSummaryBattery').textContent = `Battery capacity: ${c.batt}`;
             document.getElementById('essSummarySelf').textContent = `Self-consumption: ${c.selfConsumption}`;
+            const essRebateAmount = document.getElementById('essRebateAmount');
+            if (essRebateAmount) essRebateAmount.textContent = c.rebate;
             const strip = document.getElementById('essSchemesStrip');
             const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
             buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
