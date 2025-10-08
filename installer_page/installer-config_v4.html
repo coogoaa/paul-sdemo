@@ -389,7 +389,7 @@
           labelInput.maxLength = 80;
           labelInput.className = 'rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40';
           if (deduction.id === 'other-incentive') {
-            labelInput.placeholder = 'Other installer incentive';
+            labelInput.placeholder = 'Other installer incentives or rebates';
           }
           labelInput.addEventListener('input', (event) => {
             state.deductions[index].label = event.target.value;
@@ -402,12 +402,10 @@
           certCol.appendChild(label);
         }
 
-        if (deduction.type !== 'stc') {
+        if (deduction.type !== 'stc' && deduction.id !== 'other-incentive') {
           const helper = document.createElement('span');
           helper.className = 'text-xs font-medium text-gray-500 uppercase tracking-wide';
-          helper.textContent = deduction.id === 'other-incentive'
-            ? 'Installer incentives or rebates'
-            : 'Value-based deduction';
+          helper.textContent = 'Value-based deduction';
           certCol.appendChild(helper);
         }
 
