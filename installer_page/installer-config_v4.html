@@ -203,7 +203,7 @@
       if (!deduction || typeof deduction !== 'object') return null;
       const base = {
         id: deduction.id || generateId('deduction'),
-        label: String(deduction.label || 'Custom incentive').trim().slice(0, 80),
+        label: String(deduction.label || 'Other installer incentives or rebates').trim().slice(0, 80),
         editableLabel: Boolean(deduction.editableLabel),
         removable: Boolean(deduction.removable),
       };
