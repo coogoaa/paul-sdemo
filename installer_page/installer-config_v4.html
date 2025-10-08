@@ -99,7 +99,7 @@
             <div>
               <div>
                 <label class="block text-sm font-semibold text-gray-800">Additional Charges</label>
-                <p class="mt-1 text-xs text-gray-500">Add installer-specific line items that will be applied on top of the base quote. These appear in the SalesAgent final pricing summary.</p>
+                <p class="mt-1 text-xs text-gray-500">Add optional installer-driven charges on top of the SalesAgent auto-calculated final quote whenever needed.</p>
               </div>
               <div id="additionalChargesList" class="mt-4 space-y-3"></div>
             </div>
@@ -107,7 +107,7 @@
             <div>
               <div>
                 <label class="block text-sm font-semibold text-gray-800">Deductions</label>
-                <p class="mt-1 text-xs text-gray-500">Fine-tune rebates and incentives. STC counts stay fixed, but you can adjust pricing and add other incentives.</p>
+                <p class="mt-1 text-xs text-gray-500">Tweak the SalesAgent auto-calculated totals by adjusting unit pricing or layering in additional incentives.</p>
               </div>
               <div class="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white">
                 <div class="grid grid-cols-[minmax(0,1fr)_140px_160px] gap-3 bg-gray-50 px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">
@@ -165,8 +165,8 @@
           { id: generateId('charge'), name: '', unitCost: 0 }
         ],
         deductions: [
-          { id: 'stc-panel', type: 'stc', label: 'STC Panel Rebate (Installation Year: 2025)', stcs: 62, unitPrice: 40, editableLabel: false, removable: false },
-          { id: 'stc-battery', type: 'stc', label: 'STC Battery Rebate (Installation Year: 2025)', stcs: 245, unitPrice: 40, editableLabel: false, removable: false },
+          { id: 'stc-panel', type: 'stc', label: 'STC Panel Rebate', stcs: 62, unitPrice: 40, editableLabel: false, removable: false },
+          { id: 'stc-battery', type: 'stc', label: 'STC Battery Rebate', stcs: 245, unitPrice: 40, editableLabel: false, removable: false },
           { id: 'solar-vic-rebate', type: 'flat', label: 'Solar VIC Rebate', value: 1400, editableLabel: false, removable: false },
           { id: 'solar-vic-loan', type: 'flat', label: 'Solar VIC PV Interest Free Loan', value: 0, editableLabel: false, removable: false },
           { id: 'other-incentive', type: 'flat', label: '', value: 0, editableLabel: true, removable: false },
@@ -315,7 +315,7 @@
         row.className = 'rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-sm';
 
         const layout = document.createElement('div');
-        layout.className = 'grid gap-4 md:grid-cols-[minmax(0,1fr)_160px_auto] md:items-center';
+        layout.className = 'grid gap-4 md:grid-cols-[minmax(0,1fr)_160px] md:items-center';
 
         const nameField = document.createElement('div');
         nameField.className = 'flex flex-col gap-2';
@@ -325,7 +325,6 @@
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
         nameInput.value = charge.name || '';
-        nameInput.placeholder = 'E.g. Switchboard upgrade';
         nameInput.maxLength = 80;
         nameInput.className = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40';
         nameInput.addEventListener('input', (event) => {
@@ -359,21 +358,8 @@
         costField.appendChild(costLabel);
         costField.appendChild(costInput);
 
-        const actionField = document.createElement('div');
-        actionField.className = 'flex items-end justify-end';
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'text-sm font-medium text-red-500 hover:text-red-600';
-        removeBtn.textContent = 'Remove';
-        removeBtn.addEventListener('click', () => {
-          state.additionalCharges.splice(index, 1);
-          renderAdditionalCharges();
-        });
-        actionField.appendChild(removeBtn);
-
         layout.appendChild(nameField);
         layout.appendChild(costField);
-        layout.appendChild(actionField);
         row.appendChild(layout);
 
         additionalChargesList.appendChild(row);
@@ -419,14 +405,7 @@
           certCol.appendChild(label);
         }
 
-        if (deduction.type === 'stc') {
-          const stcInput = document.createElement('input');
-          stcInput.type = 'text';
-          stcInput.disabled = true;
-          stcInput.value = `${deduction.stcs} STCs`;
-          stcInput.className = 'w-32 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2 text-xs font-medium text-gray-500';
-          certCol.appendChild(stcInput);
-        } else {
+        if (deduction.type !== 'stc') {
           const helper = document.createElement('span');
           helper.className = 'text-xs text-gray-400';
           helper.textContent = deduction.id === 'other-incentive'
