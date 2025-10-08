@@ -110,10 +110,9 @@
                 <p class="mt-1 text-xs text-gray-500">Tweak the SalesAgent auto-calculated totals by adjusting unit pricing or layering in additional incentives.</p>
               </div>
               <div class="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white">
-                <div class="grid grid-cols-[minmax(0,1fr)_140px_160px] gap-3 bg-gray-50 px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">
+                <div class="grid grid-cols-[minmax(0,1fr)_140px] gap-3 bg-gray-50 px-5 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">
                   <span>Certificates</span>
                   <span>Unit price / value</span>
-                  <span>Amount (A$)</span>
                 </div>
                 <div id="deductionsList" class="divide-y divide-gray-100"></div>
               </div>
@@ -167,8 +166,6 @@
         deductions: [
           { id: 'stc-panel', type: 'stc', label: 'STC Panel Rebate', stcs: 62, unitPrice: 40, editableLabel: false, removable: false },
           { id: 'stc-battery', type: 'stc', label: 'STC Battery Rebate', stcs: 245, unitPrice: 40, editableLabel: false, removable: false },
-          { id: 'solar-vic-rebate', type: 'flat', label: 'Solar VIC Rebate', value: 1400, editableLabel: false, removable: false },
-          { id: 'solar-vic-loan', type: 'flat', label: 'Solar VIC PV Interest Free Loan', value: 0, editableLabel: false, removable: false },
           { id: 'other-incentive', type: 'flat', label: '', value: 0, editableLabel: true, removable: false },
         ],
       };
@@ -380,7 +377,7 @@
 
       deductions.forEach((deduction, index) => {
         const row = document.createElement('div');
-        row.className = 'grid grid-cols-[minmax(0,1fr)_140px_160px] items-center gap-3 px-5 py-4 text-sm';
+        row.className = 'grid grid-cols-[minmax(0,1fr)_140px] items-center gap-3 px-5 py-4 text-sm';
 
         const certCol = document.createElement('div');
         certCol.className = 'flex flex-col gap-2';
@@ -407,9 +404,9 @@
 
         if (deduction.type !== 'stc') {
           const helper = document.createElement('span');
-          helper.className = 'text-xs text-gray-400';
+          helper.className = 'text-xs font-medium text-gray-500 uppercase tracking-wide';
           helper.textContent = deduction.id === 'other-incentive'
-            ? 'Add other installer incentives or rebates here.'
+            ? 'Installer incentives or rebates'
             : 'Value-based deduction';
           certCol.appendChild(helper);
         }
@@ -419,65 +416,40 @@
         unitInput.type = 'number';
         unitInput.className = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-right focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40';
 
-        const amountCol = document.createElement('div');
-        amountCol.className = 'flex items-center justify-end gap-3';
-        const amountValue = document.createElement('div');
-        amountValue.className = 'text-right font-semibold text-emerald-600';
-
         if (deduction.type === 'stc') {
           unitInput.min = '0';
           unitInput.max = '60';
           unitInput.step = '0.5';
           unitInput.value = Number(deduction.unitPrice).toFixed(2);
-          amountValue.textContent = `- ${formatCurrency(calculateDeductionAmount(deduction))}`;
           unitInput.addEventListener('input', (event) => {
             if (event.target.value === '') {
               state.deductions[index].unitPrice = 0;
-              amountValue.textContent = '- A$0.00';
               return;
             }
             const value = clampNumber(Number(event.target.value), 0, 60);
             state.deductions[index].unitPrice = value;
             event.target.value = value.toFixed(2);
-            amountValue.textContent = `- ${formatCurrency(calculateDeductionAmount(state.deductions[index]))}`;
           });
         } else {
           unitInput.min = '0';
           unitInput.max = '100000';
           unitInput.step = '1';
           unitInput.value = Math.round(Number(deduction.value) || 0);
-          amountValue.textContent = `- ${formatCurrency(calculateDeductionAmount(deduction))}`;
           unitInput.addEventListener('input', (event) => {
             if (event.target.value === '') {
               state.deductions[index].value = 0;
-              amountValue.textContent = '- A$0.00';
               return;
             }
             const value = clampNumber(Number(event.target.value), 0, 100000);
             state.deductions[index].value = value;
             event.target.value = Math.round(value).toString();
-            amountValue.textContent = `- ${formatCurrency(calculateDeductionAmount(state.deductions[index]))}`;
           });
         }
 
         unitCol.appendChild(unitInput);
-        amountCol.appendChild(amountValue);
-
-        if (deduction.removable) {
-          const removeBtn = document.createElement('button');
-          removeBtn.type = 'button';
-          removeBtn.className = 'text-xs font-medium text-red-500 hover:text-red-600';
-          removeBtn.textContent = 'Remove';
-          removeBtn.addEventListener('click', () => {
-            state.deductions.splice(index, 1);
-            renderDeductions();
-          });
-          amountCol.appendChild(removeBtn);
-        }
 
         row.appendChild(certCol);
         row.appendChild(unitCol);
-        row.appendChild(amountCol);
         deductionsList.appendChild(row);
       });
     }
