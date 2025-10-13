@@ -148,9 +148,9 @@ button.apply:hover {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 120px 110px 150px 120px 190px 190px 150px 120px 120px 110px 120px 150px 140px;
-  gap: 10px;
-  padding: 12px 16px;
+  grid-template-columns: 110px 100px 140px 110px 180px 170px 140px 110px 110px 100px 110px 140px 130px;
+  gap: 8px;
+  padding: 10px 14px;
   align-items: center;
 }
 .table-header {
@@ -358,13 +358,13 @@ button.apply:hover {
 @media (max-width: 1200px) {
   .table-header,
   .table-row {
-    grid-template-columns: 120px 110px 150px 120px 180px 180px 140px 120px 120px 110px 120px 150px 140px;
+    grid-template-columns: 110px 100px 140px 110px 170px 160px 130px 110px 110px 100px 110px 140px 130px;
   }
 }
 @media (max-width: 1024px) {
   .table-header,
   .table-row {
-    min-width: 1300px;
+    min-width: 1250px;
   }
 }
 @media (max-width: 760px) {
@@ -977,6 +977,8 @@ function closeModal() {
 function dispatchLead(leadId) {
   const lead = leads.find((item) => item.id === leadId);
   if (!lead || lead.status === STATUS_DISPATCHED) return;
+  const confirmed = window.confirm(`确认通过线索 ${lead.id} 吗？`);
+  if (!confirmed) return;
   lead.status = STATUS_DISPATCHED;
   updateEmailHtml(lead);
   alert(`已通过 ${lead.id}`);
