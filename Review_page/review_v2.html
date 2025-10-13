@@ -16,6 +16,7 @@ body {
   margin: 0;
   background: #f1f5f9;
   color: #0f172a;
+  font-size: 15px;
 }
 .layout {
   min-height: 100vh;
@@ -142,20 +143,24 @@ button.apply:hover {
   border-radius: 18px;
   box-shadow: 0 18px 30px rgba(15, 23, 42, 0.1);
   overflow: hidden;
+  overflow-x: auto;
 }
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 140px 150px 140px 220px 140px 190px 190px 150px 150px 220px;
+  grid-template-columns: 140px 170px 150px 140px 220px 220px 150px 120px 140px 160px 220px 160px;
   gap: 12px;
   padding: 16px 20px;
   align-items: center;
 }
 .table-header {
   background: #f8fafc;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #475569;
+}
+.table-row div {
+  font-size: 12px;
 }
 .table-row {
   border-top: 1px solid #e2e8f0;
@@ -197,10 +202,94 @@ button.apply:hover {
 .link-card:hover {
   text-decoration: underline;
 }
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.status-pending {
+  background: rgba(67, 56, 202, 0.12);
+  color: #4338ca;
+}
+.status-dispatched {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+.status-rejected {
+  background: rgba(248, 113, 113, 0.16);
+  color: #b91c1c;
+}
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+.actions-cell button {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.actions-cell button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
+}
+.dispatch {
+  background: #16a34a;
+  color: #ffffff;
+}
+.dispatch:hover:not(:disabled) {
+  box-shadow: 0 12px 24px rgba(22, 163, 74, 0.22);
+  transform: translateY(-1px);
+}
+.reject {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.reject:hover:not(:disabled) {
+  background: #cbd5f5;
+  transform: translateY(-1px);
+}
 .empty-state {
   padding: 42px 20px;
   text-align: center;
   color: #94a3b8;
+}
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  font-size: 12px;
+}
+.pagination button {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: #e2e8f0;
+  color: #0f172a;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.pagination button:hover:not(:disabled) {
+  background: #cbd5f5;
+  transform: translateY(-1px);
+}
+.pagination button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.pagination .info {
+  color: #64748b;
 }
 .modal-backdrop {
   position: fixed;
@@ -253,19 +342,27 @@ button.apply:hover {
   color: #0f172a;
   cursor: pointer;
 }
+.email-template {
+  font-family: "Inter", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
 @media (max-width: 1200px) {
   .table-header,
   .table-row {
-    grid-template-columns: 140px 140px 140px 200px 140px 200px 200px 150px 150px 220px;
+    grid-template-columns: 140px 160px 150px 140px 210px 220px 150px 120px 140px 160px 220px 150px;
   }
 }
 @media (max-width: 1024px) {
-  .table-wrap {
-    overflow-x: auto;
-  }
   .table-header,
   .table-row {
-    min-width: 1080px;
+    min-width: 1250px;
   }
 }
 @media (max-width: 760px) {
@@ -300,23 +397,14 @@ button.apply:hover {
   </header>
   <main>
     <div class="page-title">AI Agent Lead Review List</div>
-    <div class="page-subtitle">根据最新报价卡片字段，快速核对方案关键信息。</div>
     <section class="filters">
       <div class="filter-group">
-        <label for="plan-filter">方案类型</label>
-        <select id="plan-filter">
-          <option value="all">全部类型</option>
-          <option value="新建系统">新建系统</option>
-          <option value="储能扩容">储能扩容</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label for="installer-filter">所属安装商</label>
-        <select id="installer-filter">
-          <option value="all">全部安装商</option>
-          <option value="BrightSun NSW">BrightSun NSW</option>
-          <option value="GreenPeak VIC">GreenPeak VIC</option>
-          <option value="SunWave QLD">SunWave QLD</option>
+        <label for="status-filter">审核状态</label>
+        <select id="status-filter">
+          <option value="all">全部状态</option>
+          <option value="pending">待审核</option>
+          <option value="dispatched">已分发</option>
+          <option value="rejected">已拒绝</option>
         </select>
       </div>
       <div class="filter-group">
@@ -332,17 +420,23 @@ button.apply:hover {
         <div>Leads ID</div>
         <div>所属安装商</div>
         <div>客户姓名</div>
-        <div>地址</div>
         <div>方案类型</div>
         <div>方案名称</div>
         <div>系统组成</div>
         <div>年度节省</div>
         <div>IRR</div>
         <div>回本周期</div>
+        <div>审核状态</div>
         <div>附件卡片地址</div>
+        <div>操作</div>
       </div>
       <div id="table-body"></div>
     </section>
+    <div class="pagination" id="pagination" style="display:none;">
+      <button id="prev-page">上一页</button>
+      <span class="info" id="page-info"></span>
+      <button id="next-page">下一页</button>
+    </div>
   </main>
 </div>
 <div class="modal-backdrop" id="modal-backdrop">
@@ -355,11 +449,14 @@ button.apply:hover {
   </div>
 </div>
 <script>
-const planFilter = document.getElementById("plan-filter");
-const installerFilter = document.getElementById("installer-filter");
+const statusFilter = document.getElementById("status-filter");
 const searchInput = document.getElementById("search-input");
 const applyFiltersBtn = document.getElementById("apply-filters");
 const tableBody = document.getElementById("table-body");
+const pagination = document.getElementById("pagination");
+const prevPageBtn = document.getElementById("prev-page");
+const nextPageBtn = document.getElementById("next-page");
+const pageInfo = document.getElementById("page-info");
 const modalBackdrop = document.getElementById("modal-backdrop");
 const modalTitle = document.getElementById("modal-title");
 const modalContent = document.getElementById("modal-content");
@@ -367,12 +464,15 @@ const modalCloseBtn = document.getElementById("modal-close");
 const userGreeting = document.getElementById("user-greeting");
 const logoutBtn = document.getElementById("logout-btn");
 
+const STATUS_PENDING = "pending";
+const STATUS_DISPATCHED = "dispatched";
+const STATUS_REJECTED = "rejected";
+
 const leads = [
   {
     id: "L-20230927-001",
     installer: "BrightSun NSW",
     customer: "John Smith",
-    address: "4 Main St, Sydney NSW",
     planType: "新建系统",
     planName: "The Rebate Maximiser",
     system: "13.2 kW 光伏 + 23.4 kWh 电池",
@@ -380,23 +480,33 @@ const leads = [
     irr: "≈ 9.5%",
     payback: "3-4 年",
     cardUrl: "../demo0925/assets/card-new-A.png",
-    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-001</p>
-                <p><strong>Installer:</strong> BrightSun NSW</p>
-                <p><strong>Customer Name:</strong> John Smith</p>
-                <p><strong>Address:</strong> 4 Main St, Sydney NSW</p>
-                <p><strong>Plan Type:</strong> 新建系统</p>
-                <p><strong>Plan Name:</strong> The Rebate Maximiser</p>
-                <p><strong>System Composition:</strong> 13.2 kW 光伏 + 23.4 kWh 电池</p>
-                <p><strong>Annual Savings:</strong> A$2,800 – A$3,500</p>
-                <p><strong>IRR:</strong> ≈ 9.5%</p>
-                <p><strong>Payback Period:</strong> 3-4 年</p>
-                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-new-A.png" target="_blank">查看附件卡片</a></p>`
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "BrightSun NSW",
+      planCategory: "Maximum Value",
+      planName: "The Rebate Maximiser",
+      systemSize: "13.2 kW",
+      batteryCapacity: "23.4 kWh",
+      upfrontInvestment: "A$20,000 – A$25,000",
+      rebateAmount: "3,500",
+      annualSavings: "A$2,800 – A$3,500",
+      irr: "9.5",
+      paybackPeriod: "3-4",
+      customerName: "John Smith",
+      customerPhone: "+61 400 123 456",
+      customerEmail: "john.smith@example.com",
+      address: "4 Main St, Sydney NSW",
+      coordinates: "-33.8688, 151.2093",
+      selfConsumption: "75% – 85%",
+      notes: "3D 模型通过，无异常",
+      cardUrl: "../demo0925/assets/card-new-A.png"
+    }
   },
   {
     id: "L-20230927-002",
     installer: "GreenPeak VIC",
     customer: "Jane Doe",
-    address: "10 Oak Ave, Melbourne VIC",
     planType: "新建系统",
     planName: "The High Performer",
     system: "9.9 kW 光伏 + 15.0 kWh 电池",
@@ -404,23 +514,33 @@ const leads = [
     irr: "≈ 8.8%",
     payback: "3-4 年",
     cardUrl: "../demo0925/assets/card-new-B.png",
-    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-002</p>
-                <p><strong>Installer:</strong> GreenPeak VIC</p>
-                <p><strong>Customer Name:</strong> Jane Doe</p>
-                <p><strong>Address:</strong> 10 Oak Ave, Melbourne VIC</p>
-                <p><strong>Plan Type:</strong> 新建系统</p>
-                <p><strong>Plan Name:</strong> The High Performer</p>
-                <p><strong>System Composition:</strong> 9.9 kW 光伏 + 15.0 kWh 电池</p>
-                <p><strong>Annual Savings:</strong> A$2,100 – A$2,700</p>
-                <p><strong>IRR:</strong> ≈ 8.8%</p>
-                <p><strong>Payback Period:</strong> 3-4 年</p>
-                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-new-B.png" target="_blank">查看附件卡片</a></p>`
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "GreenPeak VIC",
+      planCategory: "Most Installed",
+      planName: "The High Performer",
+      systemSize: "9.9 kW",
+      batteryCapacity: "15.0 kWh",
+      upfrontInvestment: "A$16,000 – A$19,000",
+      rebateAmount: "2,600",
+      annualSavings: "A$2,100 – A$2,700",
+      irr: "8.8",
+      paybackPeriod: "3-4",
+      customerName: "Jane Doe",
+      customerPhone: "+61 400 987 654",
+      customerEmail: "jane.doe@example.com",
+      address: "10 Oak Ave, Melbourne VIC",
+      coordinates: "-37.8136, 144.9631",
+      selfConsumption: "70% – 80%",
+      notes: "街景存在树荫，需要人工核对",
+      cardUrl: "../demo0925/assets/card-new-B.png"
+    }
   },
   {
     id: "L-20230927-003",
     installer: "SunWave QLD",
     customer: "Michael Lee",
-    address: "22 Pine Rd, Brisbane QLD",
     planType: "储能扩容",
     planName: "Max Independence",
     system: "已有光伏 + 13.8 kWh 电池升级",
@@ -428,23 +548,33 @@ const leads = [
     irr: "≈ 8.5%",
     payback: "3-4 年",
     cardUrl: "../demo0925/assets/card-storage-A.png",
-    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-003</p>
-                <p><strong>Installer:</strong> SunWave QLD</p>
-                <p><strong>Customer Name:</strong> Michael Lee</p>
-                <p><strong>Address:</strong> 22 Pine Rd, Brisbane QLD</p>
-                <p><strong>Plan Type:</strong> 储能扩容</p>
-                <p><strong>Plan Name:</strong> Max Independence</p>
-                <p><strong>System Composition:</strong> 已有光伏 + 13.8 kWh 电池升级</p>
-                <p><strong>Annual Savings:</strong> A$1,000 – A$1,300</p>
-                <p><strong>IRR:</strong> ≈ 8.5%</p>
-                <p><strong>Payback Period:</strong> 3-4 年</p>
-                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-storage-A.png" target="_blank">查看附件卡片</a></p>`
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "SunWave QLD",
+      planCategory: "Maximum Value",
+      planName: "Max Independence",
+      systemSize: "既有系统",
+      batteryCapacity: "13.8 kWh",
+      upfrontInvestment: "A$10,500 – A$12,000",
+      rebateAmount: "1,500",
+      annualSavings: "A$1,000 – A$1,300",
+      irr: "8.5",
+      paybackPeriod: "3-4",
+      customerName: "Michael Lee",
+      customerPhone: "+61 410 333 555",
+      customerEmail: "michael.lee@example.com",
+      address: "22 Pine Rd, Brisbane QLD",
+      coordinates: "-27.4698, 153.0251",
+      selfConsumption: "82% – 88%",
+      notes: "等待安装商反馈",
+      cardUrl: "../demo0925/assets/card-storage-A.png"
+    }
   },
   {
     id: "L-20230927-004",
     installer: "BrightSun NSW",
     customer: "Emily Chen",
-    address: "88 River St, Sydney NSW",
     planType: "储能扩容",
     planName: "The Daily Powerhouse",
     system: "已有光伏 + 10.0 kWh 电池升级",
@@ -452,48 +582,98 @@ const leads = [
     irr: "≈ 8.2%",
     payback: "3-4 年",
     cardUrl: "../demo0925/assets/card-storage-B.png",
-    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-004</p>
-                <p><strong>Installer:</strong> BrightSun NSW</p>
-                <p><strong>Customer Name:</strong> Emily Chen</p>
-                <p><strong>Address:</strong> 88 River St, Sydney NSW</p>
-                <p><strong>Plan Type:</strong> 储能扩容</p>
-                <p><strong>Plan Name:</strong> The Daily Powerhouse</p>
-                <p><strong>System Composition:</strong> 已有光伏 + 10.0 kWh 电池升级</p>
-                <p><strong>Annual Savings:</strong> A$900 – A$1,100</p>
-                <p><strong>IRR:</strong> ≈ 8.2%</p>
-                <p><strong>Payback Period:</strong> 3-4 年</p>
-                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-storage-B.png" target="_blank">查看附件卡片</a></p>`
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "BrightSun NSW",
+      planCategory: "Most Popular",
+      planName: "The Daily Powerhouse",
+      systemSize: "既有系统",
+      batteryCapacity: "10.0 kWh",
+      upfrontInvestment: "A$9,000 – A$11,000",
+      rebateAmount: "1,200",
+      annualSavings: "A$900 – A$1,100",
+      irr: "8.2",
+      paybackPeriod: "3-4",
+      customerName: "Emily Chen",
+      customerPhone: "+61 430 456 789",
+      customerEmail: "emily.chen@example.com",
+      address: "88 River St, Sydney NSW",
+      coordinates: "-33.8688, 151.2093",
+      selfConsumption: "78% – 85%",
+      notes: "屋顶遮阳，需要现场勘查",
+      cardUrl: "../demo0925/assets/card-storage-B.png"
+    }
   }
 ];
 
 let filteredLeads = [...leads];
+let pagedLeads = [];
+let currentPage = 1;
+const PAGE_SIZE = 5;
+
+function statusLabel(lead) {
+  if (lead.status === STATUS_DISPATCHED) {
+    return `已分发至 ${lead.installer}`;
+  }
+  if (lead.status === STATUS_REJECTED) {
+    return `已拒绝${lead.rejectReason ? `（${lead.rejectReason}）` : ""}`;
+  }
+  return "待审核";
+}
+
+function updateEmailHtml(lead) {
+  lead.emailHtml = formatEmailTemplate(lead);
+}
+
+leads.forEach(updateEmailHtml);
 
 function ensureAuthenticated() {
   const authed = localStorage.getItem("reviewAuthenticated");
   const username = localStorage.getItem("reviewUsername");
   if (!authed) {
     window.location.href = "login.html";
-  } else if (username) {
-    userGreeting.textContent = `审核员：${username}`;
-  } else {
-    userGreeting.textContent = "审核员";
+    return;
   }
+  userGreeting.textContent = username ? `审核员：${username}` : "审核员";
 }
 
-function applyFilters() {
-  const planValue = planFilter.value;
-  const installerValue = installerFilter.value;
+function applyFilters(resetPage = true) {
+  const statusValue = statusFilter.value;
   const keyword = searchInput.value.trim().toLowerCase();
   filteredLeads = leads.filter((lead) => {
-    if (planValue !== "all" && lead.planType !== planValue) return false;
-    if (installerValue !== "all" && lead.installer !== installerValue) return false;
+    if (statusValue !== "all" && lead.status !== statusValue) return false;
     if (keyword) {
       const combined = `${lead.id} ${lead.customer}`.toLowerCase();
       if (!combined.includes(keyword)) return false;
     }
     return true;
   });
+  if (resetPage) {
+    currentPage = 1;
+  } else {
+    const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+  }
+  paginateAndRender();
+}
+
+function paginateAndRender() {
+  const total = filteredLeads.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  pagedLeads = filteredLeads.slice(start, end);
   renderTable();
+  if (total > PAGE_SIZE) {
+    pagination.style.display = "flex";
+    pageInfo.textContent = `第 ${currentPage} / ${totalPages} 页（共 ${total} 条）`;
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages;
+  } else {
+    pagination.style.display = "none";
+  }
 }
 
 function createRow(lead) {
@@ -510,13 +690,34 @@ function createRow(lead) {
   const planBadge = document.createElement("span");
   planBadge.className = `badge ${lead.planType === "新建系统" ? "new" : "storage"}`;
   planBadge.textContent = lead.planType;
+  const statusBadge = document.createElement("span");
+  statusBadge.className = "status-badge";
+  if (lead.status === STATUS_PENDING) statusBadge.classList.add("status-pending");
+  if (lead.status === STATUS_DISPATCHED) statusBadge.classList.add("status-dispatched");
+  if (lead.status === STATUS_REJECTED) statusBadge.classList.add("status-rejected");
+  statusBadge.textContent = statusLabel(lead);
   const cardLink = document.createElement("a");
   cardLink.href = lead.cardUrl;
   cardLink.target = "_blank";
   cardLink.rel = "noopener";
   cardLink.className = "link-card";
   cardLink.textContent = "打开附件";
-  [leadLink, lead.installer, lead.customer, lead.address, planBadge, lead.planName, lead.system, lead.savings, lead.irr, lead.payback, cardLink].forEach((item) => {
+  const actionsDiv = document.createElement("div");
+  actionsDiv.className = "actions-cell";
+  const dispatchBtn = document.createElement("button");
+  dispatchBtn.className = "dispatch";
+  dispatchBtn.textContent = lead.status === STATUS_DISPATCHED ? "已分发" : "分发";
+  dispatchBtn.disabled = lead.status === STATUS_DISPATCHED;
+  dispatchBtn.addEventListener("click", () => dispatchLead(lead.id));
+  const rejectBtn = document.createElement("button");
+  rejectBtn.className = "reject";
+  rejectBtn.textContent = lead.status === STATUS_REJECTED ? "已拒绝" : "拒绝";
+  rejectBtn.disabled = lead.status === STATUS_REJECTED;
+  rejectBtn.addEventListener("click", () => rejectLead(lead.id));
+  actionsDiv.appendChild(dispatchBtn);
+  actionsDiv.appendChild(rejectBtn);
+
+  [leadLink, lead.installer, lead.customer, planBadge, lead.planName, lead.system, lead.savings, lead.irr, lead.payback, statusBadge, cardLink, actionsDiv].forEach((item) => {
     const cell = document.createElement("div");
     if (item instanceof HTMLElement) {
       cell.appendChild(item);
@@ -537,7 +738,7 @@ function renderTable() {
     tableBody.appendChild(empty);
     return;
   }
-  filteredLeads.forEach((lead) => {
+  pagedLeads.forEach((lead) => {
     const row = createRow(lead);
     tableBody.appendChild(row);
   });
@@ -545,12 +746,37 @@ function renderTable() {
 
 function openModal(lead) {
   modalTitle.textContent = `线索详情：${lead.id}`;
-  modalContent.innerHTML = lead.emailHtml;
+  const wrapper = document.createElement("div");
+  wrapper.className = "email-template";
+  wrapper.textContent = lead.emailHtml;
+  modalContent.innerHTML = "";
+  modalContent.appendChild(wrapper);
   modalBackdrop.style.display = "flex";
 }
 
 function closeModal() {
   modalBackdrop.style.display = "none";
+}
+
+function dispatchLead(leadId) {
+  const lead = leads.find((item) => item.id === leadId);
+  if (!lead || lead.status === STATUS_DISPATCHED) return;
+  lead.status = STATUS_DISPATCHED;
+  updateEmailHtml(lead);
+  alert(`已将 ${lead.id} 分发给 ${lead.installer}`);
+  applyFilters(false);
+}
+
+function rejectLead(leadId) {
+  const lead = leads.find((item) => item.id === leadId);
+  if (!lead || lead.status === STATUS_REJECTED) return;
+  const reason = prompt("请输入拒绝原因：", lead.rejectReason || "资料不完整");
+  if (reason === null) return;
+  lead.status = STATUS_REJECTED;
+  lead.rejectReason = reason.trim();
+  updateEmailHtml(lead);
+  alert(`已拒绝 ${lead.id}`);
+  applyFilters(false);
 }
 
 modalCloseBtn.addEventListener("click", closeModal);
@@ -566,16 +792,84 @@ logoutBtn.addEventListener("click", () => {
   window.location.href = "login.html";
 });
 
-applyFiltersBtn.addEventListener("click", applyFilters);
-[planFilter, installerFilter].forEach((element) => {
-  element.addEventListener("change", applyFilters);
-});
+applyFiltersBtn.addEventListener("click", () => applyFilters(true));
+statusFilter.addEventListener("change", () => applyFilters(true));
 searchInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
-    applyFilters();
+    applyFilters(true);
   }
 });
+
+prevPageBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    paginateAndRender();
+  }
+});
+
+nextPageBtn.addEventListener("click", () => {
+  const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE));
+  if (currentPage < totalPages) {
+    currentPage += 1;
+    paginateAndRender();
+  }
+});
+
+function formatEmailTemplate(lead) {
+  const data = lead.templateData;
+  const statusText = statusLabel(lead);
+  return `Subject: Action Needed – Sales Agent to Confirm Site & Finalize Quote (${data.systemSize} / ${data.planCategory})
+------
+Dear ${data.installerCompany},
+Based on the customer’s address and initial roof analysis, an AI-assisted Preliminary Proposal has been prepared for your review.
+Please verify the site details, confirm rebate eligibility, and schedule a roof inspection to finalise the system design and pricing.
+
+Plan Overview
+Category: ${data.planCategory}
+Selected Plan: ${data.planName}
+
+Estimated Investment
+System budget (incl. GST): ${data.upfrontInvestment}
+Includes estimated Government Subsidies & Installer Rebate of $${data.rebateAmount},
+Figures are preliminary and subject to on-site and policy confirmation.
+
+Investment Return
+Annual Bill Savings: ${data.annualSavings} / year
+IRR: ≈${data.irr}%
+Payback Period: ${data.paybackPeriod} years Payback Period
+
+System Details
+System Size: ${data.systemSize}
+Battery Capacity: ${data.batteryCapacity}
+Self-consumption Rate: ${data.selfConsumption}
+
+Customer & Site Info
+Customer: ${data.customerName}
+Phone: ${data.customerPhone}
+Email: ${data.customerEmail}
+Address: ${data.address} ，${data.coordinates}
+Notes: ${lead.status === STATUS_REJECTED && lead.rejectReason ? lead.rejectReason : data.notes}
+
+Shareable Asset
+Preview Card: attached “share card.png” (${data.cardUrl})
+
+⚡ Next Steps
+This customer is highly engaged and ready to proceed.
+Please act promptly to move the proposal forward:
+Contact ${data.customerName}: Call or email within the next few hours.
+Verify Site Details: Confirm roof layout, shading, and grid requirements.
+Finalise Quote: Adjust specs and provide the confirmed offer, including verified rebates.
+
+Disclaimer:
+All figures are inclusive of tax and based on preliminary assumptions.
+Final pricing and performance outcomes depend on on-site verification and regional policy approval.
+
+Current Review Status: ${statusText}
+
+Best regards,
+The OSW AI Agent Team`;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   ensureAuthenticated();
