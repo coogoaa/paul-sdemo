@@ -85,6 +85,11 @@
 
           <form id="settingsForm" class="glass-card shadow-soft rounded-3xl border border-white/60 px-9 py-8 space-y-7">
             <div>
+              <label for="companyInput" class="block text-sm font-semibold text-gray-800">Installer company name</label>
+              <p class="mt-1 text-xs text-gray-500">Appears on customer-facing assets and communications. Use your trading or brand name that homeowners recognise.</p>
+              <input id="companyInput" type="text" maxlength="80" placeholder="SunshineRush Energy" class="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
+            </div>
+            <div>
               <label for="phoneInput" class="block text-sm font-semibold text-gray-800">Customer service phone number</label>
               <p class="mt-1 text-xs text-gray-500">Displayed on customer-facing preliminary quote cards as the quickest contact channel. Use an international format (e.g. +61 4XX XXX XXX) so customers can reach your team promptly.</p>
               <input id="phoneInput" type="tel" inputmode="tel" placeholder="+61 400 123 456" class="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/40" />
@@ -145,6 +150,7 @@
     const resetBtn = document.getElementById('resetBtn');
     const saveMessage = document.getElementById('saveMessage');
 
+    const companyInput = document.getElementById('companyInput');
     const phoneInput = document.getElementById('phoneInput');
     const emailInput = document.getElementById('emailInput');
     const additionalChargesList = document.getElementById('additionalChargesList');
@@ -158,6 +164,7 @@
 
     function createDefaultState() {
       return {
+        companyName: 'SunshineRush Energy',
         phone: '+61 400 123 456',
         email: 'leads@your-solar.com',
         additionalCharges: [
@@ -259,6 +266,7 @@
         const stored = JSON.parse(localStorage.getItem('installer-settings'));
         if (!stored) return { ...defaults };
         return {
+          companyName: stored.companyName || defaults.companyName,
           phone: stored.phone || defaults.phone,
           email: stored.email || defaults.email,
           additionalCharges: Array.isArray(stored.additionalCharges)
@@ -290,6 +298,7 @@
     let state = createDefaultState();
 
     function applyStateToForm(currentState) {
+      companyInput.value = currentState.companyName;
       phoneInput.value = currentState.phone;
       emailInput.value = currentState.email;
       state.additionalCharges = currentState.additionalCharges.map((item) => ({ ...item }));
@@ -487,6 +496,10 @@
       showLogin();
     });
 
+    companyInput.addEventListener('blur', () => {
+      state.companyName = companyInput.value;
+    });
+
     phoneInput.addEventListener('blur', () => {
       state.phone = phoneInput.value;
     });
@@ -515,6 +528,7 @@
       const sanitizedCharges = state.additionalCharges.map(sanitizeCharge).filter(Boolean);
       const sanitizedDeductions = state.deductions.map(sanitizeDeduction).filter(Boolean);
       state = {
+        companyName: companyInput.value.trim() || defaults.companyName,
         phone: phoneInput.value.trim() || defaults.phone,
         email: emailInput.value.trim() || defaults.email,
         additionalCharges: sanitizedCharges,

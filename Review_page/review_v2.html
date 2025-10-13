@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Agent Lead Review 列表（v2）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: #1e293b;
+  color: #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18);
+}
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #4338ca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 17px;
+  color: #fff;
+}
+.logo-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 14px;
+}
+button.logout {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e0e7ff;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+button.logout:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+main {
+  flex: 1;
+  padding: 28px 32px 48px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.page-subtitle {
+  color: #475569;
+  margin-bottom: 26px;
+}
+.filters {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  margin-bottom: 28px;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+.filter-group select,
+.filter-group input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: #4338ca;
+  box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.12);
+}
+.filters .actions {
+  display: flex;
+  align-items: flex-end;
+}
+button.apply {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: #4338ca;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+button.apply:hover {
+  box-shadow: 0 12px 26px rgba(67, 56, 202, 0.18);
+  transform: translateY(-1px);
+}
+.table-wrap {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+}
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 140px 150px 140px 220px 140px 190px 190px 150px 150px 220px;
+  gap: 12px;
+  padding: 16px 20px;
+  align-items: center;
+}
+.table-header {
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+.table-row {
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+.table-row:hover {
+  background: #eef2ff;
+}
+.table-row .lead-id {
+  font-weight: 600;
+  color: #3730a3;
+  text-decoration: none;
+}
+.table-row .lead-id:hover {
+  text-decoration: underline;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge.new {
+  background: rgba(79, 70, 229, 0.12);
+  color: #4f46e5;
+}
+.badge.storage {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+.link-card {
+  color: #0ea5e9;
+  text-decoration: none;
+  font-weight: 500;
+}
+.link-card:hover {
+  text-decoration: underline;
+}
+.empty-state {
+  padding: 42px 20px;
+  text-align: center;
+  color: #94a3b8;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+.modal {
+  width: min(900px, 100%);
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  line-height: 1.6;
+  color: #334155;
+}
+.modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}
+.modal-close {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  background: #e2e8f0;
+  color: #0f172a;
+  cursor: pointer;
+}
+@media (max-width: 1200px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 140px 140px 140px 200px 140px 200px 200px 150px 150px 220px;
+  }
+}
+@media (max-width: 1024px) {
+  .table-wrap {
+    overflow-x: auto;
+  }
+  .table-header,
+  .table-row {
+    min-width: 1080px;
+  }
+}
+@media (max-width: 760px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  main {
+    padding: 24px 18px;
+  }
+  .filters {
+    padding: 18px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-badge">AI</div>
+      <div>
+        <div class="logo-title">YourCompany Internal</div>
+        <div style="font-size: 13px; color: #94a3b8;">AI Agent Lead Review Console</div>
+      </div>
+    </div>
+    <div class="user-info">
+      <span id="user-greeting"></span>
+      <button class="logout" id="logout-btn">退出登录</button>
+    </div>
+  </header>
+  <main>
+    <div class="page-title">AI Agent Lead Review List</div>
+    <div class="page-subtitle">根据最新报价卡片字段，快速核对方案关键信息。</div>
+    <section class="filters">
+      <div class="filter-group">
+        <label for="plan-filter">方案类型</label>
+        <select id="plan-filter">
+          <option value="all">全部类型</option>
+          <option value="新建系统">新建系统</option>
+          <option value="储能扩容">储能扩容</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="installer-filter">所属安装商</label>
+        <select id="installer-filter">
+          <option value="all">全部安装商</option>
+          <option value="BrightSun NSW">BrightSun NSW</option>
+          <option value="GreenPeak VIC">GreenPeak VIC</option>
+          <option value="SunWave QLD">SunWave QLD</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="search-input">搜索</label>
+        <input id="search-input" type="text" placeholder="Leads ID 或客户姓名" />
+      </div>
+      <div class="actions">
+        <button class="apply" id="apply-filters">应用筛选</button>
+      </div>
+    </section>
+    <section class="table-wrap" aria-live="polite">
+      <div class="table-header">
+        <div>Leads ID</div>
+        <div>所属安装商</div>
+        <div>客户姓名</div>
+        <div>地址</div>
+        <div>方案类型</div>
+        <div>方案名称</div>
+        <div>系统组成</div>
+        <div>年度节省</div>
+        <div>IRR</div>
+        <div>回本周期</div>
+        <div>附件卡片地址</div>
+      </div>
+      <div id="table-body"></div>
+    </section>
+  </main>
+</div>
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" id="modal-close">关闭</button>
+    </div>
+    <div class="modal-body" id="modal-content"></div>
+  </div>
+</div>
+<script>
+const planFilter = document.getElementById("plan-filter");
+const installerFilter = document.getElementById("installer-filter");
+const searchInput = document.getElementById("search-input");
+const applyFiltersBtn = document.getElementById("apply-filters");
+const tableBody = document.getElementById("table-body");
+const modalBackdrop = document.getElementById("modal-backdrop");
+const modalTitle = document.getElementById("modal-title");
+const modalContent = document.getElementById("modal-content");
+const modalCloseBtn = document.getElementById("modal-close");
+const userGreeting = document.getElementById("user-greeting");
+const logoutBtn = document.getElementById("logout-btn");
+
+const leads = [
+  {
+    id: "L-20230927-001",
+    installer: "BrightSun NSW",
+    customer: "John Smith",
+    address: "4 Main St, Sydney NSW",
+    planType: "新建系统",
+    planName: "The Rebate Maximiser",
+    system: "13.2 kW 光伏 + 23.4 kWh 电池",
+    savings: "A$2,800 – A$3,500",
+    irr: "≈ 9.5%",
+    payback: "3-4 年",
+    cardUrl: "../demo0925/assets/card-new-A.png",
+    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-001</p>
+                <p><strong>Installer:</strong> BrightSun NSW</p>
+                <p><strong>Customer Name:</strong> John Smith</p>
+                <p><strong>Address:</strong> 4 Main St, Sydney NSW</p>
+                <p><strong>Plan Type:</strong> 新建系统</p>
+                <p><strong>Plan Name:</strong> The Rebate Maximiser</p>
+                <p><strong>System Composition:</strong> 13.2 kW 光伏 + 23.4 kWh 电池</p>
+                <p><strong>Annual Savings:</strong> A$2,800 – A$3,500</p>
+                <p><strong>IRR:</strong> ≈ 9.5%</p>
+                <p><strong>Payback Period:</strong> 3-4 年</p>
+                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-new-A.png" target="_blank">查看附件卡片</a></p>`
+  },
+  {
+    id: "L-20230927-002",
+    installer: "GreenPeak VIC",
+    customer: "Jane Doe",
+    address: "10 Oak Ave, Melbourne VIC",
+    planType: "新建系统",
+    planName: "The High Performer",
+    system: "9.9 kW 光伏 + 15.0 kWh 电池",
+    savings: "A$2,100 – A$2,700",
+    irr: "≈ 8.8%",
+    payback: "3-4 年",
+    cardUrl: "../demo0925/assets/card-new-B.png",
+    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-002</p>
+                <p><strong>Installer:</strong> GreenPeak VIC</p>
+                <p><strong>Customer Name:</strong> Jane Doe</p>
+                <p><strong>Address:</strong> 10 Oak Ave, Melbourne VIC</p>
+                <p><strong>Plan Type:</strong> 新建系统</p>
+                <p><strong>Plan Name:</strong> The High Performer</p>
+                <p><strong>System Composition:</strong> 9.9 kW 光伏 + 15.0 kWh 电池</p>
+                <p><strong>Annual Savings:</strong> A$2,100 – A$2,700</p>
+                <p><strong>IRR:</strong> ≈ 8.8%</p>
+                <p><strong>Payback Period:</strong> 3-4 年</p>
+                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-new-B.png" target="_blank">查看附件卡片</a></p>`
+  },
+  {
+    id: "L-20230927-003",
+    installer: "SunWave QLD",
+    customer: "Michael Lee",
+    address: "22 Pine Rd, Brisbane QLD",
+    planType: "储能扩容",
+    planName: "Max Independence",
+    system: "已有光伏 + 13.8 kWh 电池升级",
+    savings: "A$1,000 – A$1,300",
+    irr: "≈ 8.5%",
+    payback: "3-4 年",
+    cardUrl: "../demo0925/assets/card-storage-A.png",
+    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-003</p>
+                <p><strong>Installer:</strong> SunWave QLD</p>
+                <p><strong>Customer Name:</strong> Michael Lee</p>
+                <p><strong>Address:</strong> 22 Pine Rd, Brisbane QLD</p>
+                <p><strong>Plan Type:</strong> 储能扩容</p>
+                <p><strong>Plan Name:</strong> Max Independence</p>
+                <p><strong>System Composition:</strong> 已有光伏 + 13.8 kWh 电池升级</p>
+                <p><strong>Annual Savings:</strong> A$1,000 – A$1,300</p>
+                <p><strong>IRR:</strong> ≈ 8.5%</p>
+                <p><strong>Payback Period:</strong> 3-4 年</p>
+                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-storage-A.png" target="_blank">查看附件卡片</a></p>`
+  },
+  {
+    id: "L-20230927-004",
+    installer: "BrightSun NSW",
+    customer: "Emily Chen",
+    address: "88 River St, Sydney NSW",
+    planType: "储能扩容",
+    planName: "The Daily Powerhouse",
+    system: "已有光伏 + 10.0 kWh 电池升级",
+    savings: "A$900 – A$1,100",
+    irr: "≈ 8.2%",
+    payback: "3-4 年",
+    cardUrl: "../demo0925/assets/card-storage-B.png",
+    emailHtml: `<p><strong>Lead ID:</strong> L-20230927-004</p>
+                <p><strong>Installer:</strong> BrightSun NSW</p>
+                <p><strong>Customer Name:</strong> Emily Chen</p>
+                <p><strong>Address:</strong> 88 River St, Sydney NSW</p>
+                <p><strong>Plan Type:</strong> 储能扩容</p>
+                <p><strong>Plan Name:</strong> The Daily Powerhouse</p>
+                <p><strong>System Composition:</strong> 已有光伏 + 10.0 kWh 电池升级</p>
+                <p><strong>Annual Savings:</strong> A$900 – A$1,100</p>
+                <p><strong>IRR:</strong> ≈ 8.2%</p>
+                <p><strong>Payback Period:</strong> 3-4 年</p>
+                <p><strong>Card URL:</strong> <a href="../demo0925/assets/card-storage-B.png" target="_blank">查看附件卡片</a></p>`
+  }
+];
+
+let filteredLeads = [...leads];
+
+function ensureAuthenticated() {
+  const authed = localStorage.getItem("reviewAuthenticated");
+  const username = localStorage.getItem("reviewUsername");
+  if (!authed) {
+    window.location.href = "login.html";
+  } else if (username) {
+    userGreeting.textContent = `审核员：${username}`;
+  } else {
+    userGreeting.textContent = "审核员";
+  }
+}
+
+function applyFilters() {
+  const planValue = planFilter.value;
+  const installerValue = installerFilter.value;
+  const keyword = searchInput.value.trim().toLowerCase();
+  filteredLeads = leads.filter((lead) => {
+    if (planValue !== "all" && lead.planType !== planValue) return false;
+    if (installerValue !== "all" && lead.installer !== installerValue) return false;
+    if (keyword) {
+      const combined = `${lead.id} ${lead.customer}`.toLowerCase();
+      if (!combined.includes(keyword)) return false;
+    }
+    return true;
+  });
+  renderTable();
+}
+
+function createRow(lead) {
+  const row = document.createElement("div");
+  row.className = "table-row";
+  const leadLink = document.createElement("a");
+  leadLink.href = "#";
+  leadLink.textContent = lead.id;
+  leadLink.className = "lead-id";
+  leadLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    openModal(lead);
+  });
+  const planBadge = document.createElement("span");
+  planBadge.className = `badge ${lead.planType === "新建系统" ? "new" : "storage"}`;
+  planBadge.textContent = lead.planType;
+  const cardLink = document.createElement("a");
+  cardLink.href = lead.cardUrl;
+  cardLink.target = "_blank";
+  cardLink.rel = "noopener";
+  cardLink.className = "link-card";
+  cardLink.textContent = "打开附件";
+  [leadLink, lead.installer, lead.customer, lead.address, planBadge, lead.planName, lead.system, lead.savings, lead.irr, lead.payback, cardLink].forEach((item) => {
+    const cell = document.createElement("div");
+    if (item instanceof HTMLElement) {
+      cell.appendChild(item);
+    } else {
+      cell.textContent = item;
+    }
+    row.appendChild(cell);
+  });
+  return row;
+}
+
+function renderTable() {
+  tableBody.innerHTML = "";
+  if (filteredLeads.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "暂无符合条件的线索";
+    tableBody.appendChild(empty);
+    return;
+  }
+  filteredLeads.forEach((lead) => {
+    const row = createRow(lead);
+    tableBody.appendChild(row);
+  });
+}
+
+function openModal(lead) {
+  modalTitle.textContent = `线索详情：${lead.id}`;
+  modalContent.innerHTML = lead.emailHtml;
+  modalBackdrop.style.display = "flex";
+}
+
+function closeModal() {
+  modalBackdrop.style.display = "none";
+}
+
+modalCloseBtn.addEventListener("click", closeModal);
+modalBackdrop.addEventListener("click", (event) => {
+  if (event.target === modalBackdrop) {
+    closeModal();
+  }
+});
+
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("reviewAuthenticated");
+  localStorage.removeItem("reviewUsername");
+  window.location.href = "login.html";
+});
+
+applyFiltersBtn.addEventListener("click", applyFilters);
+[planFilter, installerFilter].forEach((element) => {
+  element.addEventListener("change", applyFilters);
+});
+searchInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    applyFilters();
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  ensureAuthenticated();
+  applyFilters();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Agent Lead Review 列表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: #1e293b;
+  color: #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18);
+}
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #4338ca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 17px;
+  color: #fff;
+}
+.logo-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 14px;
+}
+button {
+  font-family: inherit;
+}
+button.logout {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e0e7ff;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+button.logout:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+main {
+  flex: 1;
+  padding: 28px 32px 48px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.page-subtitle {
+  color: #475569;
+  margin-bottom: 26px;
+}
+.filters {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  margin-bottom: 28px;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+.filter-group select,
+.filter-group input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: #4338ca;
+  box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.12);
+}
+.filters .actions {
+  display: flex;
+  align-items: flex-end;
+}
+button.apply {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: #4338ca;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+button.apply:hover {
+  box-shadow: 0 12px 26px rgba(67, 56, 202, 0.18);
+  transform: translateY(-1px);
+}
+.table-wrap {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+}
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 48px 130px 140px 190px 130px 120px 140px 160px;
+  gap: 12px;
+  padding: 16px 20px;
+  align-items: center;
+}
+.table-header {
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+.table-row {
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+.table-row:hover {
+  background: #eef2ff;
+}
+.table-row .lead-id {
+  font-weight: 600;
+  color: #3730a3;
+  text-decoration: none;
+}
+.table-row .lead-id:hover {
+  text-decoration: underline;
+}
+.checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(67, 56, 202, 0.12);
+  color: #4338ca;
+  font-size: 12px;
+  font-weight: 600;
+}
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+button.dispatch {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: #16a34a;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+button.dispatch:hover {
+  box-shadow: 0 12px 24px rgba(22, 163, 74, 0.22);
+  transform: translateY(-1px);
+}
+button.reject {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+button.reject:hover {
+  background: #cbd5f5;
+  transform: translateY(-1px);
+}
+.bulk-bar {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.bulk-actions {
+  display: flex;
+  gap: 10px;
+}
+.bulk-actions button {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.bulk-dispatch {
+  background: #15803d;
+  color: #fff;
+}
+.bulk-reject {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.empty-state {
+  padding: 42px 20px;
+  text-align: center;
+  color: #94a3b8;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+.modal {
+  width: min(920px, 100%);
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  line-height: 1.6;
+  color: #334155;
+}
+.modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.modal-actions button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.modal-close {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.modal-dispatch {
+  background: #16a34a;
+  color: #fff;
+}
+.modal-reject {
+  background: #ef4444;
+  color: #fff;
+}
+.installer-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+.installer-select label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+.installer-select select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+}
+@media (max-width: 1100px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 38px 120px 140px 170px 120px 110px 140px 160px;
+    padding: 12px 16px;
+  }
+}
+@media (max-width: 960px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 32px 120px 150px 160px 120px 120px;
+  }
+  .table-header .shrink,
+  .table-row .shrink {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  main {
+    padding: 24px 18px;
+  }
+  .filters {
+    padding: 18px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+  .table-header,
+  .table-row {
+    min-width: 880px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-badge">AI</div>
+      <div>
+        <div class="logo-title">YourCompany Internal</div>
+        <div style="font-size: 13px; color: #94a3b8;">AI Agent Lead Review Console</div>
+      </div>
+    </div>
+    <div class="user-info">
+      <span id="user-greeting"></span>
+      <button class="logout" id="logout-btn">退出登录</button>
+    </div>
+  </header>
+  <main>
+    <div class="page-title">AI Agent Lead Review List</div>
+    <div class="page-subtitle">快速核对线索信息，完成分发或拒绝操作。</div>
+    <section class="filters">
+      <div class="filter-group">
+        <label for="status-filter">状态</label>
+        <select id="status-filter">
+          <option value="all">全部状态</option>
+          <option value="pending">待审核</option>
+          <option value="dispatched">已分发</option>
+          <option value="rejected">已拒绝</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="city-filter">城市/区域</label>
+        <select id="city-filter">
+          <option value="all">全部地区</option>
+          <option value="sydney">Sydney NSW</option>
+          <option value="melbourne">Melbourne VIC</option>
+          <option value="brisbane">Brisbane QLD</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="search-input">搜索</label>
+        <input id="search-input" type="text" placeholder="Lead ID 或客户姓名" />
+      </div>
+      <div class="actions">
+        <button class="apply" id="apply-filters">应用筛选</button>
+      </div>
+    </section>
+    <section class="table-wrap" aria-live="polite">
+      <div class="table-header">
+        <div><input class="checkbox" type="checkbox" id="select-all" /></div>
+        <div>Lead ID</div>
+        <div>客户姓名</div>
+        <div>地址</div>
+        <div>估算系统</div>
+        <div>估算节省</div>
+        <div class="shrink">AI 备注</div>
+        <div>操作</div>
+      </div>
+      <div id="table-body"></div>
+    </section>
+    <div class="bulk-bar" id="bulk-bar" style="display:none;">
+      <div><span id="selected-count">0</span> 条线索已选中</div>
+      <div class="bulk-actions">
+        <button class="bulk-dispatch" id="bulk-dispatch">批量分发</button>
+        <button class="bulk-reject" id="bulk-reject">批量拒绝</button>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="logout" id="modal-close" style="padding:6px 12px; background:#e2e8f0; color:#0f172a;">关闭</button>
+    </div>
+    <div class="modal-body" id="modal-content"></div>
+    <div class="modal-actions">
+      <div class="installer-select">
+        <label for="modal-installer">分配给</label>
+        <select id="modal-installer">
+          <option value="Installer A">Installer A</option>
+          <option value="Installer B">Installer B</option>
+          <option value="Installer C">Installer C</option>
+        </select>
+      </div>
+      <button class="modal-dispatch" id="modal-dispatch">分发</button>
+      <button class="modal-reject" id="modal-reject">拒绝</button>
+    </div>
+  </div>
+</div>
+<script>
+const statusFilter = document.getElementById("status-filter");
+const cityFilter = document.getElementById("city-filter");
+const searchInput = document.getElementById("search-input");
+const applyFiltersBtn = document.getElementById("apply-filters");
+const tableBody = document.getElementById("table-body");
+const selectAllCheckbox = document.getElementById("select-all");
+const bulkBar = document.getElementById("bulk-bar");
+const selectedCount = document.getElementById("selected-count");
+const bulkDispatchBtn = document.getElementById("bulk-dispatch");
+const bulkRejectBtn = document.getElementById("bulk-reject");
+const modalBackdrop = document.getElementById("modal-backdrop");
+const modalTitle = document.getElementById("modal-title");
+const modalContent = document.getElementById("modal-content");
+const modalCloseBtn = document.getElementById("modal-close");
+const modalDispatchBtn = document.getElementById("modal-dispatch");
+const modalRejectBtn = document.getElementById("modal-reject");
+const modalInstallerSelect = document.getElementById("modal-installer");
+const userGreeting = document.getElementById("user-greeting");
+const logoutBtn = document.getElementById("logout-btn");
+const STORAGE_KEY = "reviewActiveLead";
+
+const leads = [
+  {
+    id: "L-20230927-001",
+    customer: "John Smith",
+    address: "4 Main St, Sydney NSW",
+    city: "sydney",
+    system: "6.6kW / 20kWh",
+    savings: "A$1,000",
+    status: "pending",
+    notes: "3D OK",
+    highlights: "Max Independence, A$3.5k Rebate",
+    emailHtml: `<p><strong>Customer Name:</strong> John Smith</p>
+                <p><strong>Address:</strong> 4 Main St, Sydney NSW</p>
+                <p><strong>System Size:</strong> 6.6kW</p>
+                <p><strong>Battery Capacity:</strong> 20kWh</p>
+                <p><strong>Annual Bill Savings:</strong> A$1,000</p>
+                <p><strong>Notes:</strong> 3D OK</p>
+                <p><strong>Highlights:</strong> Max Independence, Government Subsidy A$3,500</p>`
+  },
+  {
+    id: "L-20230927-002",
+    customer: "Jane Doe",
+    address: "10 Oak Ave, Melbourne VIC",
+    city: "melbourne",
+    system: "8kW / 30kWh",
+    savings: "A$1,500",
+    status: "pending",
+    notes: "Map Issue",
+    highlights: "Balanced Savings, A$3.2k Rebate",
+    emailHtml: `<p><strong>Customer Name:</strong> Jane Doe</p>
+                <p><strong>Address:</strong> 10 Oak Ave, Melbourne VIC</p>
+                <p><strong>System Size:</strong> 8kW</p>
+                <p><strong>Battery Capacity:</strong> 30kWh</p>
+                <p><strong>Annual Bill Savings:</strong> A$1,500</p>
+                <p><strong>Notes:</strong> Map Issue - Manual validation required</p>
+                <p><strong>Highlights:</strong> Balanced Savings, Subsidy A$3,200</p>`
+  },
+  {
+    id: "L-20230927-003",
+    customer: "Michael Lee",
+    address: "22 Pine Rd, Brisbane QLD",
+    city: "brisbane",
+    system: "7.2kW / 25kWh",
+    savings: "A$1,200",
+    status: "dispatched",
+    notes: "Awaiting installer feedback",
+    highlights: "Max Savings, A$3.0k Rebate",
+    emailHtml: `<p><strong>Customer Name:</strong> Michael Lee</p>
+                <p><strong>Address:</strong> 22 Pine Rd, Brisbane QLD</p>
+                <p><strong>System Size:</strong> 7.2kW</p>
+                <p><strong>Battery Capacity:</strong> 25kWh</p>
+                <p><strong>Annual Bill Savings:</strong> A$1,200</p>
+                <p><strong>Notes:</strong> Awaiting installer feedback</p>
+                <p><strong>Highlights:</strong> Max Savings, Subsidy A$3,000</p>`
+  },
+  {
+    id: "L-20230927-004",
+    customer: "Emily Chen",
+    address: "88 River St, Sydney NSW",
+    city: "sydney",
+    system: "5.5kW / 15kWh",
+    savings: "A$900",
+    status: "rejected",
+    notes: "Roof shading issue",
+    highlights: "Starter Plan, A$2.5k Rebate",
+    emailHtml: `<p><strong>Customer Name:</strong> Emily Chen</p>
+                <p><strong>Address:</strong> 88 River St, Sydney NSW</p>
+                <p><strong>System Size:</strong> 5.5kW</p>
+                <p><strong>Battery Capacity:</strong> 15kWh</p>
+                <p><strong>Annual Bill Savings:</strong> A$900</p>
+                <p><strong>Notes:</strong> Roof shading issue - suggest onsite inspection</p>
+                <p><strong>Highlights:</strong> Starter Plan, Subsidy A$2,500</p>`
+  }
+];
+
+let filteredLeads = [...leads];
+let selectedLeadIds = new Set();
+let activeLeadId = null;
+
+function ensureAuthenticated() {
+  const authed = localStorage.getItem("reviewAuthenticated");
+  const username = localStorage.getItem("reviewUsername");
+  if (!authed) {
+    window.location.href = "login.html";
+  } else {
+    userGreeting.textContent = `审核员：${username}`;
+  }
+}
+
+function applyFilters() {
+  const statusValue = statusFilter.value;
+  const cityValue = cityFilter.value;
+  const searchValue = searchInput.value.trim().toLowerCase();
+  filteredLeads = leads.filter((lead) => {
+    if (statusValue !== "all" && lead.status !== statusValue) return false;
+    if (cityValue !== "all" && lead.city !== cityValue) return false;
+    if (searchValue) {
+      const combined = `${lead.id} ${lead.customer}`.toLowerCase();
+      if (!combined.includes(searchValue)) return false;
+    }
+    return true;
+  });
+  selectedLeadIds.clear();
+  updateBulkBar();
+  renderTable();
+}
+
+function createRow(lead) {
+  const row = document.createElement("div");
+  row.className = "table-row";
+  const checkboxWrapper = document.createElement("div");
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "checkbox";
+  checkbox.checked = selectedLeadIds.has(lead.id);
+  checkbox.addEventListener("change", () => toggleSelection(lead.id, checkbox.checked));
+  checkboxWrapper.appendChild(checkbox);
+  const leadLink = document.createElement("a");
+  leadLink.href = "#";
+  leadLink.textContent = lead.id;
+  leadLink.className = "lead-id";
+  leadLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    openModal(lead);
+  });
+  const customerDiv = document.createElement("div");
+  customerDiv.textContent = lead.customer;
+  const addressDiv = document.createElement("div");
+  addressDiv.textContent = lead.address;
+  const systemDiv = document.createElement("div");
+  systemDiv.textContent = lead.system;
+  const savingsDiv = document.createElement("div");
+  savingsDiv.textContent = lead.savings;
+  const notesDiv = document.createElement("div");
+  notesDiv.className = "shrink";
+  notesDiv.innerHTML = `<span class="badge">${lead.notes}</span>`;
+  const actionsDiv = document.createElement("div");
+  actionsDiv.className = "actions-cell";
+  const installerSelectWrap = document.createElement("div");
+  installerSelectWrap.className = "installer-select";
+  const installerLabel = document.createElement("label");
+  installerLabel.textContent = "分配给";
+  installerLabel.style.fontSize = "12px";
+  installerLabel.style.fontWeight = "600";
+  installerLabel.style.color = "#64748b";
+  const installerSelect = document.createElement("select");
+  installerSelect.innerHTML = `
+    <option value="Installer A">Installer A</option>
+    <option value="Installer B">Installer B</option>
+    <option value="Installer C">Installer C</option>
+  `;
+  installerSelect.dataset.leadId = lead.id;
+  installerSelectWrap.appendChild(installerLabel);
+  installerSelectWrap.appendChild(installerSelect);
+  const dispatchBtn = document.createElement("button");
+  dispatchBtn.className = "dispatch";
+  dispatchBtn.textContent = "分发";
+  dispatchBtn.addEventListener("click", () => dispatchLead(lead.id, installerSelect.value));
+  const rejectBtn = document.createElement("button");
+  rejectBtn.className = "reject";
+  rejectBtn.textContent = "拒绝";
+  rejectBtn.addEventListener("click", () => rejectLead(lead.id));
+  actionsDiv.appendChild(installerSelectWrap);
+  actionsDiv.appendChild(dispatchBtn);
+  actionsDiv.appendChild(rejectBtn);
+  row.appendChild(checkboxWrapper);
+  row.appendChild(leadLink);
+  row.appendChild(customerDiv);
+  row.appendChild(addressDiv);
+  row.appendChild(systemDiv);
+  row.appendChild(savingsDiv);
+  row.appendChild(notesDiv);
+  row.appendChild(actionsDiv);
+  return row;
+}
+
+function renderTable() {
+  tableBody.innerHTML = "";
+  if (filteredLeads.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "暂无符合条件的线索";
+    tableBody.appendChild(empty);
+    return;
+  }
+  filteredLeads.forEach((lead) => {
+    const row = createRow(lead);
+    tableBody.appendChild(row);
+  });
+}
+
+function toggleSelection(leadId, isSelected) {
+  if (isSelected) {
+    selectedLeadIds.add(leadId);
+  } else {
+    selectedLeadIds.delete(leadId);
+  }
+  updateBulkBar();
+}
+
+selectAllCheckbox.addEventListener("change", () => {
+  if (selectAllCheckbox.checked) {
+    filteredLeads.forEach((lead) => selectedLeadIds.add(lead.id));
+  } else {
+    filteredLeads.forEach((lead) => selectedLeadIds.delete(lead.id));
+  }
+  renderTable();
+  updateBulkBar();
+});
+
+function updateBulkBar() {
+  const count = selectedLeadIds.size;
+  selectedCount.textContent = count;
+  bulkBar.style.display = count > 0 ? "flex" : "none";
+  selectAllCheckbox.checked = count > 0 && filteredLeads.every((lead) => selectedLeadIds.has(lead.id));
+}
+
+function openModal(lead) {
+  activeLeadId = lead.id;
+  modalTitle.textContent = `线索详情：${lead.id}`;
+  modalContent.innerHTML = lead.emailHtml;
+  modalInstallerSelect.value = "Installer A";
+  modalBackdrop.style.display = "flex";
+  localStorage.setItem(STORAGE_KEY, lead.id);
+}
+
+function closeModal() {
+  activeLeadId = null;
+  modalBackdrop.style.display = "none";
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+modalCloseBtn.addEventListener("click", closeModal);
+modalBackdrop.addEventListener("click", (event) => {
+  if (event.target === modalBackdrop) {
+    closeModal();
+  }
+});
+
+function dispatchLead(leadId, installer) {
+  const lead = leads.find((item) => item.id === leadId);
+  if (!lead) return;
+  lead.status = "dispatched";
+  alert(`已将 ${lead.id} 分发给 ${installer}`);
+  applyFilters();
+}
+
+function rejectLead(leadId) {
+  const reason = prompt("请输入拒绝原因：", "资料不完整");
+  if (reason === null) return;
+  const lead = leads.find((item) => item.id === leadId);
+  if (!lead) return;
+  lead.status = "rejected";
+  lead.notes = reason;
+  alert(`已拒绝 ${lead.id}`);
+  applyFilters();
+}
+
+modalDispatchBtn.addEventListener("click", () => {
+  if (!activeLeadId) return;
+  dispatchLead(activeLeadId, modalInstallerSelect.value);
+  closeModal();
+});
+
+modalRejectBtn.addEventListener("click", () => {
+  if (!activeLeadId) return;
+  rejectLead(activeLeadId);
+  closeModal();
+});
+
+bulkDispatchBtn.addEventListener("click", () => {
+  if (selectedLeadIds.size === 0) return;
+  const installer = prompt("批量分发到哪个安装商？", "Installer A");
+  if (!installer) return;
+  selectedLeadIds.forEach((leadId) => dispatchLead(leadId, installer));
+  selectedLeadIds.clear();
+  updateBulkBar();
+});
+
+bulkRejectBtn.addEventListener("click", () => {
+  if (selectedLeadIds.size === 0) return;
+  const reason = prompt("批量拒绝原因？", "资料不完整");
+  if (reason === null) return;
+  selectedLeadIds.forEach((leadId) => {
+    const lead = leads.find((item) => item.id === leadId);
+    if (lead) {
+      lead.status = "rejected";
+      lead.notes = reason;
+    }
+  });
+  alert(`已拒绝 ${selectedLeadIds.size} 条线索`);
+  selectedLeadIds.clear();
+  applyFilters();
+});
+
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("reviewAuthenticated");
+  localStorage.removeItem("reviewUsername");
+  window.location.href = "login.html";
+});
+
+applyFiltersBtn.addEventListener("click", applyFilters);
+[statusFilter, cityFilter].forEach((element) => {
+  element.addEventListener("change", applyFilters);
+});
+searchInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    applyFilters();
+  }
+});
+
+function restoreModalIfNeeded() {
+  const savedId = localStorage.getItem(STORAGE_KEY);
+  if (!savedId) return;
+  const lead = leads.find((item) => item.id === savedId);
+  if (lead) {
+    openModal(lead);
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  ensureAuthenticated();
+  applyFilters();
+  restoreModalIfNeeded();
+});
+</script>
+</body>
+</html>
