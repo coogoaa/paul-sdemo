@@ -148,19 +148,20 @@ button.apply:hover {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 140px 150px 180px 140px 220px 230px 150px 120px 140px 160px 160px;
-  gap: 12px;
-  padding: 16px 20px;
+  grid-template-columns: 120px 110px 150px 120px 190px 190px 150px 120px 120px 110px 120px 150px 140px;
+  gap: 10px;
+  padding: 12px 16px;
   align-items: center;
 }
 .table-header {
   background: #f8fafc;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #475569;
 }
+.table-header div,
 .table-row div {
-  font-size: 12px;
+  font-size: 11px;
 }
 .table-row {
   border-top: 1px solid #e2e8f0;
@@ -220,9 +221,10 @@ button.apply:hover {
 }
 .actions-cell button {
   border: none;
-  padding: 9px 14px;
-  border-radius: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 11px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
@@ -356,13 +358,13 @@ button.apply:hover {
 @media (max-width: 1200px) {
   .table-header,
   .table-row {
-    grid-template-columns: 140px 150px 180px 140px 210px 220px 150px 120px 140px 160px 150px;
+    grid-template-columns: 120px 110px 150px 120px 180px 180px 140px 120px 120px 110px 120px 150px 140px;
   }
 }
 @media (max-width: 1024px) {
   .table-header,
   .table-row {
-    min-width: 1180px;
+    min-width: 1300px;
   }
 }
 @media (max-width: 760px) {
@@ -429,6 +431,8 @@ button.apply:hover {
         <div>方案类型</div>
         <div>方案名称</div>
         <div>系统组成</div>
+        <div>系统报价</div>
+        <div>补贴金额</div>
         <div>年度节省</div>
         <div>IRR</div>
         <div>回本周期</div>
@@ -484,6 +488,8 @@ const leads = [
     planType: "新建系统",
     planName: "The Rebate Maximiser",
     system: "13.2 kW 光伏 + 23.4 kWh 电池",
+    quote: "A$20,000 – A$25,000",
+    rebate: "A$3,500",
     savings: "A$2,800 – A$3,500",
     irr: "≈ 9.5%",
     payback: "3-4 年",
@@ -519,6 +525,8 @@ const leads = [
     planType: "新建系统",
     planName: "The High Performer",
     system: "9.9 kW 光伏 + 15.0 kWh 电池",
+    quote: "A$16,000 – A$19,000",
+    rebate: "A$2,600",
     savings: "A$2,100 – A$2,700",
     irr: "≈ 8.8%",
     payback: "3-4 年",
@@ -554,6 +562,8 @@ const leads = [
     planType: "储能扩容",
     planName: "Max Independence",
     system: "已有光伏 + 13.8 kWh 电池升级",
+    quote: "A$10,500 – A$12,000",
+    rebate: "A$1,500",
     savings: "A$1,000 – A$1,300",
     irr: "≈ 8.5%",
     payback: "3-4 年",
@@ -589,6 +599,8 @@ const leads = [
     planType: "储能扩容",
     planName: "The Daily Powerhouse",
     system: "已有光伏 + 10.0 kWh 电池升级",
+    quote: "A$9,000 – A$11,000",
+    rebate: "A$1,200",
     savings: "A$900 – A$1,100",
     irr: "≈ 8.2%",
     payback: "3-4 年",
@@ -614,6 +626,154 @@ const leads = [
       selfConsumption: "78% – 85%",
       notes: "屋顶遮阳，需要现场勘查",
       cardUrl: "../demo0925/assets/card-storage-B.png"
+    }
+  },
+  {
+    id: "L-20230927-005",
+    generatedAt: "2023-09-27",
+    installer: "SolarFlow SA",
+    customer: "Olivia Martin",
+    planType: "新建系统",
+    planName: "Smart Saver",
+    system: "8.2 kW 光伏 + 10.5 kWh 电池",
+    quote: "A$14,500 – A$16,000",
+    rebate: "A$2,100",
+    savings: "A$1,900 – A$2,300",
+    irr: "≈ 8.9%",
+    payback: "3-4 年",
+    cardUrl: "../demo0925/assets/card-new-C.png",
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "SolarFlow SA",
+      planCategory: "Smart Choice",
+      planName: "Smart Saver",
+      systemSize: "8.2 kW",
+      batteryCapacity: "10.5 kWh",
+      upfrontInvestment: "A$14,500 – A$16,000",
+      rebateAmount: "2,100",
+      annualSavings: "A$1,900 – A$2,300",
+      irr: "8.9",
+      paybackPeriod: "3-4",
+      customerName: "Olivia Martin",
+      customerPhone: "+61 430 222 618",
+      customerEmail: "olivia.martin@example.com",
+      address: "12 King St, Adelaide SA",
+      coordinates: "-34.9285, 138.6007",
+      selfConsumption: "68% – 78%",
+      notes: "屋顶平整，适合快速安装",
+      cardUrl: "../demo0925/assets/card-new-C.png"
+    }
+  },
+  {
+    id: "L-20230927-006",
+    generatedAt: "2023-09-27",
+    installer: "Coastline WA",
+    customer: "Daniel Harris",
+    planType: "储能扩容",
+    planName: "Night Guardian",
+    system: "已有光伏 + 12.6 kWh 电池升级",
+    quote: "A$11,800 – A$13,200",
+    rebate: "A$1,650",
+    savings: "A$1,050 – A$1,350",
+    irr: "≈ 8.4%",
+    payback: "3-4 年",
+    cardUrl: "../demo0925/assets/card-storage-C.png",
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "Coastline WA",
+      planCategory: "Resilience",
+      planName: "Night Guardian",
+      systemSize: "既有系统",
+      batteryCapacity: "12.6 kWh",
+      upfrontInvestment: "A$11,800 – A$13,200",
+      rebateAmount: "1,650",
+      annualSavings: "A$1,050 – A$1,350",
+      irr: "8.4",
+      paybackPeriod: "3-4",
+      customerName: "Daniel Harris",
+      customerPhone: "+61 420 887 102",
+      customerEmail: "daniel.harris@example.com",
+      address: "55 St Georges Tce, Perth WA",
+      coordinates: "-31.9523, 115.8613",
+      selfConsumption: "80% – 87%",
+      notes: "需线下确认逆变器兼容性",
+      cardUrl: "../demo0925/assets/card-storage-C.png"
+    }
+  },
+  {
+    id: "L-20230927-007",
+    generatedAt: "2023-09-27",
+    installer: "BrightSun NSW",
+    customer: "Grace Wong",
+    planType: "新建系统",
+    planName: "Urban Starter",
+    system: "6.6 kW 光伏",
+    quote: "A$9,800 – A$11,200",
+    rebate: "A$1,850",
+    savings: "A$1,400 – A$1,700",
+    irr: "≈ 8.1%",
+    payback: "4-5 年",
+    cardUrl: "../demo0925/assets/card-new-D.png",
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "BrightSun NSW",
+      planCategory: "Entry Plan",
+      planName: "Urban Starter",
+      systemSize: "6.6 kW",
+      batteryCapacity: "N/A",
+      upfrontInvestment: "A$9,800 – A$11,200",
+      rebateAmount: "1,850",
+      annualSavings: "A$1,400 – A$1,700",
+      irr: "8.1",
+      paybackPeriod: "4-5",
+      customerName: "Grace Wong",
+      customerPhone: "+61 400 912 233",
+      customerEmail: "grace.wong@example.com",
+      address: "210 George St, Sydney NSW",
+      coordinates: "-33.8650, 151.2094",
+      selfConsumption: "60% – 68%",
+      notes: "客户希望尽快安装",
+      cardUrl: "../demo0925/assets/card-new-D.png"
+    }
+  },
+  {
+    id: "L-20230927-008",
+    generatedAt: "2023-09-27",
+    installer: "GreenPeak VIC",
+    customer: "Noah Patel",
+    planType: "储能扩容",
+    planName: "Peak Balancer",
+    system: "已有光伏 + 9.6 kWh 电池升级",
+    quote: "A$10,200 – A$11,700",
+    rebate: "A$1,450",
+    savings: "A$950 – A$1,200",
+    irr: "≈ 7.9%",
+    payback: "4-5 年",
+    cardUrl: "../demo0925/assets/card-storage-D.png",
+    status: STATUS_PENDING,
+    rejectReason: "",
+    templateData: {
+      installerCompany: "GreenPeak VIC",
+      planCategory: "Evening Saver",
+      planName: "Peak Balancer",
+      systemSize: "既有系统",
+      batteryCapacity: "9.6 kWh",
+      upfrontInvestment: "A$10,200 – A$11,700",
+      rebateAmount: "1,450",
+      annualSavings: "A$950 – A$1,200",
+      irr: "7.9",
+      paybackPeriod: "4-5",
+      customerName: "Noah Patel",
+      customerPhone: "+61 430 781 004",
+      customerEmail: "noah.patel@example.com",
+      address: "80 Collins St, Melbourne VIC",
+      coordinates: "-37.8130, 144.9730",
+      selfConsumption: "76% – 82%",
+      notes: "客户询问补贴政策细节",
+      cardUrl: "../demo0925/assets/card-storage-D.png"
     }
   }
 ];
@@ -771,7 +931,9 @@ function createRow(lead) {
   actionsDiv.appendChild(dispatchBtn);
   actionsDiv.appendChild(rejectBtn);
 
-  [leadLink, lead.generatedAt, lead.installer, planBadge, lead.planName, lead.system, lead.savings, lead.irr, lead.payback, statusBadge, actionsDiv].forEach((item) => {
+  const quoteText = lead.quote || lead.templateData.upfrontInvestment;
+  const rebateText = lead.rebate || `A$${lead.templateData.rebateAmount}`;
+  [leadLink, lead.generatedAt, lead.installer, planBadge, lead.planName, lead.system, quoteText, rebateText, lead.savings, lead.irr, lead.payback, statusBadge, actionsDiv].forEach((item) => {
     const cell = document.createElement("div");
     if (item instanceof HTMLElement) {
       cell.appendChild(item);
