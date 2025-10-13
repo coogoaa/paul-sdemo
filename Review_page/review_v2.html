@@ -148,7 +148,7 @@ button.apply:hover {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 140px 170px 150px 140px 220px 220px 150px 120px 140px 160px 220px 160px;
+  grid-template-columns: 140px 150px 180px 140px 220px 230px 150px 120px 140px 160px 160px;
   gap: 12px;
   padding: 16px 20px;
   align-items: center;
@@ -193,14 +193,6 @@ button.apply:hover {
 .badge.storage {
   background: rgba(16, 185, 129, 0.12);
   color: #059669;
-}
-.link-card {
-  color: #0ea5e9;
-  text-decoration: none;
-  font-weight: 500;
-}
-.link-card:hover {
-  text-decoration: underline;
 }
 .status-badge {
   display: inline-flex;
@@ -288,6 +280,14 @@ button.apply:hover {
   cursor: not-allowed;
   transform: none;
 }
+.pagination button.active {
+  background: #4338ca;
+  color: #fff;
+}
+.pagination-pages {
+  display: flex;
+  gap: 6px;
+}
 .pagination .info {
   color: #64748b;
 }
@@ -356,13 +356,13 @@ button.apply:hover {
 @media (max-width: 1200px) {
   .table-header,
   .table-row {
-    grid-template-columns: 140px 160px 150px 140px 210px 220px 150px 120px 140px 160px 220px 150px;
+    grid-template-columns: 140px 150px 180px 140px 210px 220px 150px 120px 140px 160px 150px;
   }
 }
 @media (max-width: 1024px) {
   .table-header,
   .table-row {
-    min-width: 1250px;
+    min-width: 1180px;
   }
 }
 @media (max-width: 760px) {
@@ -408,6 +408,12 @@ button.apply:hover {
         </select>
       </div>
       <div class="filter-group">
+        <label for="installer-filter">所属安装商</label>
+        <select id="installer-filter">
+          <option value="all">全部安装商</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <label for="search-input">搜索</label>
         <input id="search-input" type="text" placeholder="Leads ID 或客户姓名" />
       </div>
@@ -418,8 +424,8 @@ button.apply:hover {
     <section class="table-wrap" aria-live="polite">
       <div class="table-header">
         <div>Leads ID</div>
+        <div>生成日期</div>
         <div>所属安装商</div>
-        <div>客户姓名</div>
         <div>方案类型</div>
         <div>方案名称</div>
         <div>系统组成</div>
@@ -427,13 +433,13 @@ button.apply:hover {
         <div>IRR</div>
         <div>回本周期</div>
         <div>审核状态</div>
-        <div>附件卡片地址</div>
         <div>操作</div>
       </div>
       <div id="table-body"></div>
     </section>
     <div class="pagination" id="pagination" style="display:none;">
       <button id="prev-page">上一页</button>
+      <div class="pagination-pages"></div>
       <span class="info" id="page-info"></span>
       <button id="next-page">下一页</button>
     </div>
@@ -450,6 +456,7 @@ button.apply:hover {
 </div>
 <script>
 const statusFilter = document.getElementById("status-filter");
+const installerFilter = document.getElementById("installer-filter");
 const searchInput = document.getElementById("search-input");
 const applyFiltersBtn = document.getElementById("apply-filters");
 const tableBody = document.getElementById("table-body");
@@ -471,6 +478,7 @@ const STATUS_REJECTED = "rejected";
 const leads = [
   {
     id: "L-20230927-001",
+    generatedAt: "2023-09-27",
     installer: "BrightSun NSW",
     customer: "John Smith",
     planType: "新建系统",
@@ -505,6 +513,7 @@ const leads = [
   },
   {
     id: "L-20230927-002",
+    generatedAt: "2023-09-27",
     installer: "GreenPeak VIC",
     customer: "Jane Doe",
     planType: "新建系统",
@@ -539,6 +548,7 @@ const leads = [
   },
   {
     id: "L-20230927-003",
+    generatedAt: "2023-09-27",
     installer: "SunWave QLD",
     customer: "Michael Lee",
     planType: "储能扩容",
@@ -573,6 +583,7 @@ const leads = [
   },
   {
     id: "L-20230927-004",
+    generatedAt: "2023-09-27",
     installer: "BrightSun NSW",
     customer: "Emily Chen",
     planType: "储能扩容",
@@ -612,6 +623,18 @@ let pagedLeads = [];
 let currentPage = 1;
 const PAGE_SIZE = 5;
 
+function populateInstallerFilter() {
+  const options = new Set(["all"]);
+  leads.forEach((lead) => options.add(lead.installer));
+  installerFilter.innerHTML = "";
+  Array.from(options).forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value === "all" ? "全部安装商" : value;
+    installerFilter.appendChild(option);
+  });
+}
+
 function statusLabel(lead) {
   if (lead.status === STATUS_DISPATCHED) {
     return `已分发至 ${lead.installer}`;
@@ -640,9 +663,11 @@ function ensureAuthenticated() {
 
 function applyFilters(resetPage = true) {
   const statusValue = statusFilter.value;
+  const installerValue = installerFilter.value;
   const keyword = searchInput.value.trim().toLowerCase();
   filteredLeads = leads.filter((lead) => {
     if (statusValue !== "all" && lead.status !== statusValue) return false;
+    if (installerValue !== "all" && lead.installer !== installerValue) return false;
     if (keyword) {
       const combined = `${lead.id} ${lead.customer}`.toLowerCase();
       if (!combined.includes(keyword)) return false;
@@ -666,14 +691,49 @@ function paginateAndRender() {
   const end = start + PAGE_SIZE;
   pagedLeads = filteredLeads.slice(start, end);
   renderTable();
-  if (total > PAGE_SIZE) {
-    pagination.style.display = "flex";
-    pageInfo.textContent = `第 ${currentPage} / ${totalPages} 页（共 ${total} 条）`;
-    prevPageBtn.disabled = currentPage === 1;
-    nextPageBtn.disabled = currentPage === totalPages;
-  } else {
+  renderPagination(total, totalPages);
+}
+
+function renderPagination(total, totalPages) {
+  if (total <= PAGE_SIZE) {
     pagination.style.display = "none";
+    return;
   }
+  pagination.style.display = "flex";
+  prevPageBtn.disabled = currentPage === 1;
+  nextPageBtn.disabled = currentPage === totalPages;
+  pageInfo.textContent = `共 ${total} 条`;
+  const pagesWrapper = pagination.querySelector(".pagination-pages");
+  pagesWrapper.innerHTML = "";
+  for (let page = 1; page <= totalPages; page += 1) {
+    const button = document.createElement("button");
+    button.textContent = `${page}`;
+    if (page === currentPage) {
+      button.classList.add("active");
+    }
+    button.addEventListener("click", () => {
+      if (currentPage !== page) {
+        currentPage = page;
+        paginateAndRender();
+      }
+    });
+    pagesWrapper.appendChild(button);
+  }
+}
+
+function renderTable() {
+  tableBody.innerHTML = "";
+  if (filteredLeads.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "暂无符合条件的线索";
+    tableBody.appendChild(empty);
+    return;
+  }
+  pagedLeads.forEach((lead) => {
+    const row = createRow(lead);
+    tableBody.appendChild(row);
+  });
 }
 
 function createRow(lead) {
@@ -696,17 +756,11 @@ function createRow(lead) {
   if (lead.status === STATUS_DISPATCHED) statusBadge.classList.add("status-dispatched");
   if (lead.status === STATUS_REJECTED) statusBadge.classList.add("status-rejected");
   statusBadge.textContent = statusLabel(lead);
-  const cardLink = document.createElement("a");
-  cardLink.href = lead.cardUrl;
-  cardLink.target = "_blank";
-  cardLink.rel = "noopener";
-  cardLink.className = "link-card";
-  cardLink.textContent = "打开附件";
   const actionsDiv = document.createElement("div");
   actionsDiv.className = "actions-cell";
   const dispatchBtn = document.createElement("button");
   dispatchBtn.className = "dispatch";
-  dispatchBtn.textContent = lead.status === STATUS_DISPATCHED ? "已分发" : "分发";
+  dispatchBtn.textContent = lead.status === STATUS_DISPATCHED ? "已通过" : "通过";
   dispatchBtn.disabled = lead.status === STATUS_DISPATCHED;
   dispatchBtn.addEventListener("click", () => dispatchLead(lead.id));
   const rejectBtn = document.createElement("button");
@@ -717,7 +771,7 @@ function createRow(lead) {
   actionsDiv.appendChild(dispatchBtn);
   actionsDiv.appendChild(rejectBtn);
 
-  [leadLink, lead.installer, lead.customer, planBadge, lead.planName, lead.system, lead.savings, lead.irr, lead.payback, statusBadge, cardLink, actionsDiv].forEach((item) => {
+  [leadLink, lead.generatedAt, lead.installer, planBadge, lead.planName, lead.system, lead.savings, lead.irr, lead.payback, statusBadge, actionsDiv].forEach((item) => {
     const cell = document.createElement("div");
     if (item instanceof HTMLElement) {
       cell.appendChild(item);
@@ -763,7 +817,7 @@ function dispatchLead(leadId) {
   if (!lead || lead.status === STATUS_DISPATCHED) return;
   lead.status = STATUS_DISPATCHED;
   updateEmailHtml(lead);
-  alert(`已将 ${lead.id} 分发给 ${lead.installer}`);
+  alert(`已通过 ${lead.id}`);
   applyFilters(false);
 }
 
@@ -794,6 +848,7 @@ logoutBtn.addEventListener("click", () => {
 
 applyFiltersBtn.addEventListener("click", () => applyFilters(true));
 statusFilter.addEventListener("change", () => applyFilters(true));
+installerFilter.addEventListener("change", () => applyFilters(true));
 searchInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
@@ -818,7 +873,6 @@ nextPageBtn.addEventListener("click", () => {
 
 function formatEmailTemplate(lead) {
   const data = lead.templateData;
-  const statusText = statusLabel(lead);
   return `Subject: Action Needed – Sales Agent to Confirm Site & Finalize Quote (${data.systemSize} / ${data.planCategory})
 ------
 Dear ${data.installerCompany},
@@ -864,15 +918,13 @@ Finalise Quote: Adjust specs and provide the confirmed offer, including verified
 Disclaimer:
 All figures are inclusive of tax and based on preliminary assumptions.
 Final pricing and performance outcomes depend on on-site verification and regional policy approval.
-
-Current Review Status: ${statusText}
-
 Best regards,
 The OSW AI Agent Team`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   ensureAuthenticated();
+  populateInstallerFilter();
   applyFilters();
 });
 </script>
