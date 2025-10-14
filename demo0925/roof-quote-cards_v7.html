@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#22C55E">
+  <title>3D屋顶模型报价卡片（Demo0925 · V7）</title>
+
+  <!-- TailwindCSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: { DEFAULT: '#22C55E' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+  <!-- Model Viewer (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@google/model-viewer@1.12.1/dist/model-viewer-umd.min.js"></script>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial;">
+  <div class="mx-auto max-w-md min-h-screen flex flex-col">
+    <!-- 顶部栏（V7） -->
+    <div class="sticky top-0 z-50 backdrop-blur bg-white/90 border-b border-green-100">
+      <div class="px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+            <span class="text-[15px] font-semibold text-[#22C55E]">S</span>
+          </div>
+          <div class="flex-1">
+            <div class="text-[18px] font-semibold text-gray-800">屋顶3D模型 · 报价卡片 · V7</div>
+            <div class="text-[12px] text-gray-600">两张卡片 | 突出补贴金额</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 内容 -->
+    <main class="flex-1 px-3 pb-24">
+      <div id="cards" class="space-y-4 mt-4">
+        <!-- New System (3D model + 3-scheme strip + detail panel) -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-2.5">
+            <div class="flex items-center justify-between mb-1.5">
+              <div class="flex items-center gap-1.5 text-[11px] text-emerald-600">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>Analysis complete</span>
+              </div>
+            </div>
+            <h3 class="text-[17px] tracking-tight font-semibold text-gray-800 leading-snug">Your 3D roof model</h3>
+
+            <!-- 3D viewer -->
+            <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 22vh;">
+              <model-viewer
+                src="../sales_agent_v1.1/3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
+                camera-controls
+                auto-rotate
+                disable-zoom
+                ar
+                style="width:100%;height:100%;background:transparent"
+                class="absolute inset-0"
+              ></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+            </div>
+
+            <!-- Schemes strip: A/B/C -->
+            <div class="mt-3">
+              <div class="text-[11px] text-gray-600 mb-1.5">Choose Your Perfect Plan</div>
+              <div id="nsSchemesStrip" class="flex gap-1 overflow-x-auto no-scrollbar snap-x snap-mandatory pr-1">
+                <!-- A -->
+                <button class="scheme-card-mini shrink-0 snap-start basis-1/2 md:basis-[45%] rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="A">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The Rebate Maximiser</div>
+                    <i data-lucide="star" class="w-4 h-4 text-amber-500"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1"><span class="font-semibold">Maximum Value</span> · Go big for the biggest rewards</div>
+                </button>
+                <!-- B -->
+                <button class="scheme-card-mini shrink-0 snap-start basis-1/2 md:basis-[45%] rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="B">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The High Performer</div>
+                    <i data-lucide="gauge" class="w-4 h-4 text-gray-600"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1"><span class="font-semibold">Most Installed</span> · The proven choice for Australian homes</div>
+                </button>
+                <!-- C -->
+                <button class="scheme-card-mini shrink-0 snap-start basis-1/2 md:basis-[45%] rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="C">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The Smart Starter</div>
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1"><span class="font-semibold">Optimal Fit</span> · Smart, simple, and effective</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Detail panel (V7视觉：灰卡+橙色金额) -->
+            <section id="nsDetailPanel" class="mt-3 space-y-3">
+              <div class="rounded-2xl border border-gray-200 bg-slate-50 shadow-sm">
+                <div class="p-3">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-[13px] font-semibold text-gray-900">New System — Plan details</h3>
+                    <span id="nsSchemeTag" class="text-[12px] text-gray-500">Select a plan</span>
+                  </div>
+                  <div class="mt-3">
+                    <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Estimated Upfront Investment</h4>
+                    <div id="nsUpfront" class="mt-1 text-[22px] font-semibold text-orange-500 tracking-tight">$20,000 – $25,000</div>
+                    <p id="nsRebateNote" class="mt-1 text-[11px] text-gray-600">
+                      Includes estimated Government Subsidies & Installer
+                      <span class="ml-1">Limited-time Rebate of <span id="nsRebateAmount" class="font-semibold text-orange-500">$2,000</span></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-50 shadow-sm">
+                <div class="p-3">
+                  <h4 class="text-[12px] font-medium text-gray-700 uppercase tracking-wide">Your Investment Return</h4>
+                  <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="badge-dollar" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="nsReturnSavings" class="text-[15px] font-semibold text-emerald-600 leading-none">$2,800 – $3,500</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Annual Bill Savings</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="nsReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 9.5%</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="nsReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3-4 years</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-gray-700 leading-5">
+                <div id="nsSummarySize">System size: 13.2 kW (≈ 28 panels)</div>
+                <div id="nsSummaryBattery">Battery capacity: 23.4 kWh</div>
+                <div id="nsSummarySelf">Self-consumption: 75% – 85%</div>
+              </div>
+
+              <p class="text-[10px] text-gray-500 leading-4">
+                Need a detailed quote? Contact the installer. Figures come from automated analysis; final pricing and rebates follow the installer's official quote.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="flex flex-wrap gap-2">
+                  <button id="nsCopyBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+                  <button id="nsSaveImgBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" title="Save image">
+                    <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                    <span>Save image</span>
+                  </button>
+                  <button id="nsShareBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+                </div>
+                <div class="flex flex-wrap gap-2 ml-auto">
+                  <button id="nsRestartBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white">Restart</button>
+                  <button id="nsReportBtn" class="px-3 py-2 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Get full report</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Storage Add-on (3D model + 3-scheme strip + detail panel) -->
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-2.5">
+            <div class="flex items-center justify-between mb-1.5">
+              <div class="flex items-center gap-1.5 text-[11px] text-emerald-600">
+                <i data-lucide="battery-charging" class="w-4 h-4"></i>
+                <span>Storage Add-on</span>
+              </div>
+            </div>
+            <h3 class="text-[16px] tracking-tight font-semibold text-gray-800 leading-snug">Battery expansion for independence</h3>
+
+            <!-- 3D viewer -->
+            <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 22vh;">
+              <model-viewer
+                src="../sales_agent_v1.1/3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
+                camera-controls
+                auto-rotate
+                disable-zoom
+                ar
+                style="width:100%;height:100%;background:transparent"
+                class="absolute inset-0"
+              ></model-viewer>
+              <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+            </div>
+
+            <!-- Schemes strip: A/B/C -->
+            <div class="mt-3">
+              <div class="text-[11px] text-gray-600 mb-1.5">Select Your Ideal Upgrade</div>
+              <div id="essSchemesStrip" class="flex gap-1 overflow-x-auto no-scrollbar snap-x snap-mandatory pr-1">
+                <!-- A -->
+                <button class="scheme-card-mini shrink-0 snap-start basis-1/2 md:basis-[45%] rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="A">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">Max Independence</div>
+                    <i data-lucide="diamond" class="w-4 h-4 text-emerald-600"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1"><span class="font-semibold">Maximum Value</span> · Maximise your battery, maximise your cash.</div>
+                </button>
+                <!-- B -->
+                <button class="scheme-card-mini shrink-0 snap-start basis-1/2 md:basis-[45%] rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="B">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The Daily Powerhouse</div>
+                    <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+                  </div>
+                  <div class="text-[10px] text-gray-600 mt-1"><span class="font-semibold">Most Popular</span> · Power your nights, own your energy.</div>
+                </button>
+                <!-- C -->
+                <button class="scheme-card-mini shrink-0 snap-start basis-1/2 md:basis-[45%] rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="C">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The Smart Upgrade</div>
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1"><span class="font-semibold">Custom Fit</span> · Simple, practical, and secure</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Detail panel (V7视觉：灰卡+橙色金额) -->
+            <section id="essDetailPanel" class="mt-3 space-y-3">
+              <div class="rounded-2xl border border-gray-200 bg-slate-50 shadow-sm">
+                <div class="p-3">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-[13px] font-semibold text-gray-900">Storage Add-on — Plan details</h3>
+                    <span id="essSchemeTag" class="text-[12px] text-gray-500">Select a plan</span>
+                  </div>
+                  <div class="mt-3">
+                    <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Battery Upgrade Investment</h4>
+                    <div id="essUpfront" class="mt-1 text-[22px] font-semibold text-orange-500 tracking-tight">$10,000</div>
+                    <p id="essRebateNote" class="mt-1 text-[11px] text-gray-600">
+                      Includes estimated Government Subsidies & Installer
+                      <span class="ml-1">Limited-time Rebate of <span id="essRebateAmount" class="font-semibold text-orange-500">$2,000</span></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-50 shadow-sm">
+                <div class="p-3">
+                  <h4 class="text-[12px] font-medium text-gray-700 uppercase tracking-wide">Your Investment Return</h4>
+                  <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="badge-dollar" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="essReturnSavings" class="text-[15px] font-semibold text-emerald-600 leading-none">$1,000 – $1,300</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Annual Bill Savings</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="essReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 8.5%</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="essReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3-4 years</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-gray-700 leading-5">
+                <div id="essSummaryBattery">Battery capacity: 13.8 kWh</div>
+                <div id="essSummarySelf">Self-consumption: 82% – 88%</div>
+              </div>
+
+              <p class="text-[10px] text-gray-500 leading-4">
+                Need a detailed quote? Contact the installer. Figures come from automated analysis; final pricing and rebates follow the installer's official quote.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="flex flex-wrap gap-2">
+                  <button id="essCopyBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white">Copy</button>
+                  <button id="essSaveImgBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white inline-flex items-center gap-1.5" title="Save image">
+                    <i data-lucide="image-down" class="w-3.5 h-3.5"></i>
+                    <span>Save image</span>
+                  </button>
+                  <button id="essShareBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white">Share</button>
+                </div>
+                <div class="flex flex-wrap gap-2 ml-auto">
+                  <button id="essRestartBtn" class="px-3 py-2 text-[11px] rounded-xl border border-gray-200 bg-white">Restart</button>
+                  <button id="essReportBtn" class="px-3 py-2 text-[11px] rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">Get full report</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Inline script: interaction for the two cards (同步V6逻辑，改橙色金额) -->
+        <script>
+          // New System configurations (A/B/C)
+          const NS_CFG = {
+            A: {
+              name: 'The Rebate Maximiser',
+              tag: 'Maximum Value · Go big for the biggest rewards',
+              quote: '$20,000 – $24,000',
+              upfront: '$20,000 – $25,000',
+              rebate: '$3,500',
+              size: '13.2 kW (≈ 28 panels)',
+              batt: '23.4 kWh',
+              selfConsumption: '75% – 85%',
+              returnSavings: '$2,800 – $3,500',
+              payback: '3-4 years',
+              irr: '≈ 9.5%'
+            },
+            B: {
+              name: 'The High Performer',
+              tag: 'Most Installed · The proven choice for Australian homes',
+              quote: '$16,000 – $19,000',
+              upfront: '$16,000 – $19,000',
+              rebate: '$2,600',
+              size: '9.9 kW (≈ 22 panels)',
+              batt: '15.0 kWh',
+              selfConsumption: '70% – 80%',
+              returnSavings: '$2,100 – $2,700',
+              payback: '3-4 years',
+              irr: '≈ 8.8%'
+            },
+            C: {
+              name: 'The Smart Starter',
+              tag: 'Optimal Fit · Smart, simple, and effective',
+              quote: '$12,000 – $15,000',
+              upfront: '$12,000 – $15,000',
+              rebate: '$1,800',
+              size: '6.6 kW (≈ 16 panels)',
+              batt: '10.0 kWh',
+              selfConsumption: '65% – 75%',
+              returnSavings: '$1,500 – $1,900',
+              payback: '3-4 years',
+              irr: '≈ 8.0%'
+            }
+          };
+
+          function updateNS(key) {
+            const c = NS_CFG[key]; if (!c) return;
+            document.getElementById('nsSchemeTag').textContent = `${c.name}`;
+            document.getElementById('nsUpfront').textContent = c.upfront;
+            document.getElementById('nsReturnSavings').textContent = c.returnSavings;
+            document.getElementById('nsReturnPayback').textContent = c.payback;
+            document.getElementById('nsReturnIRR').textContent = c.irr;
+            document.getElementById('nsSummarySize').textContent = `System size: ${c.size}`;
+            document.getElementById('nsSummaryBattery').textContent = `Battery capacity: ${c.batt}`;
+            document.getElementById('nsSummarySelf').textContent = `Self-consumption: ${c.selfConsumption}`;
+            const nsRebateAmount = document.getElementById('nsRebateAmount');
+            if (nsRebateAmount) nsRebateAmount.textContent = c.rebate;
+            const strip = document.getElementById('nsSchemesStrip');
+            const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+            buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
+            buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
+          }
+
+          // Storage Add-on configurations (A/B/C)
+          const ESS_CFG = {
+            A: {
+              name: 'Max Independence',
+              tag: 'Maximum Value · Maximise your battery, maximise your cash.',
+              quote: '$10,500 – $12,000',
+              batt: '13.8 kWh',
+              upfront: '$10,000 – $12,000',
+              rebate: '$1,500',
+              addSavings: '$1,000 – $1,300',
+              irr: '≈ 8.5%',
+              payback: '3-4 years',
+              selfConsumption: '85% – 95%'
+            },
+            B: {
+              name: 'The Daily Powerhouse',
+              tag: 'Most Popular · Power your nights, own your energy.',
+              quote: '$8,800 – $10,200',
+              batt: '10.2 kWh',
+              upfront: '$8,800 – $10,200',
+              rebate: '$1,100',
+              addSavings: '$900 – $1,200',
+              irr: '≈ 8.0%',
+              payback: '3-4 years',
+              selfConsumption: '80% – 88%'
+            },
+            C: {
+              name: 'The Smart Upgrade',
+              tag: 'Custom Fit · Simple, practical, and secure',
+              quote: '$6,900 – $8,200',
+              batt: '7.0 kWh',
+              upfront: '$6,900 – $8,200',
+              rebate: '$800',
+              addSavings: '$600 – $800',
+              irr: '≈ 7.2%',
+              payback: '3-4 years',
+              selfConsumption: '78% – 84%'
+            }
+          };
+
+          function updateESS(key) {
+            const c = ESS_CFG[key]; if (!c) return;
+            document.getElementById('essSchemeTag').textContent = `${c.name}`;
+            document.getElementById('essUpfront').textContent = c.upfront;
+            document.getElementById('essReturnSavings').textContent = c.addSavings;
+            document.getElementById('essReturnIRR').textContent = c.irr;
+            document.getElementById('essReturnPayback').textContent = c.payback;
+            document.getElementById('essSummaryBattery').textContent = `Battery capacity: ${c.batt}`;
+            document.getElementById('essSummarySelf').textContent = `Self-consumption: ${c.selfConsumption}`;
+            const essRebateAmount = document.getElementById('essRebateAmount');
+            if (essRebateAmount) essRebateAmount.textContent = c.rebate;
+            const strip = document.getElementById('essSchemesStrip');
+            const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+            buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
+            buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
+          }
+
+          // Bind interactions
+          (function bindNewCards() {
+            // New System
+            const nsStrip = document.getElementById('nsSchemesStrip');
+            nsStrip?.addEventListener('click', (e) => {
+              const btn = e.target.closest('.scheme-card-mini'); if (!btn) return;
+              updateNS(btn.dataset.scheme);
+            });
+            updateNS('A'); // default select A
+
+            // Storage Add-on
+            const essStrip = document.getElementById('essSchemesStrip');
+            essStrip?.addEventListener('click', (e) => {
+              const btn = e.target.closest('.scheme-card-mini'); if (!btn) return;
+              updateESS(btn.dataset.scheme);
+            });
+            updateESS('A'); // default select A
+
+            // Actions - copy/share/save/refine
+            function toast(message, type = 'success', duration = 1400) {
+              const styles = {
+                success: 'bg-emerald-600 text-white border-emerald-700',
+                info: 'bg-gray-900 text-white border-gray-800',
+                error: 'bg-red-600 text-white border-red-700'
+              };
+              const t = document.createElement('div');
+              t.className = `fixed bottom-16 left-1/2 -translate-x-1/2 z-[70] px-3 py-2 rounded-lg border shadow-lg ${styles[type] || styles.success}`;
+              t.innerHTML = `<div class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i><span>${message}</span></div>`;
+              document.body.appendChild(t);
+              setTimeout(() => { t.style.transition = 'opacity .25s ease'; t.style.opacity = '0'; setTimeout(() => t.remove(), 340); }, duration);
+            }
+
+            async function savePanelImage(targetId) {
+              const el = document.getElementById(targetId);
+              if (!el || !window.html2canvas) { toast('Save failed', 'error'); return; }
+              try {
+                const canvas = await window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                const url = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = url; a.download = `card_${targetId}_${Date.now()}.png`;
+                document.body.appendChild(a); a.click(); a.remove();
+                toast('Image saved');
+              } catch { toast('Save failed', 'error'); }
+            }
+
+            // NS actions
+            document.getElementById('nsCopyBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('nsDetailPanel').innerText.trim();
+              try { await navigator.clipboard.writeText(text); toast('Copied'); } catch { toast('Copy failed', 'error'); }
+            });
+            document.getElementById('nsShareBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('nsDetailPanel').innerText.trim();
+              const shareData = { title: 'New System plan', text, url: location.href };
+              try {
+                if (navigator.share) { await navigator.share(shareData); toast('Share opened', 'info'); }
+                else { await navigator.clipboard.writeText(text + '\n' + location.href); toast('Copied for share'); }
+              } catch { toast('Share canceled', 'info'); }
+            });
+            document.getElementById('nsSaveImgBtn')?.addEventListener('click', () => savePanelImage('nsDetailPanel'));
+            document.getElementById('nsRefineBtn')?.addEventListener('click', () => toast('Connect with installer for detailed quote', 'info', 1800));
+
+            // ESS actions
+            document.getElementById('essCopyBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('essDetailPanel').innerText.trim();
+              try { await navigator.clipboard.writeText(text); toast('Copied'); } catch { toast('Copy failed', 'error'); }
+            });
+            document.getElementById('essShareBtn')?.addEventListener('click', async () => {
+              const text = document.getElementById('essDetailPanel').innerText.trim();
+              const shareData = { title: 'Storage add-on plan', text, url: location.href };
+              try {
+                if (navigator.share) { await navigator.share(shareData); toast('Share opened', 'info'); }
+                else { await navigator.clipboard.writeText(text + '\n' + location.href); toast('Copied for share'); }
+              } catch { toast('Share canceled', 'info'); }
+            });
+            document.getElementById('essSaveImgBtn')?.addEventListener('click', () => savePanelImage('essDetailPanel'));
+            document.getElementById('essRefineBtn')?.addEventListener('click', () => toast('Connect with installer for detailed quote', 'info', 1800));
+          })();
+        </script>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

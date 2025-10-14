@@ -27,17 +27,34 @@ body {
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
 }
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 24px;
+}
+.logo-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #312e81;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 18px;
 }
 .logo-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
-.logo-text span {
+.logo-text span:first-child {
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
+}
+.logo-text span:last-child {
+  font-size: 13px;
+  color: #475569;
 }
 .title {
   font-size: 26px;
@@ -116,8 +133,10 @@ input + label {
 <body>
 <div class="container">
   <div class="logo">
+    <div class="logo-badge">AI</div>
     <div class="logo-text">
-      <span>Sales Agent Lead Review Console</span>
+      <span>YourCompany Internal</span>
+      <span>AI Agent Lead Review Console</span>
     </div>
   </div>
   <h1 class="title">登录内部审核台</h1>
@@ -129,6 +148,7 @@ input + label {
     <input id="password" type="password" autocomplete="current-password" />
     <button class="button" type="submit">登录</button>
   </form>
+  <div class="footer">如需重置密码，请联系 <span>ops@yourcompany.com</span></div>
 </div>
 <script>
 const form = document.getElementById("login-form");

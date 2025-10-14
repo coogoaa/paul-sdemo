@@ -35,19 +35,7 @@ header {
 .logo-wrap {
   display: flex;
   align-items: center;
-  gap: 14px;
-}
-.logo-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: #4338ca;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 17px;
-  color: #fff;
+  gap: 10px;
 }
 .logo-title {
   font-size: 18px;
@@ -148,7 +136,7 @@ button.apply:hover {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 110px 100px 140px 110px 180px 170px 140px 110px 110px 100px 110px 140px 130px;
+  grid-template-columns: 110px 100px 140px 110px 180px 170px 140px 110px 110px 100px 120px 120px 140px 130px;
   gap: 8px;
   padding: 10px 14px;
   align-items: center;
@@ -358,13 +346,13 @@ button.apply:hover {
 @media (max-width: 1200px) {
   .table-header,
   .table-row {
-    grid-template-columns: 110px 100px 140px 110px 170px 160px 130px 110px 110px 100px 110px 140px 130px;
+    grid-template-columns: 110px 100px 140px 110px 170px 160px 130px 110px 110px 100px 120px 120px 140px 130px;
   }
 }
 @media (max-width: 1024px) {
   .table-header,
   .table-row {
-    min-width: 1250px;
+    min-width: 1320px;
   }
 }
 @media (max-width: 760px) {
@@ -386,10 +374,8 @@ button.apply:hover {
 <div class="layout">
   <header>
     <div class="logo-wrap">
-      <div class="logo-badge">AI</div>
       <div>
-        <div class="logo-title">YourCompany Internal</div>
-        <div style="font-size: 13px; color: #94a3b8;">AI Agent Lead Review Console</div>
+        <div class="logo-title">Sales Agent Lead Review Console</div>
       </div>
     </div>
     <div class="user-info">
@@ -436,6 +422,7 @@ button.apply:hover {
         <div>年度节省</div>
         <div>IRR</div>
         <div>回本周期</div>
+        <div>卡片链接</div>
         <div>审核状态</div>
         <div>操作</div>
       </div>
@@ -933,7 +920,13 @@ function createRow(lead) {
 
   const quoteText = lead.quote || lead.templateData.upfrontInvestment;
   const rebateText = lead.rebate || `A$${lead.templateData.rebateAmount}`;
-  [leadLink, lead.generatedAt, lead.installer, planBadge, lead.planName, lead.system, quoteText, rebateText, lead.savings, lead.irr, lead.payback, statusBadge, actionsDiv].forEach((item) => {
+  const cardLink = document.createElement("a");
+  cardLink.href = lead.cardUrl;
+  cardLink.target = "_blank";
+  cardLink.rel = "noopener";
+  cardLink.className = "link-card";
+  cardLink.textContent = "查看";
+  [leadLink, lead.generatedAt, lead.installer, planBadge, lead.planName, lead.system, quoteText, rebateText, lead.savings, lead.irr, lead.payback, cardLink, statusBadge, actionsDiv].forEach((item) => {
     const cell = document.createElement("div");
     if (item instanceof HTMLElement) {
       cell.appendChild(item);
