@@ -37,13 +37,13 @@
                 </div>
                 <div class="config-section section-new">
                     <h6>新建系统 - 方案参数</h6>
+                    <div class="alert alert-info py-2 px-3 mb-2 small">
+                        <strong>说明：</strong>A/B/C三个方案使用相同的光伏容量系数。只有C方案需要目标自用率来计算电池容量。
+                    </div>
                     <div class="row g-2">
-                        <div class="col-6"><label class="form-label small">A容量系数</label><input type="number" id="plan_a_capacity_factor" class="form-control form-control-sm" value="0.5" step="0.1"></div>
-                        <div class="col-6"><label class="form-label small">A目标自用率</label><input type="number" id="plan_a_target_sc_rate" class="form-control form-control-sm" value="0.4" step="0.1"></div>
-                        <div class="col-6"><label class="form-label small">B容量系数</label><input type="number" id="plan_b_capacity_factor" class="form-control form-control-sm" value="0.7" step="0.1"></div>
-                        <div class="col-6"><label class="form-label small">B目标自用率</label><input type="number" id="plan_b_target_sc_rate" class="form-control form-control-sm" value="0.6" step="0.1"></div>
-                        <div class="col-6"><label class="form-label small">C容量系数</label><input type="number" id="plan_c_capacity_factor" class="form-control form-control-sm" value="0.9" step="0.1"></div>
-                        <div class="col-6"><label class="form-label small">C目标自用率</label><input type="number" id="plan_c_target_sc_rate" class="form-control form-control-sm" value="0.8" step="0.1"></div>
+                        <div class="col-12"><label class="form-label small">光伏容量系数（A/B/C共用）</label><input type="number" id="plan_c_capacity_factor" class="form-control form-control-sm" value="0.9" step="0.1"></div>
+                        <div class="col-12"><label class="form-label small">C方案目标自用率</label><input type="number" id="plan_c_target_sc_rate" class="form-control form-control-sm" value="0.8" step="0.1"></div>
+                        <div class="col-12"><label class="form-label small">GS电池补偿系数（>20kW时）</label><input type="number" id="gs_battery_factor" class="form-control form-control-sm" value="1.3" step="0.1"></div>
                     </div>
                 </div>
                 <div class="config-section">
@@ -166,15 +166,19 @@
             const batteryRte = getVal('battery_rte');
             const yieldPerKw = getVal('yield_per_kw_per_year');
             
+            // A/B/C三个方案使用相同的容量系数
+            const capacityFactor = getVal('plan_c_capacity_factor');
+            const targetScC = getVal('plan_c_target_sc_rate');
+            
             const plans = {
-                A: { cf: getVal('plan_a_capacity_factor'), sc: getVal('plan_a_target_sc_rate'), type: 'GS' },
-                B: { cf: getVal('plan_b_capacity_factor'), sc: getVal('plan_b_target_sc_rate'), type: 'GD' },
-                C: { cf: getVal('plan_c_capacity_factor'), sc: getVal('plan_c_target_sc_rate'), type: 'CALC' }
+                A: { type: 'GS' },
+                B: { type: 'GD' },
+                C: { type: 'CALC', sc: targetScC }
             };
 
             const results = {};
             Object.entries(plans).forEach(([key, p]) => {
-                const solarKw = roofMaxPower * p.cf;
+                const solarKw = roofMaxPower * capacityFactor;
                 const panelCount = Math.floor(solarKw / panelPower);
                 const annualGeneration = solarKw * yieldPerKw;
                 
@@ -494,11 +498,14 @@
         }
 
         function displayNewSystemSteps(plan, r) {
+            const capacityFactor = getVal('plan_c_capacity_factor');
+            const roofMaxPower = getVal('roof_max_power_kw');
             const steps = `
                 <div class="calculation-step">
-                    <h6>步骤1: 计算光伏容量</h6>
-                    <div class="formula-box">solar_kw = roof_max_power_kw × plan_${plan.toLowerCase()}_capacity_factor</div>
-                    <div class="mt-2">结果: ${r.solarKw.toFixed(2)} kW</div>
+                    <h6>步骤1: 计算光伏容量（A/B/C相同）</h6>
+                    <div class="formula-box">solar_kw = roof_max_power_kw × capacity_factor<br>
+                    = ${roofMaxPower} × ${capacityFactor} = ${r.solarKw.toFixed(2)} kW</div>
+                    <div class="mt-2"><strong>说明：</strong>A/B/C三个方案使用相同的光伏容量系数</div>
                 </div>
                 <div class="calculation-step">
                     <h6>步骤2: 计算面板数量</h6>
@@ -507,12 +514,13 @@
                 </div>
                 <div class="calculation-step">
                     <h6>步骤3: 计算逆变器功率</h6>
-                    <div class="formula-box">方案${plan}使用${plan==='A'?'GS':plan==='B'?'GD':'计算'}方式</div>
+                    <div class="formula-box">方案${plan}：${plan==='A'?'查GS映射表':plan==='B'?'查GD映射表':'inverter_kw = CEILING_TO_0.1(solar_kw / dc_ac_ratio)'}</div>
                     <div class="mt-2">结果: ${r.inverterKw.toFixed(2)} kW</div>
                 </div>
                 <div class="calculation-step">
                     <h6>步骤4: 计算电池容量</h6>
-                    <div class="formula-box">nominal_battery = usable_battery / battery_dod</div>
+                    <div class="formula-box">方案${plan}：${plan==='A'?'查GS映射表（>20kW时×补偿系数）':plan==='B'?'查GD映射表':'基于目标自用率计算'}<br>
+                    nominal_battery = usable_battery / battery_dod</div>
                     <div class="mt-2">可用容量: ${r.usableBattery.toFixed(2)} kWh<br>标称容量: ${r.nominalBattery.toFixed(2)} kWh</div>
                 </div>
                 <div class="calculation-step">
