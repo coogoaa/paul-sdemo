@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>经济效益计算器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";margin:0;padding:24px;background:#0b1220;color:#e5e7eb}
+    h1{font-size:20px;margin:0 0 16px;color:#f9fafb}
+    .wrap{max-width:1100px;margin:0 auto}
+    .card{background:#0f172a;border:1px solid #1f2937;border-radius:12px;padding:20px}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+    .col-2{grid-column:span 2}
+    .col-3{grid-column:span 3}
+    .col-6{grid-column:span 6}
+    label{display:block;font-size:12px;color:#94a3b8;margin:0 0 6px}
+    input,select{width:100%;border:1px solid #334155;background:#0b1220;color:#e5e7eb;border-radius:8px;padding:10px 12px;font-size:14px}
+    .inline{display:flex;align-items:center;gap:10px}
+    .btn{background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:600;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .muted{color:#94a3b8;font-size:12px}
+    .out{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+    .kpi{flex:1 1 220px;background:#0b1220;border:1px solid #334155;border-radius:10px;padding:14px}
+    .kpi h3{margin:0 0 6px;font-size:12px;color:#94a3b8}
+    .kpi .v{font-size:22px;font-weight:700;color:#f8fafc}
+    .sep{height:1px;background:#1f2937;margin:16px 0}
+    .help{font-size:12px;color:#9ca3af}
+    .footer{margin-top:16px;color:#64748b;font-size:12px}
+    .switch{display:flex;gap:12px;align-items:center}
+    .proc{margin-top:12px}
+    table{width:100%;border-collapse:collapse;font-size:12px;color:#cbd5e1}
+    th,td{border:1px solid #334155;padding:6px 8px;text-align:right}
+    th{background:#0b1220;color:#94a3b8}
+    td:first-child,th:first-child{text-align:left}
+    details{border:1px solid #334155;border-radius:8px;padding:8px 12px;background:#0b1220;margin-top:8px}
+    details > div{padding:8px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>经济效益计算器 <span style="font-size:12px;color:#64748b">v2.0</span></h1>
+    <div class="card">
+      <div class="row">
+        <div class="col-3">
+          <label>年度用电量 E (kWh/年)</label>
+          <input id="E" type="number" step="1" value="5000" />
+        </div>
+        <div class="col-3">
+          <label>购电价 x ($/kWh, 含税)</label>
+          <input id="x" type="number" step="0.001" value="0.30" />
+        </div>
+        <div class="col-3">
+          <label>日固定费 z ($/日, 含税)</label>
+          <input id="z" type="number" step="0.01" value="1.00" />
+        </div>
+        <div class="col-3">
+          <label>馈网电价 y ($/kWh)</label>
+          <input id="y" type="number" step="0.001" value="0.08" />
+        </div>
+        <div class="col-3">
+          <label>电费膨胀率 q (%)</label>
+          <input id="q" type="number" step="0.1" value="3" />
+        </div>
+        <div class="col-3">
+          <label>系统一次性成本 H ($, 含税)</label>
+          <input id="H" type="number" step="1" value="12000" />
+        </div>
+        <div class="col-3">
+          <label>额定年发电量 P (kWh/年，未计衰减)</label>
+          <input id="P" type="number" step="1" value="6000" />
+        </div>
+        <div class="col-3">
+          <label>自用率 a (%)</label>
+          <input id="a" type="number" step="0.1" value="40" />
+        </div>
+        <div class="col-3">
+          <label>板首年衰减 r1 (%)</label>
+          <input id="r1" type="number" step="0.01" value="1" />
+        </div>
+        <div class="col-3">
+          <label>次年后衰减 r2 (%)</label>
+          <input id="r2" type="number" step="0.01" value="0.4" />
+        </div>
+        <div class="col-3">
+          <label>电池更换成本 ($)</label>
+          <input id="Hbat" type="number" step="1" value="4000" />
+        </div>
+        <div class="col-3">
+          <label>电池更换年份</label>
+          <input id="Nbat" type="number" step="1" value="10" />
+        </div>
+        <div class="col-3">
+          <label>计量模式</label>
+          <select id="mode">
+            <option value="non_net">非净计量</option>
+            <option value="net">净计量</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label>回本口径</label>
+          <select id="pbMode">
+            <option value="amort">按月计提备用金</option>
+            <option value="lump">一次性更换</option>
+          </select>
+        </div>
+        <div class="col-6 inline">
+          <button class="btn" id="calc">计算</button>
+          <span class="muted">按下“计算”后将在下方显示年度节省、回本周期与IRR</span>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="out">
+        <div class="kpi">
+          <h3>年度节省（首年，未贴现）</h3>
+          <div class="v" id="kpiSaving">—</div>
+        </div>
+        <div class="kpi">
+          <h3>回本周期</h3>
+          <div class="v" id="kpiPayback">—</div>
+          <div class="help" id="kpiPaybackNote"></div>
+        </div>
+        <div class="kpi">
+          <h3>IRR（0-20年）</h3>
+          <div class="v" id="kpiIRR">—</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="proc" id="process">
+        <h3 style="margin:0 0 8px;font-size:14px;color:#94a3b8">计算过程</h3>
+        <div id="year1Details"></div>
+        <details>
+          <summary>年度明细（1-20年）</summary>
+          <div id="yearTable"></div>
+        </details>
+        <details>
+          <summary>IRR 现金流（0-20年）</summary>
+          <div id="irrTable"></div>
+        </details>
+      </div>
+      <div class="footer">
+        <strong>计算说明：</strong><br>
+        • <strong>年度节省</strong>：未装电费 - 装后电费（含售电收入），未考虑贴现<br>
+        • <strong>回本周期</strong>：从 -H 开始累加月度现金流（年度节省/12），电池口径："按月计提"=每月扣准备金至第N年；"一次性"=第N年一次性扣除更换成本<br>
+        • <strong>IRR</strong>：基于 0-20 年现金流（CF_0=-H，CF_n=年度节省-电池投入），使用二分法求解内部收益率<br>
+        • 基于《方案计算 1014/经济效益计算.md》核心公式，采用年度粒度估算；净计量和非净计量均支持
+      </div>
+    </div>
+  </div>
+  <script>
+    console.log('✅ ROI Calculator v2.0 loaded successfully');
+    function val(id){return parseFloat(document.getElementById(id).value||"0")}
+    function pct(v){return isFinite(v)?(v*100).toFixed(2)+"%":"—"}
+    function cur(v){return isFinite(v)?"$"+v.toFixed(0):"—"}
+    function max(a,b){return a>b?a:b}
+
+    function pn_year(P,r1,r2,year){
+      if(year<=0) return 0
+      if(year===1) return P*(1-r1)
+      return P*(1-r1)*Math.pow(1-r2,year-1)
+    }
+
+    function computeYear(E,x,z,y,q,P,a,r1,r2,year,mode){
+      const A = E*x + 365*z
+      const infl = Math.pow(1+q,year)
+      const PN = pn_year(P,r1,r2,year)
+      const UN = Math.min(a*PN,E)
+      const SN = Math.max(PN-UN,0)
+      const DN = Math.max(E-UN,0)
+      const k_nom = A*infl
+      if(mode==='non_net'){
+        const C_nom = (DN*x + 365*z)*infl
+        const G_nom = SN*y
+        const J_nom = C_nom - G_nom
+        const AS = k_nom - J_nom
+        return {k_nom,J_nom,AS,PN,UN,SN,DN,feedIncome:G_nom,saving:AS}
+      }else{
+        const energyCost = (max(DN-SN,0)*x)*infl
+        const fixedCost = (365*z)*infl
+        const feedIncome = max(SN-DN,0)*y
+        const J_nom = energyCost + fixedCost - feedIncome
+        const AS = k_nom - J_nom
+        return {k_nom,J_nom,AS,PN,UN,SN,DN,feedIncome,saving:AS}
+      }
+    }
+
+    function irr(cfs){
+      let low=-0.99, high=10.0
+      const npv=(r)=>cfs.reduce((s,c,i)=>s + c/Math.pow(1+r,i),0)
+      let fL=npv(low), fH=npv(high)
+      let expand=0
+      while(fL*fH>0 && expand<20){
+        high*=2
+        fH=npv(high)
+        expand++
+      }
+      if(fL*fH>0) return null
+      for(let i=0;i<200;i++){
+        const mid=(low+high)/2
+        const fM=npv(mid)
+        if(Math.abs(fM)<1e-8 || Math.abs(high-low)<1e-7) return mid
+        if(fL*fM<=0){
+          high=mid; fH=fM
+        }else{
+          low=mid; fL=fM
+        }
+      }
+      return (low+high)/2
+    }
+
+    function num(v,d=0){return isFinite(v)?Number(v).toFixed(d):'—'}
+    function cur2(v){return isFinite(v)?('$'+Number(v).toFixed(2)):'—'}
+
+    function renderYear1Details(E,x,z,y,q,P,a,r1,r2,mode){
+      const year=1
+      const A = E*x + 365*z
+      const infl = Math.pow(1+q,year)
+      const PN = pn_year(P,r1,r2,year)
+      const UN = Math.min(a*PN,E)
+      const SN = Math.max(PN-UN,0)
+      const DN = Math.max(E-UN,0)
+      const k_nom = A*infl
+      let html = ''
+      html += '<table><thead><tr>'+
+              '<th>项目</th><th>公式</th><th>数值</th>'+
+              '</tr></thead><tbody>'
+      html += '<tr><td>A（未装首年基准电费）</td><td>E*x + 365*z</td><td>'+cur2(A)+'</td></tr>'
+      html += '<tr><td>膨胀因子</td><td>(1+q)^1</td><td>'+num(infl,4)+'</td></tr>'
+      html += '<tr><td>PN（首年发电量）</td><td>P*(1-r1)</td><td>'+num(PN,0)+' kWh</td></tr>'
+      html += '<tr><td>UN（自用电量）</td><td>min(a*PN, E)</td><td>'+num(UN,0)+' kWh</td></tr>'
+      html += '<tr><td>SN（售电电量）</td><td>PN - UN</td><td>'+num(SN,0)+' kWh</td></tr>'
+      html += '<tr><td>DN（购电电量）</td><td>E - UN</td><td>'+num(DN,0)+' kWh</td></tr>'
+      html += '<tr><td>k_nom（未装首年电费）</td><td>A*(1+q)</td><td>'+cur2(k_nom)+'</td></tr>'
+      if(mode==='non_net'){
+        const C_nom = (DN*x + 365*z)*infl
+        const G_nom = SN*y
+        const J_nom = C_nom - G_nom
+        const AS = k_nom - J_nom
+        html += '<tr><td>C_nom（装后购电费）</td><td>(DN*x + 365*z)*(1+q)</td><td>'+cur2(C_nom)+'</td></tr>'
+        html += '<tr><td>G_nom（售电收入）</td><td>SN*y</td><td>'+cur2(G_nom)+'</td></tr>'
+        html += '<tr><td>J_nom（装后电费合计）</td><td>C_nom - G_nom</td><td>'+cur2(J_nom)+'</td></tr>'
+        html += '<tr><td>AS（首年节省）</td><td>k_nom - J_nom</td><td>'+cur2(AS)+'</td></tr>'
+      }else{
+        const energyCost = Math.max(DN-SN,0)*x*infl
+        const fixedCost = 365*z*infl
+        const feedIncome = Math.max(SN-DN,0)*y
+        const J_nom = energyCost + fixedCost - feedIncome
+        const AS = k_nom - J_nom
+        html += '<tr><td>能量费用</td><td>max(DN-SN,0)*x*(1+q)</td><td>'+cur2(energyCost)+'</td></tr>'
+        html += '<tr><td>固定日费</td><td>365*z*(1+q)</td><td>'+cur2(fixedCost)+'</td></tr>'
+        html += '<tr><td>馈网收入</td><td>max(SN-DN,0)*y</td><td>'+cur2(feedIncome)+'</td></tr>'
+        html += '<tr><td>J_nom（装后电费合计）</td><td>能量费用+固定日费-馈网收入</td><td>'+cur2(J_nom)+'</td></tr>'
+        html += '<tr><td>AS（首年节省）</td><td>k_nom - J_nom</td><td>'+cur2(AS)+'</td></tr>'
+      }
+      html += '</tbody></table>'
+      document.getElementById('year1Details').innerHTML = html
+    }
+
+    function renderYearTable(rows){
+      let html = '<table><thead><tr>'+
+                 '<th>年</th>'+
+                 '<th>PN<br><span style="font-size:10px;font-weight:400">发电量(kWh)</span></th>'+
+                 '<th>UN<br><span style="font-size:10px;font-weight:400">自用电量(kWh)</span></th>'+
+                 '<th>SN<br><span style="font-size:10px;font-weight:400">售电量(kWh)</span></th>'+
+                 '<th>DN<br><span style="font-size:10px;font-weight:400">购电量(kWh)</span></th>'+
+                 '<th>k_nom<br><span style="font-size:10px;font-weight:400">未装电费($)</span></th>'+
+                 '<th>J_nom<br><span style="font-size:10px;font-weight:400">装后电费($)</span></th>'+
+                 '<th>AS<br><span style="font-size:10px;font-weight:400">年度节省($)</span></th>'+
+                 '</tr></thead><tbody>'
+      for(const r of rows){
+        html += '<tr>'+
+                '<td>'+r.n+'</td>'+
+                '<td>'+num(r.PN,0)+' kWh</td>'+
+                '<td>'+num(r.UN,0)+' kWh</td>'+
+                '<td>'+num(r.SN,0)+' kWh</td>'+
+                '<td>'+num(r.DN,0)+' kWh</td>'+
+                '<td>'+cur2(r.k_nom)+'</td>'+
+                '<td>'+cur2(r.J_nom)+'</td>'+
+                '<td>'+cur2(r.AS)+'</td>'+
+                '</tr>'
+      }
+      html += '</tbody></table>'
+      document.getElementById('yearTable').innerHTML = html
+    }
+
+    function renderIRRTable(cfs,Nbat,details){
+      let html = '<table><thead><tr>'+
+                 '<th>年</th>'+
+                 '<th>年度节省($)<br><span style="font-size:10px;font-weight:400">未装-装后电费</span></th>'+
+                 '<th>上网收益($)<br><span style="font-size:10px;font-weight:400">售电收入</span></th>'+
+                 '<th>系统投入($)<br><span style="font-size:10px;font-weight:400">成本支出</span></th>'+
+                 '<th>现金流 CF_n($)</th>'+
+                 '</tr></thead><tbody>'
+      html += '<tr>'+
+              '<td>0</td>'+
+              '<td>-</td>'+
+              '<td>-</td>'+
+              '<td>'+cur2(-cfs[0])+'</td>'+
+              '<td style="color:#ef4444">'+cur2(cfs[0])+'</td>'+
+              '</tr>'
+      for(let n=1;n<cfs.length;n++){
+        const d = details[n-1]
+        const invest = (n===Nbat)?d.batteryReplace:0
+        const color = cfs[n]>=0?'#10b981':'#ef4444'
+        html += '<tr>'+
+                '<td>'+n+'</td>'+
+                '<td>'+cur2(d.saving)+'</td>'+
+                '<td>'+cur2(d.feedIncome)+'</td>'+
+                '<td>'+(invest>0?cur2(invest):'-')+'</td>'+
+                '<td style="color:'+color+'">'+cur2(cfs[n])+'</td>'+
+                '</tr>'
+      }
+      html += '</tbody></table>'
+      document.getElementById('irrTable').innerHTML = html
+    }
+
+    function paybackMonths(E,x,z,y,q,P,a,r1,r2,H,Hbat,Nbat,mode,pbMode){
+      let cum=-H
+      const months=240
+      const monthlyReserve = Hbat/(Nbat*12)
+      for(let m=1;m<=months;m++){
+        const year = Math.ceil(m/12)
+        const res = computeYear(E,x,z,y,q,P,a,r1,r2,year,mode)
+        let cfMonth = res.AS/12
+        if(pbMode==='amort'){
+          if(m<=Nbat*12) cfMonth -= monthlyReserve
+        }else{
+          if(m===Nbat*12) cfMonth -= Hbat
+        }
+        cum += cfMonth
+        if(cum>=0){
+          if(m===1) return {months:m,label:'立即回本'}
+          const yearsF=(m/12)
+          return {months:m,label:yearsF.toFixed(2)+" 年"}
+        }
+      }
+      return {months:null,label:'大于20年'}
+    }
+
+    document.getElementById('calc').addEventListener('click',function(){
+      console.log('🔄 计算按钮被点击');
+      const E = val('E')
+      const x = val('x')
+      const z = val('z')
+      const y = val('y')
+      const q = val('q')/100
+      const H = val('H')
+      const P = val('P')
+      const a = val('a')/100
+      const r1 = val('r1')/100
+      const r2 = val('r2')/100
+      const Hbat = val('Hbat')
+      const Nbat = Math.max(1,Math.floor(val('Nbat')||10))
+      const mode = document.getElementById('mode').value
+      const pbMode = document.getElementById('pbMode').value
+      
+      console.log('📊 读取的参数:', {E,x,z,y,q,H,P,a,r1,r2,Hbat,Nbat,mode,pbMode})
+
+      const y1 = computeYear(E,x,z,y,q,P,a,r1,r2,1,mode)
+      console.log('💰 首年计算结果:', y1)
+      document.getElementById('kpiSaving').textContent = cur(y1.AS)
+      console.log('✏️ 更新年度节省为:', cur(y1.AS))
+
+      const pb = paybackMonths(E,x,z,y,q,P,a,r1,r2,H,Hbat,Nbat,mode,pbMode)
+      document.getElementById('kpiPayback').textContent = pb.label
+      document.getElementById('kpiPaybackNote').textContent = pb.months?("≈ "+pb.months+" 个月"):''
+
+      const cfs=[-H]
+      const irrDetails=[]
+      for(let n=1;n<=20;n++){
+        const res=computeYear(E,x,z,y,q,P,a,r1,r2,n,mode)
+        const v=res.AS
+        let cf=v
+        if(n===Nbat) cf -= Hbat
+        cfs.push(cf)
+        irrDetails.push({
+          saving:res.saving,
+          feedIncome:res.feedIncome,
+          batteryReplace:Hbat
+        })
+      }
+      const r=irr(cfs)
+      document.getElementById('kpiIRR').textContent = r==null?'—':pct(r)
+
+      // 渲染计算过程
+      renderYear1Details(E,x,z,y,q,P,a,r1,r2,mode)
+      const rows=[]
+      for(let n=1;n<=20;n++){
+        const res=computeYear(E,x,z,y,q,P,a,r1,r2,n,mode)
+        rows.push({n, PN:res.PN, UN:res.UN, SN:res.SN, DN:res.DN, k_nom:res.k_nom, J_nom:res.J_nom, AS:res.AS})
+      }
+      renderYearTable(rows)
+      renderIRRTable(cfs,Nbat,irrDetails)
+    })
+  </script>
+</body>
+</html>
