@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光伏报价计算器 - 1014版</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .config-section { border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .sticky-top-custom { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; }
+        .result-card { border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .detail-table { font-size: 0.85rem; }
+        .detail-table th { background-color: #f8f9fa; }
+        #leftPanel { font-size: 0.9rem; }
+        .calculation-step { border-left: 3px solid #007bff; padding-left: 15px; margin-bottom: 20px; }
+        .formula-box { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="leftPanel" class="col-md-3 sticky-top-custom">
+                <h4 class="mb-3">输入参数</h4>
+                <div class="alert alert-secondary py-2 px-3 mb-3">
+                    <strong>模式：</strong>
+                    <select id="modeSelector" class="form-select form-select-sm mt-2">
+                        <option value="new">新建系统</option>
+                        <option value="retrofit">储能扩容</option>
+                    </select>
+                </div>
+                <div class="config-section">
+                    <h6>上游输入</h6>
+                    <div class="mb-2">
+                        <label>屋顶最大装机容量 (kW)</label>
+                        <input type="number" id="roof_max_power_kw" class="form-control form-control-sm" value="20" step="0.1">
+                    </div>
+                </div>
+                <div class="config-section section-new">
+                    <h6>新建系统 - 方案参数</h6>
+                    <div class="row g-2">
+                        <div class="col-6"><label class="form-label small">A容量系数</label><input type="number" id="plan_a_capacity_factor" class="form-control form-control-sm" value="0.5" step="0.1"></div>
+                        <div class="col-6"><label class="form-label small">A目标自用率</label><input type="number" id="plan_a_target_sc_rate" class="form-control form-control-sm" value="0.4" step="0.1"></div>
+                        <div class="col-6"><label class="form-label small">B容量系数</label><input type="number" id="plan_b_capacity_factor" class="form-control form-control-sm" value="0.7" step="0.1"></div>
+                        <div class="col-6"><label class="form-label small">B目标自用率</label><input type="number" id="plan_b_target_sc_rate" class="form-control form-control-sm" value="0.6" step="0.1"></div>
+                        <div class="col-6"><label class="form-label small">C容量系数</label><input type="number" id="plan_c_capacity_factor" class="form-control form-control-sm" value="0.9" step="0.1"></div>
+                        <div class="col-6"><label class="form-label small">C目标自用率</label><input type="number" id="plan_c_target_sc_rate" class="form-control form-control-sm" value="0.8" step="0.1"></div>
+                    </div>
+                </div>
+                <div class="config-section">
+                    <h6>技术参数</h6>
+                    <div class="mb-2"><label class="small">单块面板功率 (kW)</label><input type="number" id="panel_power_kw" class="form-control form-control-sm" value="0.44" step="0.01"></div>
+                    <div class="mb-2"><label class="small">容配比 (DC/AC)</label><input type="number" id="dc_ac_ratio" class="form-control form-control-sm" value="1.5" step="0.01"></div>
+                    <div class="mb-2"><label class="small">基线自用率</label><input type="number" id="baseline_self_consumption_rate" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">电池DoD</label><input type="number" id="battery_dod" class="form-control form-control-sm" value="0.9" step="0.01"></div>
+                    <div class="mb-2"><label class="small">电池RTE</label><input type="number" id="battery_rte" class="form-control form-control-sm" value="0.95" step="0.01"></div>
+                    <div class="mb-2"><label class="small">年发电量/kW (kWh)</label><input type="number" id="yield_per_kw_per_year" class="form-control form-control-sm" value="1526" step="1"></div>
+                </div>
+                <div class="config-section section-new">
+                    <h6>成本与利润率</h6>
+                    <div class="mb-2"><label class="small">面板单价 (AUD/块)</label><input type="number" id="panel_unit_cost" class="form-control form-control-sm" value="80" step="1"></div>
+                    <div class="mb-2"><label class="small">逆变器单价 (AUD/kW)</label><input type="number" id="inverter_unit_cost_per_kw" class="form-control form-control-sm" value="200" step="1"></div>
+                    <div class="mb-2"><label class="small">电池单价 (AUD/kWh)</label><input type="number" id="battery_unit_cost_per_kwh" class="form-control form-control-sm" value="320" step="1"></div>
+                    <div class="mb-2"><label class="small">安装基础费 (AUD)</label><input type="number" id="install_base_cost" class="form-control form-control-sm" value="1000" step="10"></div>
+                    <div class="mb-2"><label class="small">安装单价 (AUD/kW)</label><input type="number" id="install_cost_per_kw" class="form-control form-control-sm" value="150" step="1"></div>
+                    <div class="mb-2"><label class="small">面板利润率</label><input type="number" id="panel_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">逆变器利润率</label><input type="number" id="inverter_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">电池利润率</label><input type="number" id="battery_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">安装基础费利润率</label><input type="number" id="install_base_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">安装单价利润率</label><input type="number" id="install_cost_per_kw_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">电池安装基础费 (AUD)</label><input type="number" id="battery_install_base_cost" class="form-control form-control-sm" value="1000" step="10"></div>
+                    <div class="mb-2"><label class="small">电池安装单价 (AUD/kWh)</label><input type="number" id="battery_install_cost_per_kwh" class="form-control form-control-sm" value="250" step="1"></div>
+                    <div class="mb-2"><label class="small">电池安装基础费利润率</label><input type="number" id="battery_install_base_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                    <div class="mb-2"><label class="small">电池安装单价利润率</label><input type="number" id="battery_install_cost_per_kwh_profit_margin" class="form-control form-control-sm" value="0.3" step="0.01"></div>
+                </div>
+                <div class="config-section section-new">
+                    <h6>补贴参数</h6>
+                    <div class="mb-2"><label class="small">STC地区倍率</label><input type="number" id="stc_zone_rating" class="form-control form-control-sm" value="1.382" step="0.001"></div>
+                    <div class="mb-2"><label class="small">STC折算年数</label><input type="number" id="stc_deeming_period_years" class="form-control form-control-sm" value="6" step="1"></div>
+                    <div class="mb-2"><label class="small">面板STC单价 (AUD)</label><input type="number" id="pv_stc_price_default" class="form-control form-control-sm" value="40" step="1"></div>
+                    <div class="mb-2"><label class="small">电池STC系数 (STCs/kWh)</label><input type="number" id="stc_factor_per_kwh_battery" class="form-control form-control-sm" value="9.3" step="0.1"></div>
+                    <div class="mb-2"><label class="small">电池STC单价 (AUD)</label><input type="number" id="battery_stc_price_default" class="form-control form-control-sm" value="40" step="1"></div>
+                    <div class="mb-2"><label class="small">最大STC系统容量 (kW)</label><input type="number" id="max_stc_system_kw" class="form-control form-control-sm" value="100" step="1"></div>
+                    <div class="mb-2"><label class="small">VIC州PV补贴 (AUD)</label><input type="number" id="solar_vic_rebate" class="form-control form-control-sm" value="1400" step="10"></div>
+                    <div class="mb-2"><label class="small">VIC州无息贷款 (AUD)</label><input type="number" id="solar_vic_pv_interest_free_loan" class="form-control form-control-sm" value="1400" step="10"></div>
+                    <div class="mb-2"><label class="small">其他政府补贴 (AUD)</label><input type="number" id="other_gov_subsidy" class="form-control form-control-sm" value="0" step="10"></div>
+                    <div class="mb-2"><label class="small">其他补贴 (AUD)</label><input type="number" id="other_subsidy" class="form-control form-control-sm" value="0" step="10"></div>
+                </div>
+                <div class="config-section">
+                    <h6>通用参数</h6>
+                    <div class="mb-2"><label class="small">GST税率</label><input type="number" id="gst_rate" class="form-control form-control-sm" value="0.1" step="0.01"></div>
+                    <div class="mb-2"><label class="small">安装商附加费 (AUD)</label><input type="number" id="installer_additional_fee" class="form-control form-control-sm" value="0" step="10"></div>
+                </div>
+                <div class="config-section section-retrofit" style="display:none;">
+                    <h6>储能扩容参数</h6>
+                    <div class="mb-2"><label class="small">屋顶使用系数</label><input type="number" id="rooftop_use_factor" class="form-control form-control-sm" value="0.7" step="0.01"></div>
+                </div>
+                <button class="btn btn-primary w-100 mt-3" onclick="calculate()">重新计算</button>
+            </div>
+            <div id="middlePanel" class="col-md-5">
+                <h4 class="mb-3">计算过程详解</h4>
+                <div class="d-flex gap-2 mb-3">
+                    <select id="planSelector" class="form-select form-select-sm" style="width:auto">
+                        <option value="A">方案A</option>
+                        <option value="B">方案B</option>
+                        <option value="C">方案C</option>
+                    </select>
+                </div>
+                <div id="calculationSteps"></div>
+            </div>
+            <div id="rightPanel" class="col-md-4">
+                <h4 class="mb-3">计算结果</h4>
+                <div id="resultsContainer"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const GS_MAPPING = [
+            { min: 0, max: 5, battery: 20.2, inverter: 8 },
+            { min: 5, max: 7.5, battery: 20, inverter: 9.6 },
+            { min: 7.5, max: 12, battery: 26.4, inverter: 9.994 },
+            { min: 12, max: 20, battery: 25.24, inverter: 9.3 }
+        ];
+        const GD_MAPPING = [
+            { min: 0, max: 5, battery: 13.5, inverter: 5 },
+            { min: 5, max: 7.5, battery: 13.34, inverter: 5 },
+            { min: 7.5, max: 12, battery: 15.6, inverter: 7.22 },
+            { min: 12, max: 20, battery: 20, inverter: 10 },
+            { min: 20, max: 100, battery: 37.74, inverter: 15 }
+        ];
+        const RETROFIT_MAPPING = [
+            { min: 0, max: 5, a: 10, b: 13.5, c: 15 },
+            { min: 5, max: 7.5, a: 10, b: 13.5, c: 19.2 },
+            { min: 7.5, max: 12, a: 13.8, b: 16, c: 23.4 },
+            { min: 12, max: 20, a: 19.2, b: 23.4, c: 30 },
+            { min: 20, max: 100, a: 30, b: 43, c: 50 }
+        ];
+
+        function getVal(id) {
+            const el = document.getElementById(id);
+            return el ? parseFloat(el.value) || 0 : 0;
+        }
+
+        function findMapping(arr, kw) {
+            for (let i = 0; i < arr.length; i++) {
+                if (kw > arr[i].min && kw <= arr[i].max) return arr[i];
+            }
+            return arr[arr.length - 1];
+        }
+
+        function calculate() {
+            const mode = document.getElementById('modeSelector').value;
+            if (mode === 'new') {
+                calculateNewSystem();
+            } else {
+                calculateRetrofit();
+            }
+        }
+
+        function calculateNewSystem() {
+            const roofMaxPower = getVal('roof_max_power_kw');
+            const panelPower = getVal('panel_power_kw');
+            const dcAcRatio = getVal('dc_ac_ratio');
+            const baselineSc = getVal('baseline_self_consumption_rate');
+            const batteryDod = getVal('battery_dod');
+            const batteryRte = getVal('battery_rte');
+            const yieldPerKw = getVal('yield_per_kw_per_year');
+            
+            const plans = {
+                A: { cf: getVal('plan_a_capacity_factor'), sc: getVal('plan_a_target_sc_rate'), type: 'GS' },
+                B: { cf: getVal('plan_b_capacity_factor'), sc: getVal('plan_b_target_sc_rate'), type: 'GD' },
+                C: { cf: getVal('plan_c_capacity_factor'), sc: getVal('plan_c_target_sc_rate'), type: 'CALC' }
+            };
+
+            const results = {};
+            Object.entries(plans).forEach(([key, p]) => {
+                const solarKw = roofMaxPower * p.cf;
+                const panelCount = Math.floor(solarKw / panelPower);
+                const annualGeneration = solarKw * yieldPerKw;
+                
+                let inverterKw, usableBattery;
+                if (p.type === 'GS') {
+                    const map = findMapping(GS_MAPPING, solarKw);
+                    inverterKw = map.inverter;
+                    usableBattery = map.battery;
+                    if (solarKw > 20) usableBattery *= getVal('gs_battery_factor') || 1.3;
+                } else if (p.type === 'GD') {
+                    const map = findMapping(GD_MAPPING, solarKw);
+                    inverterKw = map.inverter;
+                    usableBattery = map.battery;
+                } else {
+                    inverterKw = Math.ceil((solarKw / dcAcRatio) * 10) / 10;
+                    const dailyShift = (annualGeneration / 365) * (p.sc - baselineSc);
+                    usableBattery = Math.min(dailyShift / batteryRte, 50);
+                }
+                
+                const nominalBattery = usableBattery / batteryDod;
+                
+                const panelUnitCost = getVal('panel_unit_cost');
+                const inverterUnitCostPerKw = getVal('inverter_unit_cost_per_kw');
+                const batteryUnitCostPerKwh = getVal('battery_unit_cost_per_kwh');
+                const installBaseCost = getVal('install_base_cost');
+                const installCostPerKw = getVal('install_cost_per_kw');
+                const panelMargin = getVal('panel_profit_margin');
+                const inverterMargin = getVal('inverter_profit_margin');
+                const batteryMargin = getVal('battery_profit_margin');
+                const installBaseMargin = getVal('install_base_profit_margin');
+                const installPerKwMargin = getVal('install_cost_per_kw_profit_margin');
+                const batteryInstallBaseCost = getVal('battery_install_base_cost');
+                const batteryInstallCostPerKwh = getVal('battery_install_cost_per_kwh');
+                const batteryInstallBaseMargin = getVal('battery_install_base_profit_margin');
+                const batteryInstallPerKwhMargin = getVal('battery_install_cost_per_kwh_profit_margin');
+                
+                const panelLineCost = panelUnitCost * panelCount;
+                const panelLinePrice = panelLineCost * (1 + panelMargin);
+                const inverterLineCost = inverterKw * inverterUnitCostPerKw;
+                const inverterLinePrice = inverterLineCost * (1 + inverterMargin);
+                const batteryLineCost = nominalBattery * batteryUnitCostPerKwh;
+                const batteryLinePrice = batteryLineCost * (1 + batteryMargin);
+                
+                const keyProductsTotalCost = panelLineCost + inverterLineCost + batteryLineCost;
+                const keyProductsTotalPrice = panelLinePrice + inverterLinePrice + batteryLinePrice;
+                
+                const installBaseLineCost = installBaseCost;
+                const installBaseLinePrice = installBaseLineCost * (1 + installBaseMargin);
+                const installPerKwLineCost = solarKw * installCostPerKw;
+                const installPerKwLinePrice = installPerKwLineCost * (1 + installPerKwMargin);
+                const batteryInstallBaseLineCost = batteryInstallBaseCost;
+                const batteryInstallBaseLinePrice = batteryInstallBaseLineCost * (1 + batteryInstallBaseMargin);
+                const batteryInstallPerKwhLineCost = nominalBattery * batteryInstallCostPerKwh;
+                const batteryInstallPerKwhLinePrice = batteryInstallPerKwhLineCost * (1 + batteryInstallPerKwhMargin);
+                
+                const bosTotalCost = installBaseLineCost + installPerKwLineCost + batteryInstallBaseLineCost + batteryInstallPerKwhLineCost;
+                const bosTotalPrice = installBaseLinePrice + installPerKwLinePrice + batteryInstallBaseLinePrice + batteryInstallPerKwhLinePrice;
+                
+                const additionalCharges = getVal('installer_additional_fee');
+                const gstRate = getVal('gst_rate');
+                
+                const systemTotalPriceBeforeGst = keyProductsTotalPrice + bosTotalPrice + additionalCharges;
+                const systemTotalCostBeforeGst = keyProductsTotalCost + bosTotalCost + additionalCharges;
+                const gstPrice = systemTotalPriceBeforeGst * gstRate;
+                const gstCost = systemTotalCostBeforeGst * gstRate;
+                const systemTotalPrice = systemTotalPriceBeforeGst + gstPrice;
+                const systemTotalCost = systemTotalCostBeforeGst + gstCost;
+                
+                const stcZoneRating = getVal('stc_zone_rating');
+                const stcDeemingYears = getVal('stc_deeming_period_years');
+                const maxStcSystemKw = getVal('max_stc_system_kw');
+                const pvStcPrice = getVal('pv_stc_price_default');
+                const batteryStcFactor = getVal('stc_factor_per_kwh_battery');
+                const batteryStcPrice = getVal('battery_stc_price_default');
+                const solarVicRebate = getVal('solar_vic_rebate');
+                const solarVicLoan = getVal('solar_vic_pv_interest_free_loan');
+                const otherGovSubsidy = getVal('other_gov_subsidy');
+                const otherSubsidy = getVal('other_subsidy');
+                
+                const pvStcCount = Math.floor(Math.min(solarKw, maxStcSystemKw) * stcZoneRating * stcDeemingYears);
+                const pvStcRebate = pvStcCount * pvStcPrice;
+                const batteryStcCount = Math.floor(usableBattery * batteryStcFactor);
+                const batteryStcRebate = batteryStcCount * batteryStcPrice;
+                const totalDeductions = pvStcRebate + batteryStcRebate + solarVicRebate + solarVicLoan + otherGovSubsidy + otherSubsidy;
+                
+                const totalCost = systemTotalCost - totalDeductions;
+                const finalPrice = systemTotalPrice - totalDeductions;
+                const grossProfit = finalPrice - totalCost;
+                const grossMargin = finalPrice > 0 ? (grossProfit / finalPrice * 100) : 0;
+                
+                results[key] = {
+                    solarKw, panelCount, inverterKw, usableBattery, nominalBattery, annualGeneration,
+                    panelLineCost, panelLinePrice, inverterLineCost, inverterLinePrice,
+                    batteryLineCost, batteryLinePrice, keyProductsTotalCost, keyProductsTotalPrice,
+                    installBaseLineCost, installBaseLinePrice, installPerKwLineCost, installPerKwLinePrice,
+                    batteryInstallBaseLineCost, batteryInstallBaseLinePrice,
+                    batteryInstallPerKwhLineCost, batteryInstallPerKwhLinePrice,
+                    bosTotalCost, bosTotalPrice, additionalCharges, gstPrice, gstCost,
+                    systemTotalPrice, systemTotalCost, pvStcRebate, batteryStcRebate,
+                    solarVicRebate, solarVicLoan, otherGovSubsidy, otherSubsidy, totalDeductions,
+                    totalCost, finalPrice, grossProfit, grossMargin
+                };
+            });
+            
+            displayNewSystemResults(results);
+            const selectedPlan = document.getElementById('planSelector').value;
+            displayNewSystemSteps(selectedPlan, results[selectedPlan]);
+        }
+        function calculateRetrofit() {
+            const roofMaxPower = getVal('roof_max_power_kw');
+            const rooftopUseFactor = getVal('rooftop_use_factor');
+            const panelPower = getVal('panel_power_kw');
+            const batteryDod = getVal('battery_dod');
+            const batteryRte = getVal('battery_rte');
+            
+            const solarKw = roofMaxPower * rooftopUseFactor;
+            const panelCount = Math.floor(solarKw / panelPower);
+            
+            const map = findMapping(RETROFIT_MAPPING, solarKw);
+            const plans = {
+                A: { usableBattery: map.a },
+                B: { usableBattery: map.b },
+                C: { usableBattery: map.c }
+            };
+            
+            const results = {};
+            Object.entries(plans).forEach(([key, p]) => {
+                const nominalBattery = p.usableBattery / batteryDod;
+                
+                const batteryUnitCostPerKwh = getVal('battery_unit_cost_per_kwh');
+                const batteryMargin = getVal('battery_profit_margin');
+                const batteryInstallBaseCost = getVal('battery_install_base_cost');
+                const batteryInstallCostPerKwh = getVal('battery_install_cost_per_kwh');
+                const batteryInstallBaseMargin = getVal('battery_install_base_profit_margin');
+                const batteryInstallPerKwhMargin = getVal('battery_install_cost_per_kwh_profit_margin');
+                
+                const batteryLineCost = nominalBattery * batteryUnitCostPerKwh;
+                const batteryLinePrice = batteryLineCost * (1 + batteryMargin);
+                const keyProductsTotalCost = batteryLineCost;
+                const keyProductsTotalPrice = batteryLinePrice;
+                
+                const batteryInstallBaseLineCost = batteryInstallBaseCost;
+                const batteryInstallBaseLinePrice = batteryInstallBaseLineCost * (1 + batteryInstallBaseMargin);
+                const batteryInstallPerKwhLineCost = nominalBattery * batteryInstallCostPerKwh;
+                const batteryInstallPerKwhLinePrice = batteryInstallPerKwhLineCost * (1 + batteryInstallPerKwhMargin);
+                const bosTotalCost = batteryInstallBaseLineCost + batteryInstallPerKwhLineCost;
+                const bosTotalPrice = batteryInstallBaseLinePrice + batteryInstallPerKwhLinePrice;
+                
+                const additionalCharges = getVal('installer_additional_fee');
+                const gstRate = getVal('gst_rate');
+                
+                const systemTotalPriceBeforeGst = keyProductsTotalPrice + bosTotalPrice + additionalCharges;
+                const systemTotalCostBeforeGst = keyProductsTotalCost + bosTotalCost + additionalCharges;
+                const gstPrice = systemTotalPriceBeforeGst * gstRate;
+                const gstCost = systemTotalCostBeforeGst * gstRate;
+                const systemTotalPrice = systemTotalPriceBeforeGst + gstPrice;
+                const systemTotalCost = systemTotalCostBeforeGst + gstCost;
+                
+                const batteryStcFactor = getVal('stc_factor_per_kwh_battery');
+                const batteryStcPrice = getVal('battery_stc_price_default');
+                const otherGovSubsidy = getVal('other_gov_subsidy');
+                const otherSubsidy = getVal('other_subsidy');
+                
+                const batteryStcCount = Math.floor(p.usableBattery * batteryStcFactor);
+                const batteryStcRebate = batteryStcCount * batteryStcPrice;
+                const totalDeductions = batteryStcRebate + otherGovSubsidy + otherSubsidy;
+                
+                const totalCost = systemTotalCost - totalDeductions;
+                const finalPrice = systemTotalPrice - totalDeductions;
+                const grossProfit = finalPrice - totalCost;
+                const grossMargin = finalPrice > 0 ? (grossProfit / finalPrice * 100) : 0;
+                
+                results[key] = {
+                    solarKw, panelCount, usableBattery: p.usableBattery, nominalBattery,
+                    batteryLineCost, batteryLinePrice, keyProductsTotalCost, keyProductsTotalPrice,
+                    batteryInstallBaseLineCost, batteryInstallBaseLinePrice,
+                    batteryInstallPerKwhLineCost, batteryInstallPerKwhLinePrice,
+                    bosTotalCost, bosTotalPrice, additionalCharges, gstPrice, gstCost,
+                    systemTotalPrice, systemTotalCost, batteryStcRebate, otherGovSubsidy,
+                    otherSubsidy, totalDeductions, totalCost, finalPrice, grossProfit, grossMargin
+                };
+            });
+            
+            displayRetrofitResults(results);
+            const selectedPlan = document.getElementById('planSelector').value;
+            displayRetrofitSteps(selectedPlan, results[selectedPlan]);
+        }
+
+        function displayNewSystemResults(results) {
+            let html = '';
+            ['A', 'B', 'C'].forEach(key => {
+                const r = results[key];
+                html += `
+                    <div class="result-card">
+                        <h5>方案${key}</h5>
+                        <table class="table table-sm mb-2">
+                            <tr><th>光伏容量</th><td>${r.solarKw.toFixed(2)} kW</td></tr>
+                            <tr><th>面板数量</th><td>${r.panelCount} 块</td></tr>
+                            <tr><th>逆变器功率</th><td>${r.inverterKw.toFixed(2)} kW</td></tr>
+                            <tr><th>电池容量(可用/标称)</th><td>${r.usableBattery.toFixed(2)} / ${r.nominalBattery.toFixed(2)} kWh</td></tr>
+                        </table>
+                        <h6>System Total Cost <button class="btn btn-sm btn-outline-secondary" onclick="toggleDetail('cost${key}')">展开</button></h6>
+                        <div id="cost${key}" style="display:none;">
+                            <table class="table table-sm detail-table">
+                                <thead><tr><th>项目</th><th>Line Cost</th></tr></thead>
+                                <tbody>
+                                    <tr><td colspan="2"><strong>Key Products</strong></td></tr>
+                                    <tr><td>面板</td><td>$${r.panelLineCost.toFixed(2)}</td></tr>
+                                    <tr><td>逆变器</td><td>$${r.inverterLineCost.toFixed(2)}</td></tr>
+                                    <tr><td>电池</td><td>$${r.batteryLineCost.toFixed(2)}</td></tr>
+                                    <tr><td><strong>Key Products Total</strong></td><td><strong>$${r.keyProductsTotalCost.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Balance of System</strong></td></tr>
+                                    <tr><td>安装基础费</td><td>$${r.installBaseLineCost.toFixed(2)}</td></tr>
+                                    <tr><td>安装单价</td><td>$${r.installPerKwLineCost.toFixed(2)}</td></tr>
+                                    <tr><td>电池安装基础费</td><td>$${r.batteryInstallBaseLineCost.toFixed(2)}</td></tr>
+                                    <tr><td>电池安装单价</td><td>$${r.batteryInstallPerKwhLineCost.toFixed(2)}</td></tr>
+                                    <tr><td><strong>BOS Total</strong></td><td><strong>$${r.bosTotalCost.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Additional Charges</strong></td></tr>
+                                    <tr><td>安装商附加费</td><td>$${r.additionalCharges.toFixed(2)}</td></tr>
+                                    <tr><td><strong>GST</strong></td><td><strong>$${r.gstCost.toFixed(2)}</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="mb-1"><strong>System Total Cost: $${r.systemTotalCost.toFixed(2)}</strong></p>
+                        <h6>System Total Price <button class="btn btn-sm btn-outline-secondary" onclick="toggleDetail('price${key}')">展开</button></h6>
+                        <div id="price${key}" style="display:none;">
+                            <table class="table table-sm detail-table">
+                                <thead><tr><th>项目</th><th>Line Price</th></tr></thead>
+                                <tbody>
+                                    <tr><td colspan="2"><strong>Key Products</strong></td></tr>
+                                    <tr><td>面板</td><td>$${r.panelLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td>逆变器</td><td>$${r.inverterLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td>电池</td><td>$${r.batteryLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td><strong>Key Products Total</strong></td><td><strong>$${r.keyProductsTotalPrice.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Balance of System</strong></td></tr>
+                                    <tr><td>安装基础费</td><td>$${r.installBaseLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td>安装单价</td><td>$${r.installPerKwLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td>电池安装基础费</td><td>$${r.batteryInstallBaseLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td>电池安装单价</td><td>$${r.batteryInstallPerKwhLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td><strong>BOS Total</strong></td><td><strong>$${r.bosTotalPrice.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Additional Charges</strong></td></tr>
+                                    <tr><td>安装商附加费</td><td>$${r.additionalCharges.toFixed(2)}</td></tr>
+                                    <tr><td><strong>GST</strong></td><td><strong>$${r.gstPrice.toFixed(2)}</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="mb-1"><strong>System Total Price: $${r.systemTotalPrice.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Total Deductions: $${r.totalDeductions.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Total Cost: $${r.totalCost.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Final Price: $${r.finalPrice.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Gross Profit: $${r.grossProfit.toFixed(2)}</strong></p>
+                        <p class="mb-0"><strong>Gross Margin: ${r.grossMargin.toFixed(2)}%</strong></p>
+                    </div>
+                `;
+            });
+            document.getElementById('resultsContainer').innerHTML = html;
+        }
+        function displayRetrofitResults(results) {
+            let html = '';
+            ['A', 'B', 'C'].forEach(key => {
+                const r = results[key];
+                html += `
+                    <div class="result-card">
+                        <h5>储能扩容${key}</h5>
+                        <table class="table table-sm mb-2">
+                            <tr><th>光伏容量</th><td>${r.solarKw.toFixed(2)} kW</td></tr>
+                            <tr><th>面板数量</th><td>${r.panelCount} 块</td></tr>
+                            <tr><th>电池容量(可用/标称)</th><td>${r.usableBattery.toFixed(2)} / ${r.nominalBattery.toFixed(2)} kWh</td></tr>
+                        </table>
+                        <h6>System Total Cost <button class="btn btn-sm btn-outline-secondary" onclick="toggleDetail('retrocost${key}')">展开</button></h6>
+                        <div id="retrocost${key}" style="display:none;">
+                            <table class="table table-sm detail-table">
+                                <thead><tr><th>项目</th><th>Line Cost</th></tr></thead>
+                                <tbody>
+                                    <tr><td colspan="2"><strong>Key Products</strong></td></tr>
+                                    <tr><td>电池</td><td>$${r.batteryLineCost.toFixed(2)}</td></tr>
+                                    <tr><td><strong>Key Products Total</strong></td><td><strong>$${r.keyProductsTotalCost.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Balance of System</strong></td></tr>
+                                    <tr><td>电池安装基础费</td><td>$${r.batteryInstallBaseLineCost.toFixed(2)}</td></tr>
+                                    <tr><td>电池安装单价</td><td>$${r.batteryInstallPerKwhLineCost.toFixed(2)}</td></tr>
+                                    <tr><td><strong>BOS Total</strong></td><td><strong>$${r.bosTotalCost.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Additional Charges</strong></td></tr>
+                                    <tr><td>安装商附加费</td><td>$${r.additionalCharges.toFixed(2)}</td></tr>
+                                    <tr><td><strong>GST</strong></td><td><strong>$${r.gstCost.toFixed(2)}</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="mb-1"><strong>System Total Cost: $${r.systemTotalCost.toFixed(2)}</strong></p>
+                        <h6>System Total Price <button class="btn btn-sm btn-outline-secondary" onclick="toggleDetail('retroprice${key}')">展开</button></h6>
+                        <div id="retroprice${key}" style="display:none;">
+                            <table class="table table-sm detail-table">
+                                <thead><tr><th>项目</th><th>Line Price</th></tr></thead>
+                                <tbody>
+                                    <tr><td colspan="2"><strong>Key Products</strong></td></tr>
+                                    <tr><td>电池</td><td>$${r.batteryLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td><strong>Key Products Total</strong></td><td><strong>$${r.keyProductsTotalPrice.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Balance of System</strong></td></tr>
+                                    <tr><td>电池安装基础费</td><td>$${r.batteryInstallBaseLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td>电池安装单价</td><td>$${r.batteryInstallPerKwhLinePrice.toFixed(2)}</td></tr>
+                                    <tr><td><strong>BOS Total</strong></td><td><strong>$${r.bosTotalPrice.toFixed(2)}</strong></td></tr>
+                                    <tr><td colspan="2"><strong>Additional Charges</strong></td></tr>
+                                    <tr><td>安装商附加费</td><td>$${r.additionalCharges.toFixed(2)}</td></tr>
+                                    <tr><td><strong>GST</strong></td><td><strong>$${r.gstPrice.toFixed(2)}</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="mb-1"><strong>System Total Price: $${r.systemTotalPrice.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Total Deductions: $${r.totalDeductions.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Total Cost: $${r.totalCost.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Final Price: $${r.finalPrice.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>Gross Profit: $${r.grossProfit.toFixed(2)}</strong></p>
+                        <p class="mb-0"><strong>Gross Margin: ${r.grossMargin.toFixed(2)}%</strong></p>
+                    </div>
+                `;
+            });
+            document.getElementById('resultsContainer').innerHTML = html;
+        }
+
+        function displayNewSystemSteps(plan, r) {
+            const steps = `
+                <div class="calculation-step">
+                    <h6>步骤1: 计算光伏容量</h6>
+                    <div class="formula-box">solar_kw = roof_max_power_kw × plan_${plan.toLowerCase()}_capacity_factor</div>
+                    <div class="mt-2">结果: ${r.solarKw.toFixed(2)} kW</div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤2: 计算面板数量</h6>
+                    <div class="formula-box">panel_count = FLOOR(solar_kw / panel_power_kw)</div>
+                    <div class="mt-2">结果: ${r.panelCount} 块</div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤3: 计算逆变器功率</h6>
+                    <div class="formula-box">方案${plan}使用${plan==='A'?'GS':plan==='B'?'GD':'计算'}方式</div>
+                    <div class="mt-2">结果: ${r.inverterKw.toFixed(2)} kW</div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤4: 计算电池容量</h6>
+                    <div class="formula-box">nominal_battery = usable_battery / battery_dod</div>
+                    <div class="mt-2">可用容量: ${r.usableBattery.toFixed(2)} kWh<br>标称容量: ${r.nominalBattery.toFixed(2)} kWh</div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤5: 计算成本与报价</h6>
+                    <div class="mt-2">
+                        <strong>System Total Cost:</strong> $${r.systemTotalCost.toFixed(2)}<br>
+                        <strong>System Total Price:</strong> $${r.systemTotalPrice.toFixed(2)}
+                    </div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤6: 计算补贴</h6>
+                    <div class="mt-2">
+                        <strong>Total Deductions:</strong> $${r.totalDeductions.toFixed(2)}<br>
+                        (PV STC: $${r.pvStcRebate.toFixed(2)} + Battery STC: $${r.batteryStcRebate.toFixed(2)} + 其他)
+                    </div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤7: 最终价格</h6>
+                    <div class="mt-2">
+                        <strong>Total Cost:</strong> $${r.totalCost.toFixed(2)}<br>
+                        <strong>Final Price:</strong> $${r.finalPrice.toFixed(2)}<br>
+                        <strong>Gross Profit:</strong> $${r.grossProfit.toFixed(2)}<br>
+                        <strong>Gross Margin:</strong> ${r.grossMargin.toFixed(2)}%
+                    </div>
+                </div>
+            `;
+            document.getElementById('calculationSteps').innerHTML = steps;
+        }
+
+        function displayRetrofitSteps(plan, r) {
+            const steps = `
+                <div class="calculation-step">
+                    <h6>步骤1: 计算已有光伏容量</h6>
+                    <div class="formula-box">solar_kw = roof_max_power_kw × rooftop_use_factor</div>
+                    <div class="mt-2">结果: ${r.solarKw.toFixed(2)} kW</div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤2: 查表获取电池容量</h6>
+                    <div class="formula-box">根据光伏容量区间查找储能扩容容量映射表</div>
+                    <div class="mt-2">可用容量: ${r.usableBattery.toFixed(2)} kWh<br>标称容量: ${r.nominalBattery.toFixed(2)} kWh</div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤3: 计算成本与报价</h6>
+                    <div class="mt-2">
+                        <strong>System Total Cost:</strong> $${r.systemTotalCost.toFixed(2)}<br>
+                        <strong>System Total Price:</strong> $${r.systemTotalPrice.toFixed(2)}
+                    </div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤4: 计算补贴</h6>
+                    <div class="mt-2">
+                        <strong>Total Deductions:</strong> $${r.totalDeductions.toFixed(2)}<br>
+                        (Battery STC: $${r.batteryStcRebate.toFixed(2)} + 其他)
+                    </div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤5: 最终价格</h6>
+                    <div class="mt-2">
+                        <strong>Total Cost:</strong> $${r.totalCost.toFixed(2)}<br>
+                        <strong>Final Price:</strong> $${r.finalPrice.toFixed(2)}<br>
+                        <strong>Gross Profit:</strong> $${r.grossProfit.toFixed(2)}<br>
+                        <strong>Gross Margin:</strong> ${r.grossMargin.toFixed(2)}%
+                    </div>
+                </div>
+            `;
+            document.getElementById('calculationSteps').innerHTML = steps;
+        }
+
+        function toggleDetail(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? '' : 'none';
+        }
+
+        function applyMode() {
+            const mode = document.getElementById('modeSelector').value;
+            document.querySelectorAll('.section-new').forEach(el => el.style.display = mode === 'new' ? '' : 'none');
+            document.querySelectorAll('.section-retrofit').forEach(el => el.style.display = mode === 'retrofit' ? '' : 'none');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('modeSelector').addEventListener('change', function() {
+                applyMode();
+                calculate();
+            });
+            document.getElementById('planSelector').addEventListener('change', calculate);
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', calculate);
+            });
+            applyMode();
+            calculate();
+        });
+    </script>
+</body>
+</html>
