@@ -156,7 +156,7 @@
 <div class="city-marker pointer-events-auto" data-city="Canberra" style="position:absolute; left:65%; top:60%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
 </div>
 <!-- 信息卡片 -->
-<div id="info-card" class="absolute top-4 right-4 bg-background-dark/95 dark:bg-background-light/95 text-content-dark dark:text-content-light border border-primary rounded-lg p-4 shadow-xl min-w-[220px] hidden">
+<div id="info-card" class="absolute bg-background-dark/95 dark:bg-background-light/95 text-content-dark dark:text-content-light border border-primary rounded-lg p-4 shadow-xl min-w-[220px] hidden" style="z-index: 100;">
 <div class="font-bold text-lg mb-2 text-primary" id="card-title"></div>
 <div class="text-sm space-y-1" id="card-content"></div>
 </div>
@@ -431,11 +431,48 @@ const citiesData = {
   'Hobart': { value: '$9,500', grade: 'B', payback: '5.3 Years' }
 };
 
+// 获取锚点坐标（相对于容器）
+function getAnchorPoint(targetEl, containerEl) {
+  const targetRect = targetEl.getBoundingClientRect();
+  const containerRect = containerEl.getBoundingClientRect();
+  
+  return {
+    x: targetRect.left - containerRect.left + targetRect.width / 2,
+    y: targetRect.top - containerRect.top + targetRect.height / 2
+  };
+}
+
+// 计算卡片位置（带碰撞检测）
+function computeCardPosition(anchor, cardWidth, cardHeight, containerWidth, containerHeight) {
+  const offset = 12; // 偏移量
+  const positions = [
+    { left: anchor.x + offset, top: anchor.y - cardHeight - offset }, // 右上
+    { left: anchor.x - cardWidth - offset, top: anchor.y - cardHeight - offset }, // 左上
+    { left: anchor.x + offset, top: anchor.y + offset }, // 右下
+    { left: anchor.x - cardWidth - offset, top: anchor.y + offset }  // 左下
+  ];
+  
+  // 找到第一个不溢出的位置
+  for (const pos of positions) {
+    if (pos.left >= 0 && pos.left + cardWidth <= containerWidth &&
+        pos.top >= 0 && pos.top + cardHeight <= containerHeight) {
+      return pos;
+    }
+  }
+  
+  // 都溢出则使用右上并限制边界
+  return {
+    left: Math.max(0, Math.min(positions[0].left, containerWidth - cardWidth)),
+    top: Math.max(0, Math.min(positions[0].top, containerHeight - cardHeight))
+  };
+}
+
 // 显示信息卡片
-function showCard(id, type) {
+function showCard(id, type, targetEl) {
   const card = document.getElementById('info-card');
   const title = document.getElementById('card-title');
   const content = document.getElementById('card-content');
+  const container = document.getElementById('map-container');
   
   const data = type === 'state' ? statesData[id] : citiesData[id];
   if (!data) return;
@@ -448,6 +485,24 @@ function showCard(id, type) {
   `;
   
   card.classList.remove('hidden');
+  
+  // 计算位置
+  if (targetEl) {
+    const anchor = getAnchorPoint(targetEl, container);
+    const cardRect = card.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    const pos = computeCardPosition(
+      anchor,
+      cardRect.width || 220,
+      cardRect.height || 120,
+      containerRect.width,
+      containerRect.height
+    );
+    
+    card.style.left = pos.left + 'px';
+    card.style.top = pos.top + 'px';
+  }
 }
 
 // 隐藏信息卡片
@@ -468,7 +523,8 @@ function init() {
   // 默认显示 QLD 卡片(州模式)
   mapContainer.addEventListener('mouseenter', () => {
     if (stateHotspots.style.display !== 'none') {
-      showCard('QLD', 'state');
+      const qldHotspot = document.querySelector('.state-hotspot[data-state="QLD"]');
+      showCard('QLD', 'state', qldHotspot);
     }
   });
   
@@ -476,7 +532,7 @@ function init() {
   document.querySelectorAll('.state-hotspot').forEach(hotspot => {
     hotspot.addEventListener('click', () => {
       const stateId = hotspot.getAttribute('data-state');
-      showCard(stateId, 'state');
+      showCard(stateId, 'state', hotspot);
     });
   });
   
@@ -484,7 +540,7 @@ function init() {
   document.querySelectorAll('.city-marker').forEach(marker => {
     marker.addEventListener('mouseenter', () => {
       const cityName = marker.getAttribute('data-city');
-      showCard(cityName, 'city');
+      showCard(cityName, 'city', marker);
     });
   });
   
@@ -492,15 +548,26 @@ function init() {
   document.querySelectorAll('#state-list li[data-state]').forEach(item => {
     item.addEventListener('click', () => {
       const stateId = item.getAttribute('data-state');
-      showCard(stateId, 'state');
+      const hotspot = document.querySelector(`.state-hotspot[data-state="${stateId}"]`);
+      showCard(stateId, 'state', hotspot);
     });
   });
   
-  // 城市列表点击
+  // 城市列表点击 - 自动切换到 City tab
   document.querySelectorAll('#city-list li[data-city]').forEach(item => {
     item.addEventListener('click', () => {
       const cityName = item.getAttribute('data-city');
-      showCard(cityName, 'city');
+      
+      // 自动切换到 City tab
+      if (stateHotspots.style.display !== 'none') {
+        tabCity.click();
+      }
+      
+      // 延迟显示卡片，确保标记已显示
+      setTimeout(() => {
+        const marker = document.querySelector(`.city-marker[data-city="${cityName}"]`);
+        showCard(cityName, 'city', marker);
+      }, 50);
     });
   });
   
@@ -516,7 +583,8 @@ function init() {
     stateHotspots.style.display = 'block';
     cityMarkers.style.display = 'none';
     hideCard();
-    showCard('QLD', 'state'); // 默认显示 QLD
+    const qldHotspot = document.querySelector('.state-hotspot[data-state="QLD"]');
+    showCard('QLD', 'state', qldHotspot); // 默认显示 QLD
   });
   
   tabCity.addEventListener('click', () => {
@@ -533,7 +601,8 @@ function init() {
   });
   
   // 初始显示 QLD 卡片
-  showCard('QLD', 'state');
+  const qldHotspot = document.querySelector('.state-hotspot[data-state="QLD"]');
+  showCard('QLD', 'state', qldHotspot);
 }
 
 // 页面加载完成后初始化
