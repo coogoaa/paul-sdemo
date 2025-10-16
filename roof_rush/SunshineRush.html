@@ -131,8 +131,35 @@
 </div>
 <div class="flex flex-col lg:flex-row gap-8">
 <div class="lg:w-2/3 relative">
-<div class="bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark p-6 flex items-center justify-center">
+<div id="map-container" class="bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark p-6 relative">
 <img src="pic/AU_map.png" alt="Australia Map" class="w-full h-auto max-w-2xl rounded-lg"/>
+<!-- 州热点层 -->
+<div id="state-hotspots" class="absolute inset-0 pointer-events-none">
+<div class="state-hotspot pointer-events-auto" data-state="WA" style="position:absolute; left:5%; top:30%; width:22%; height:40%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="NT" style="position:absolute; left:30%; top:18%; width:18%; height:35%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="SA" style="position:absolute; left:28%; top:50%; width:25%; height:30%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="QLD" style="position:absolute; left:55%; top:20%; width:25%; height:35%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="NSW" style="position:absolute; left:55%; top:48%; width:25%; height:22%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="VIC" style="position:absolute; left:52%; top:68%; width:18%; height:16%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="TAS" style="position:absolute; left:58%; top:85%; width:10%; height:8%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="ACT" style="position:absolute; left:64%; top:58%; width:4%; height:4%; cursor:pointer;"></div>
+</div>
+<!-- 城市标记层 -->
+<div id="city-markers" class="absolute inset-0 pointer-events-none" style="display:none;">
+<div class="city-marker pointer-events-auto" data-city="Perth" style="position:absolute; left:12%; top:50%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Darwin" style="position:absolute; left:39%; top:25%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Adelaide" style="position:absolute; left:40%; top:62%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Brisbane" style="position:absolute; left:70%; top:38%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Sydney" style="position:absolute; left:72%; top:56%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Melbourne" style="position:absolute; left:60%; top:72%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Hobart" style="position:absolute; left:62%; top:88%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Canberra" style="position:absolute; left:65%; top:60%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+</div>
+<!-- 信息卡片 -->
+<div id="info-card" class="absolute top-4 right-4 bg-background-dark/95 dark:bg-background-light/95 text-content-dark dark:text-content-light border border-primary rounded-lg p-4 shadow-xl min-w-[220px] hidden">
+<div class="font-bold text-lg mb-2 text-primary" id="card-title"></div>
+<div class="text-sm space-y-1" id="card-content"></div>
+</div>
 </div>
 </div>
 <div class="lg:w-1/3">
@@ -142,56 +169,56 @@
 </div>
 <div id="state-list" class="mt-6 flow-root">
 <ul class="-my-4 divide-y divide-border-light dark:divide-border-dark" role="list">
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="QLD">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">1</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Queensland</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$18,000 | A+ | 4.0 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="NSW">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">2</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">New South Wales</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$15,000 | A | 4.2 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="WA">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">3</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Western Australia</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$14,000 | A- | 4.8 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="ACT">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">4</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Australian Capital Territory</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$13,500 | A- | 4.4 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="VIC">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">5</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Victoria</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$12,000 | B+ | 4.5 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="NT">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">6</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Northern Territory</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$11,000 | A | 4.3 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="SA">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">7</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">South Australia</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$10,000 | B | 5.0 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="TAS">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">8</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Tasmania</p>
@@ -202,56 +229,56 @@
 </div>
 <div id="city-list" class="mt-6 flow-root" style="display: none;">
 <ul class="-my-4 divide-y divide-border-light dark:divide-border-dark" role="list">
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Brisbane">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">1</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Brisbane</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$18,500 | A+ | 3.9 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Sydney">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">2</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Sydney</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$15,500 | A | 4.1 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Perth">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">3</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Perth</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$14,500 | A- | 4.7 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Canberra">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">4</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Canberra</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$13,500 | A- | 4.4 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Melbourne">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">5</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Melbourne</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$12,500 | B+ | 4.4 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Darwin">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">6</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Darwin</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$11,500 | A | 4.2 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Adelaide">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">7</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Adelaide</p>
 <p class="text-sm text-subtle-light dark:text-subtle-dark">$10,500 | B+ | 4.9 Years</p>
 </div>
 </li>
-<li class="flex items-center space-x-4 py-4 group cursor-pointer">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Hobart">
 <div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">8</div>
 <div class="min-w-0 flex-1">
 <p class="text-base font-semibold group-hover:text-primary transition-colors">Hobart</p>
@@ -381,7 +408,7 @@
 </div>
 
 <script>
-// Australia Map Data and Interaction
+// 数据
 const statesData = {
   'WA': { name: 'Western Australia', value: '$14,000', grade: 'A-', payback: '4.8 Years' },
   'NT': { name: 'Northern Territory', value: '$11,000', grade: 'A', payback: '4.3 Years' },
@@ -404,200 +431,114 @@ const citiesData = {
   'Hobart': { value: '$9,500', grade: 'B', payback: '5.3 Years' }
 };
 
-// Create Australia Map SVG
-function createMap() {
-  const svg = document.getElementById('australia-map');
+// 显示信息卡片
+function showCard(id, type) {
+  const card = document.getElementById('info-card');
+  const title = document.getElementById('card-title');
+  const content = document.getElementById('card-content');
   
-  // State regions paths
-  const states = [
-    { id: 'WA', path: 'M 50,150 L 50,500 L 200,550 L 250,500 L 300,480 L 320,450 L 350,400 L 350,350 L 320,300 L 300,250 L 280,200 L 250,180 L 200,160 L 150,150 Z', label: { x: 175, y: 350 } },
-    { id: 'NT', path: 'M 320,100 L 320,450 L 350,450 L 380,430 L 420,400 L 450,350 L 470,300 L 480,250 L 480,200 L 470,150 L 450,120 L 420,100 Z', label: { x: 400, y: 280 } },
-    { id: 'SA', path: 'M 300,480 L 250,500 L 200,550 L 220,600 L 260,620 L 320,630 L 380,620 L 420,600 L 450,570 L 470,540 L 480,500 L 480,450 L 450,430 L 420,450 L 380,470 L 350,480 Z', label: { x: 350, y: 550 } },
-    { id: 'QLD', path: 'M 480,100 L 480,450 L 520,450 L 560,430 L 600,400 L 650,350 L 700,300 L 730,250 L 750,200 L 750,150 L 730,120 L 700,100 L 650,90 L 600,90 L 550,95 Z', label: { x: 615, y: 280 } },
-    { id: 'NSW', path: 'M 480,450 L 480,600 L 520,620 L 560,630 L 600,635 L 650,630 L 700,610 L 730,580 L 750,550 L 750,500 L 730,470 L 700,450 L 650,440 L 600,440 L 560,445 L 520,450 Z', label: { x: 615, y: 540 } },
-    { id: 'VIC', path: 'M 450,600 L 480,600 L 520,620 L 560,630 L 600,635 L 620,650 L 630,670 L 620,690 L 590,700 L 550,700 L 510,690 L 480,670 L 460,650 L 450,630 Z', label: { x: 540, y: 665 } },
-    { id: 'TAS', path: 'M 580,730 L 620,730 L 640,740 L 650,760 L 640,780 L 620,785 L 590,785 L 570,780 L 560,760 L 570,740 Z', label: { x: 605, y: 765, size: 16 } }
-  ];
+  const data = type === 'state' ? statesData[id] : citiesData[id];
+  if (!data) return;
   
-  // Draw state regions
-  states.forEach(state => {
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('class', 'state-region');
-    path.setAttribute('d', state.path);
-    path.setAttribute('fill', '#39E079');
-    path.setAttribute('fill-opacity', '0.3');
-    path.setAttribute('data-state', state.id);
-    svg.appendChild(path);
-    
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', state.label.x);
-    text.setAttribute('y', state.label.y);
-    text.setAttribute('font-size', state.label.size || 20);
-    text.setAttribute('font-weight', 'bold');
-    text.setAttribute('fill', 'currentColor');
-    text.setAttribute('text-anchor', 'middle');
-    text.textContent = state.id;
-    svg.appendChild(text);
-  });
+  title.textContent = type === 'state' ? data.name : id;
+  content.innerHTML = `
+    <div>Rooftop Value: ${data.value}</div>
+    <div>Sunlight Grade: ${data.grade}</div>
+    <div>Payback Period: ${data.payback}</div>
+  `;
   
-  // ACT (small circle)
-  const actCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  actCircle.setAttribute('class', 'state-region');
-  actCircle.setAttribute('cx', '650');
-  actCircle.setAttribute('cy', '590');
-  actCircle.setAttribute('r', '15');
-  actCircle.setAttribute('fill', '#39E079');
-  actCircle.setAttribute('fill-opacity', '0.5');
-  actCircle.setAttribute('data-state', 'ACT');
-  svg.appendChild(actCircle);
-  
-  const actText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  actText.setAttribute('x', '650');
-  actText.setAttribute('y', '595');
-  actText.setAttribute('font-size', '12');
-  actText.setAttribute('font-weight', 'bold');
-  actText.setAttribute('fill', 'currentColor');
-  actText.setAttribute('text-anchor', 'middle');
-  actText.textContent = 'ACT';
-  svg.appendChild(actText);
-  
-  // City markers group
-  const cityGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  cityGroup.setAttribute('id', 'city-markers');
-  cityGroup.style.display = 'none';
-  
-  const cities = [
-    { name: 'Perth', x: 120, y: 420 },
-    { name: 'Darwin', x: 400, y: 130 },
-    { name: 'Adelaide', x: 380, y: 580 },
-    { name: 'Brisbane', x: 700, y: 380 },
-    { name: 'Sydney', x: 720, y: 530 },
-    { name: 'Melbourne', x: 580, y: 660 },
-    { name: 'Hobart', x: 605, y: 765 },
-    { name: 'Canberra', x: 650, y: 590 }
-  ];
-  
-  cities.forEach(city => {
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('class', 'city-marker');
-    circle.setAttribute('cx', city.x);
-    circle.setAttribute('cy', city.y);
-    circle.setAttribute('r', '8');
-    circle.setAttribute('fill', '#FF6B6B');
-    circle.setAttribute('stroke', 'white');
-    circle.setAttribute('stroke-width', '2');
-    circle.setAttribute('data-city', city.name);
-    cityGroup.appendChild(circle);
-    
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', city.x);
-    text.setAttribute('y', city.y + 25);
-    text.setAttribute('font-size', '14');
-    text.setAttribute('fill', 'currentColor');
-    text.setAttribute('text-anchor', 'middle');
-    text.textContent = city.name;
-    cityGroup.appendChild(text);
-  });
-  
-  svg.appendChild(cityGroup);
+  card.classList.remove('hidden');
 }
 
-// Tooltip functionality
-function setupTooltips() {
-  const tooltip = document.getElementById('tooltip');
-  
-  // State tooltips
-  document.querySelectorAll('.state-region').forEach(region => {
-    region.addEventListener('mouseenter', (e) => {
-      const stateId = e.target.getAttribute('data-state');
-      const data = statesData[stateId];
-      if (data) {
-        tooltip.innerHTML = `
-          <div class="tooltip-title">${data.name}</div>
-          <div class="tooltip-content">
-            <div>Rooftop Value: ${data.value}</div>
-            <div>Sunlight Grade: ${data.grade}</div>
-            <div>Payback Period: ${data.payback}</div>
-          </div>
-        `;
-        tooltip.classList.add('show');
-      }
-    });
-    
-    region.addEventListener('mousemove', (e) => {
-      tooltip.style.left = (e.pageX + 15) + 'px';
-      tooltip.style.top = (e.pageY + 15) + 'px';
-    });
-    
-    region.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('show');
-    });
-  });
-  
-  // City tooltips
-  document.querySelectorAll('.city-marker').forEach(marker => {
-    marker.addEventListener('mouseenter', (e) => {
-      const cityName = e.target.getAttribute('data-city');
-      const data = citiesData[cityName];
-      if (data) {
-        tooltip.innerHTML = `
-          <div class="tooltip-title">${cityName}</div>
-          <div class="tooltip-content">
-            <div>Rooftop Value: ${data.value}</div>
-            <div>Sunlight Grade: ${data.grade}</div>
-            <div>Payback Period: ${data.payback}</div>
-          </div>
-        `;
-        tooltip.classList.add('show');
-      }
-    });
-    
-    marker.addEventListener('mousemove', (e) => {
-      tooltip.style.left = (e.pageX + 15) + 'px';
-      tooltip.style.top = (e.pageY + 15) + 'px';
-    });
-    
-    marker.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('show');
-    });
-  });
+// 隐藏信息卡片
+function hideCard() {
+  document.getElementById('info-card').classList.add('hidden');
 }
 
-// Tab switching functionality
-function setupTabs() {
+// 初始化
+function init() {
+  const mapContainer = document.getElementById('map-container');
+  const stateHotspots = document.getElementById('state-hotspots');
+  const cityMarkers = document.getElementById('city-markers');
   const tabState = document.getElementById('tab-state');
   const tabCity = document.getElementById('tab-city');
   const stateList = document.getElementById('state-list');
   const cityList = document.getElementById('city-list');
   
+  // 默认显示 QLD 卡片(州模式)
+  mapContainer.addEventListener('mouseenter', () => {
+    if (stateHotspots.style.display !== 'none') {
+      showCard('QLD', 'state');
+    }
+  });
+  
+  // 州热点点击
+  document.querySelectorAll('.state-hotspot').forEach(hotspot => {
+    hotspot.addEventListener('click', () => {
+      const stateId = hotspot.getAttribute('data-state');
+      showCard(stateId, 'state');
+    });
+  });
+  
+  // 城市标记悬停
+  document.querySelectorAll('.city-marker').forEach(marker => {
+    marker.addEventListener('mouseenter', () => {
+      const cityName = marker.getAttribute('data-city');
+      showCard(cityName, 'city');
+    });
+  });
+  
+  // 州列表点击
+  document.querySelectorAll('#state-list li[data-state]').forEach(item => {
+    item.addEventListener('click', () => {
+      const stateId = item.getAttribute('data-state');
+      showCard(stateId, 'state');
+    });
+  });
+  
+  // 城市列表点击
+  document.querySelectorAll('#city-list li[data-city]').forEach(item => {
+    item.addEventListener('click', () => {
+      const cityName = item.getAttribute('data-city');
+      showCard(cityName, 'city');
+    });
+  });
+  
+  // 标签切换
   tabState.addEventListener('click', () => {
-    // Update tabs
     tabState.classList.add('border-primary', 'text-primary');
     tabState.classList.remove('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
     tabCity.classList.remove('border-primary', 'text-primary');
     tabCity.classList.add('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
     
-    // Update lists
     stateList.style.display = 'block';
     cityList.style.display = 'none';
+    stateHotspots.style.display = 'block';
+    cityMarkers.style.display = 'none';
+    hideCard();
+    showCard('QLD', 'state'); // 默认显示 QLD
   });
   
   tabCity.addEventListener('click', () => {
-    // Update tabs
     tabCity.classList.add('border-primary', 'text-primary');
     tabCity.classList.remove('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
     tabState.classList.remove('border-primary', 'text-primary');
     tabState.classList.add('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
     
-    // Update lists
     stateList.style.display = 'none';
     cityList.style.display = 'block';
+    stateHotspots.style.display = 'none';
+    cityMarkers.style.display = 'block';
+    hideCard();
   });
+  
+  // 初始显示 QLD 卡片
+  showCard('QLD', 'state');
 }
 
-// Initialize everything when DOM is ready
+// 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
-  setupTabs();
+  init();
 });
 </script>
 </body></html>
