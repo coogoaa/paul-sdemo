@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GreenSketch - Full City Rankings</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f2a60d",
+            "background-light": "#f8f7f5",
+            "background-dark": "#221c10",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .custom-select-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f2a60d' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-black dark:text-white">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-primary/20 dark:border-primary/30">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<div class="flex items-center gap-3">
+<svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+<h1 class="text-2xl font-bold text-black dark:text-white">GreenSketch</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Services</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-4">
+<a class="px-6 py-2.5 rounded-lg bg-primary text-black text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all" href="#">Get a Quote</a>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<section class="py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto">
+<h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter">The Complete Sunshine Rush Leaderboard</h1>
+<p class="mt-4 text-lg text-black/70 dark:text-white/70">
+              Explore the in-depth analysis of solar asset value, sunlight grade, and payback periods across Australian cities. Discover where your city ranks and the potential value of rooftop solar.
+            </p>
+</div>
+<div class="mt-12 rounded-xl overflow-hidden shadow-2xl shadow-primary/10">
+<div class="h-64 md:h-96 w-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBsd-XuCRUw5o_5l787GKMYc4tr0xy01dDJMqJ_0yUIt-imTMK4Oalec6ekSXflXcrD1B4ke7Y3L2ucZ-DN8dR48ayTdz91eiSl33RDuCMIb0ItrPXxGLjIp971o_zefAeDaOf8UcZo1Ut_vivpQdJoahq5mcJRQ7c3MH1v0ed5wptc44UGuPz67J2CO4mdsbqTBf6zLtcmkNx7ybQ0fiyu0eEhuIX2Ro0oweFc17Oy4aN9wLGOFHiTotHYoIDaK4Lab6HHO6lSE3Y");'></div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-background-light dark:bg-background-dark/50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto">
+<h2 class="text-3xl font-bold text-center mb-12">Interactive Tools</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-1">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black/50 dark:text-white/50">search</span>
+<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-primary/20 dark:border-primary/30 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Search for your city..." type="text"/>
+</div>
+</div>
+<div>
+<select class="custom-select-icon w-full px-4 py-3 rounded-lg border border-primary/20 dark:border-primary/30 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+<option>Filter by: All States</option>
+<option>NSW</option>
+<option>QLD</option>
+<option>VIC</option>
+<option>SA</option>
+<option>WA</option>
+<option>TAS</option>
+<option>NT</option>
+<option>ACT</option>
+</select>
+</div>
+<div>
+<select class="custom-select-icon w-full px-4 py-3 rounded-lg border border-primary/20 dark:border-primary/30 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+<option>Sort by: Rank</option>
+<option>Rooftop Value (High to Low)</option>
+<option>Payback Period (Short to Long)</option>
+<option>Sunlight Grade (High to Low)</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="overflow-x-auto rounded-xl border border-primary/20 dark:border-primary/30 bg-white dark:bg-background-dark/50 shadow-lg shadow-primary/5">
+<table class="min-w-full divide-y divide-primary/20 dark:divide-primary/30">
+<thead class="bg-primary/5 dark:bg-primary/10">
+<tr>
+<th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" scope="col">Rank</th>
+<th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" scope="col">City &amp; State</th>
+<th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" scope="col">Avg. Rooftop Asset Value</th>
+<th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" scope="col">Sunlight Grade</th>
+<th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" scope="col">Avg. Payback Period</th>
+<th class="relative px-6 py-4" scope="col"><span class="sr-only">Get Report</span></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/10 dark:divide-primary/20">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">1</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Brisbane, QLD</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$15,000</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Excellent</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">4 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">2</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Sydney, NSW</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$14,500</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Good</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">4.5 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">3</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Melbourne, VIC</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$14,000</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Good</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">5 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">4</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Adelaide, SA</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$13,500</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Very Good</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">4.2 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">5</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Perth, WA</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$13,000</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Excellent</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">3.8 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">6</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Canberra, ACT</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$12,500</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Good</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">4.7 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">7</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Hobart, TAS</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$12,000</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Fair</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">5.5 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">8</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Darwin, NT</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$11,500</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Excellent</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">3.5 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">9</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Gold Coast, QLD</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$11,000</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Excellent</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">4 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">10</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">Sunshine Coast, QLD</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary">$10,500</td>
+<td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Excellent</span></td>
+<td class="px-6 py-4 whitespace-nowrap text-sm">4.1 years</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><a class="text-primary hover:text-primary/80" href="#">Get My Free Report</a></td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-center text-sm text-black/50 dark:text-white/50" colspan="6">... and 90 more cities</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-background-light dark:bg-background-dark/50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl font-bold text-center mb-12">Data Spotlight</h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="flex flex-col gap-4 p-6 rounded-lg bg-white dark:bg-background-dark/70 border border-primary/20 dark:border-primary/30">
+<div class="w-full h-48 rounded-md bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDMTQYpm19odVQ9UijdwrMIuvph0vKLMEqYAVCCA0tWqsoRDmSnneMJKkMuzewLhhXlB-ucdBUwfDDevjW4VCfI2PSX2RCowT8RoHCOR62GzZ7-sdE8eiqNk8bTViG61l-W29Nt5wxTes1F6-if6to3bYah68bL8cZsPDSf3GOv0U6QBUrQB-UY-8NJLmAaqx0oWHFVwk8i-Sj8Zzn200Eu07NeJVr8JNiVYM57QBLh8fLroUX0-zNjzy9gRa9-9g2SkYxNyDi-7q0");'></div>
+<h3 class="text-xl font-bold">The Sunshine State Dominates</h3>
+<p class="text-sm text-black/70 dark:text-white/70">Queensland cities consistently rank high, showcasing the state's abundant sunlight and favorable conditions for rooftop solar.</p>
+</div>
+<div class="flex flex-col gap-4 p-6 rounded-lg bg-white dark:bg-background-dark/70 border border-primary/20 dark:border-primary/30">
+<div class="w-full h-48 rounded-md bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAgTGRYvasiDpZCyJAj3qp3gyS-W5wyr4LR1AUvXybC_CDFntPclsEZTvQf-O7xob4LEFo2rieEObXPSNHJnFr9lAX636j-QDSZwePtCeW2T4PLLdm3bYPZMo6sAWNblhSyXAcX5q0DYgDVfHMasXk6bChr-chjo2M5UkkiP901e9uq9H2FbYQmpGU61f3NZ-vHgE_2OGFcv81OvEK_nhgdEycK_R3YyXWmRfIdb6E57eA6uEfMpPpGPK5AXww02Ly3sAZyL14QhiA");'></div>
+<h3 class="text-xl font-bold">Regional Powerhouses</h3>
+<p class="text-sm text-black/70 dark:text-white/70">Beyond capitals, regional centers like Gold Coast and Sunshine Coast demonstrate significant solar potential and attractive returns.</p>
+</div>
+<div class="flex flex-col gap-4 p-6 rounded-lg bg-white dark:bg-background-dark/70 border border-primary/20 dark:border-primary/30">
+<div class="w-full h-48 rounded-md bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDP4rHDy3bYYcO8-kuRbAhzYWKg8UDgJwdunoEdoxzfPelV_at9sTJQVBjGvpjMLzQl9k5eEpu6exQRxOQktFY-G2bx9KggiWsBbYMrYByC3np3CpEgTps4mLXtBhwZ0HxIyCEHQu0SiTtRQgsCe0PtAoqvPL5lT8tVlxAUjjjjU4qLkm05jFd3VoVSi7Qva6bqsebVIejzx-Ul0Q8zMExoS0HKKO5TOPuI6a8b_389sJf3SSmkptw0SxJRs6mv8TucQu2HzNJs9LI");'></div>
+<h3 class="text-xl font-bold">The Southern Challenge</h3>
+<p class="text-sm text-black/70 dark:text-white/70">Even in areas with lower sunlight grades, strategic installations can lead to strong returns, as seen in cities like Hobart.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto text-center">
+<h2 class="text-3xl sm:text-4xl font-bold">Discover Your Rooftop's Potential</h2>
+<p class="mt-4 text-lg text-black/70 dark:text-white/70">Find out how much your rooftop solar could be worth. Enter your address for a free, personalized report.</p>
+<div class="mt-8 flex flex-col sm:flex-row gap-2 max-w-lg mx-auto">
+<input class="flex-grow w-full px-5 py-4 rounded-lg border border-primary/20 dark:border-primary/30 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter your address" type="text"/>
+<button class="px-8 py-4 rounded-lg bg-primary text-black text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">Reveal My Asset Value</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-background-light dark:bg-background-dark/50 border-t border-primary/20 dark:border-primary/30">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+<p class="text-sm text-black/60 dark:text-white/60">© 2024 GreenSketch. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-sm text-black/60 dark:text-white/60 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-sm text-black/60 dark:text-white/60 hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>
