@@ -42,7 +42,7 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>经济效益计算器 <span style="font-size:12px;color:#64748b">v2.0</span></h1>
+    <h1>经济效益计算器 <span style="font-size:12px;color:#64748b">v3.0</span></h1>
     <div class="card">
       <div class="row">
         <div class="col-3">
@@ -107,6 +107,10 @@
             <option value="lump">一次性更换</option>
           </select>
         </div>
+        <div class="col-3">
+          <label>贴现率 d (%)</label>
+          <input id="d" type="number" step="0.1" value="5" />
+        </div>
         <div class="col-6 inline">
           <button class="btn" id="calc">计算</button>
           <span class="muted">按下“计算”后将在下方显示年度节省、回本周期与IRR</span>
@@ -127,6 +131,10 @@
           <h3>IRR（0-20年）</h3>
           <div class="v" id="kpiIRR">—</div>
         </div>
+        <div class="kpi">
+          <h3>NPV（0-25年）</h3>
+          <div class="v" id="kpiNPV">—</div>
+        </div>
       </div>
       <div class="sep"></div>
       <div class="proc" id="process">
@@ -140,18 +148,23 @@
           <summary>IRR 现金流（0-20年）</summary>
           <div id="irrTable"></div>
         </details>
+        <details>
+          <summary>NPV 现金流（0-25年）</summary>
+          <div id="npvTable"></div>
+        </details>
       </div>
       <div class="footer">
         <strong>计算说明：</strong><br>
         • <strong>年度节省</strong>：未装电费 - 装后电费（含售电收入），未考虑贴现<br>
         • <strong>回本周期</strong>：从 -H 开始累加月度现金流（年度节省/12），电池口径："按月计提"=每月扣准备金至第N年；"一次性"=第N年一次性扣除更换成本<br>
         • <strong>IRR</strong>：基于 0-20 年现金流（CF_0=-H，CF_n=年度节省-电池投入），使用二分法求解内部收益率<br>
+        • <strong>NPV</strong>：净现值，基于 0-25 年现金流，按给定贴现率折现到当前价值，NPV>0表示项目可行<br>
         • 基于《方案计算 1014/经济效益计算.md》核心公式，采用年度粒度估算；净计量和非净计量均支持
       </div>
     </div>
   </div>
   <script>
-    console.log('✅ ROI Calculator v2.0 loaded successfully');
+    console.log('✅ ROI Calculator v3.0 loaded successfully');
     function val(id){return parseFloat(document.getElementById(id).value||"0")}
     function pct(v){return isFinite(v)?(v*100).toFixed(2)+"%":"—"}
     function cur(v){return isFinite(v)?"$"+v.toFixed(0):"—"}
@@ -209,6 +222,14 @@
         }
       }
       return (low+high)/2
+    }
+
+    function calculateNPV(cfs, discountRate){
+      let npv = 0
+      for(let i=0; i<cfs.length; i++){
+        npv += cfs[i] / Math.pow(1 + discountRate, i)
+      }
+      return npv
     }
 
     function num(v,d=0){return isFinite(v)?Number(v).toFixed(d):'—'}
@@ -317,6 +338,32 @@
       document.getElementById('irrTable').innerHTML = html
     }
 
+    function renderNPVTable(cfs, discountRate, Nbat, details){
+      let html = '<table><thead><tr>'+
+                 '<th>年</th>'+
+                 '<th>现金流 CF_n($)</th>'+
+                 '<th>折现因子<br><span style="font-size:10px;font-weight:400">1/(1+d)^n</span></th>'+
+                 '<th>折现现金流($)<br><span style="font-size:10px;font-weight:400">CF_n × 折现因子</span></th>'+
+                 '<th>累计NPV($)</th>'+
+                 '</tr></thead><tbody>'
+      let cumNPV = 0
+      for(let i=0; i<cfs.length; i++){
+        const factor = 1 / Math.pow(1 + discountRate, i)
+        const discounted = cfs[i] * factor
+        cumNPV += discounted
+        const color = cumNPV>=0?'#10b981':'#ef4444'
+        html += '<tr>'+
+                '<td>'+i+'</td>'+
+                '<td>'+cur2(cfs[i])+'</td>'+
+                '<td>'+num(factor,4)+'</td>'+
+                '<td>'+cur2(discounted)+'</td>'+
+                '<td style="color:'+color+'">'+cur2(cumNPV)+'</td>'+
+                '</tr>'
+      }
+      html += '</tbody></table>'
+      document.getElementById('npvTable').innerHTML = html
+    }
+
     function paybackMonths(E,x,z,y,q,P,a,r1,r2,H,Hbat,Nbat,mode,pbMode){
       let cum=-H
       const months=240
@@ -385,6 +432,25 @@
       const r=irr(cfs)
       document.getElementById('kpiIRR').textContent = r==null?'—':pct(r)
 
+      // 计算NPV（25年）
+      const d = val('d')/100
+      const npvCfs = [-H]
+      const npvDetails = []
+      for(let n=1; n<=25; n++){
+        const res = computeYear(E,x,z,y,q,P,a,r1,r2,n,mode)
+        let cf = res.AS
+        if(n===Nbat) cf -= Hbat
+        npvCfs.push(cf)
+        npvDetails.push({
+          saving: res.saving,
+          feedIncome: res.feedIncome,
+          batteryReplace: Hbat
+        })
+      }
+      const npvValue = calculateNPV(npvCfs, d)
+      document.getElementById('kpiNPV').textContent = cur(npvValue)
+      console.log('📈 NPV计算结果:', npvValue)
+
       // 渲染计算过程
       renderYear1Details(E,x,z,y,q,P,a,r1,r2,mode)
       const rows=[]
@@ -394,6 +460,7 @@
       }
       renderYearTable(rows)
       renderIRRTable(cfs,Nbat,irrDetails)
+      renderNPVTable(npvCfs,d,Nbat,npvDetails)
     })
   </script>
 </body>

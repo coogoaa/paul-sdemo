@@ -90,6 +90,15 @@
                     <div class="mb-2"><label class="small">GST税率</label><input type="number" id="gst_rate" class="form-control form-control-sm" value="0.1" step="0.01"></div>
                     <div class="mb-2"><label class="small">安装商附加费 (AUD)</label><input type="number" id="installer_additional_fee" class="form-control form-control-sm" value="0" step="10"></div>
                 </div>
+                <div class="config-section">
+                    <h6>NPV计算参数</h6>
+                    <div class="mb-2"><label class="small">电价 (AUD/kWh)</label><input type="number" id="electricity_rate" class="form-control form-control-sm" value="0.25" step="0.01"></div>
+                    <div class="mb-2"><label class="small">上网电价 (AUD/kWh)</label><input type="number" id="feed_in_tariff" class="form-control form-control-sm" value="0.05" step="0.01"></div>
+                    <div class="mb-2"><label class="small">电价年增长率</label><input type="number" id="electricity_escalation" class="form-control form-control-sm" value="0.03" step="0.01"></div>
+                    <div class="mb-2"><label class="small">贴现率</label><input type="number" id="discount_rate" class="form-control form-control-sm" value="0.05" step="0.01"></div>
+                    <div class="mb-2"><label class="small">项目年限</label><input type="number" id="project_years" class="form-control form-control-sm" value="25" step="1"></div>
+                    <div class="mb-2"><label class="small">系统年衰减率</label><input type="number" id="system_degradation" class="form-control form-control-sm" value="0.005" step="0.001"></div>
+                </div>
                 <div class="config-section section-retrofit" style="display:none;">
                     <h6>储能扩容参数</h6>
                     <div class="mb-2"><label class="small">屋顶使用系数</label><input type="number" id="rooftop_use_factor" class="form-control form-control-sm" value="0.7" step="0.01"></div>
@@ -146,6 +155,41 @@
                 if (kw > arr[i].min && kw <= arr[i].max) return arr[i];
             }
             return arr[arr.length - 1];
+        }
+
+        function calculateNPV(annualGeneration, selfConsumptionRate, initialInvestment) {
+            const electricityRate = getVal('electricity_rate');
+            const feedInTariff = getVal('feed_in_tariff');
+            const escalation = getVal('electricity_escalation');
+            const discountRate = getVal('discount_rate');
+            const projectYears = getVal('project_years');
+            const degradation = getVal('system_degradation');
+            
+            let npv = -initialInvestment;
+            let cumulativeCashFlow = -initialInvestment;
+            let paybackYears = projectYears;
+            let totalSavings = 0;
+            
+            for (let year = 1; year <= projectYears; year++) {
+                const yearlyGeneration = annualGeneration * Math.pow(1 - degradation, year - 1);
+                const selfConsumed = yearlyGeneration * selfConsumptionRate;
+                const exported = yearlyGeneration * (1 - selfConsumptionRate);
+                const currentElectricityRate = electricityRate * Math.pow(1 + escalation, year - 1);
+                const currentFeedInTariff = feedInTariff * Math.pow(1 + escalation, year - 1);
+                
+                const annualSavings = selfConsumed * currentElectricityRate + exported * currentFeedInTariff;
+                const discountedSavings = annualSavings / Math.pow(1 + discountRate, year);
+                
+                npv += discountedSavings;
+                cumulativeCashFlow += annualSavings;
+                totalSavings += annualSavings;
+                
+                if (cumulativeCashFlow >= 0 && paybackYears === projectYears) {
+                    paybackYears = year - 1 + (initialInvestment - (cumulativeCashFlow - annualSavings)) / annualSavings;
+                }
+            }
+            
+            return { npv, paybackYears, totalSavings };
         }
 
         function calculate() {
@@ -269,6 +313,11 @@
                 const grossProfit = finalPrice - totalCost;
                 const grossMargin = finalPrice > 0 ? (grossProfit / finalPrice * 100) : 0;
                 
+                // 计算自用率：基线自用率 + 电池提升的自用率
+                const batteryBoost = usableBattery > 0 ? Math.min(0.5, usableBattery / (annualGeneration / 365) * 0.8) : 0;
+                const effectiveSelfConsumption = Math.min(0.95, baselineSc + batteryBoost);
+                const npvData = calculateNPV(annualGeneration, effectiveSelfConsumption, finalPrice);
+                
                 results[key] = {
                     solarKw, panelCount, inverterKw, usableBattery, nominalBattery, annualGeneration,
                     panelLineCost, panelLinePrice, inverterLineCost, inverterLinePrice,
@@ -279,7 +328,8 @@
                     bosTotalCost, bosTotalPrice, additionalCharges, gstPrice, gstCost,
                     systemTotalPrice, systemTotalCost, pvStcRebate, batteryStcRebate,
                     solarVicRebate, solarVicLoan, otherGovSubsidy, otherSubsidy, totalDeductions,
-                    totalCost, finalPrice, grossProfit, grossMargin
+                    totalCost, finalPrice, grossProfit, grossMargin,
+                    npv: npvData.npv, paybackYears: npvData.paybackYears, totalSavings: npvData.totalSavings
                 };
             });
             
@@ -351,6 +401,14 @@
                 const grossProfit = finalPrice - totalCost;
                 const grossMargin = finalPrice > 0 ? (grossProfit / finalPrice * 100) : 0;
                 
+                // 储能扩容：假设已有光伏系统，计算电池带来的额外自用率提升
+                const yieldPerKw = getVal('yield_per_kw_per_year');
+                const annualGeneration = solarKw * yieldPerKw;
+                const baselineSc = getVal('baseline_self_consumption_rate');
+                const batteryBoost = p.usableBattery > 0 ? Math.min(0.5, p.usableBattery / (annualGeneration / 365) * 0.8) : 0;
+                const effectiveSelfConsumption = Math.min(0.95, baselineSc + batteryBoost);
+                const npvData = calculateNPV(annualGeneration, effectiveSelfConsumption, finalPrice);
+                
                 results[key] = {
                     solarKw, panelCount, usableBattery: p.usableBattery, nominalBattery,
                     batteryLineCost, batteryLinePrice, keyProductsTotalCost, keyProductsTotalPrice,
@@ -358,7 +416,8 @@
                     batteryInstallPerKwhLineCost, batteryInstallPerKwhLinePrice,
                     bosTotalCost, bosTotalPrice, additionalCharges, gstPrice, gstCost,
                     systemTotalPrice, systemTotalCost, batteryStcRebate, otherGovSubsidy,
-                    otherSubsidy, totalDeductions, totalCost, finalPrice, grossProfit, grossMargin
+                    otherSubsidy, totalDeductions, totalCost, finalPrice, grossProfit, grossMargin,
+                    npv: npvData.npv, paybackYears: npvData.paybackYears, totalSavings: npvData.totalSavings
                 };
             });
             
@@ -430,7 +489,12 @@
                         <p class="mb-1"><strong>Total Cost: $${r.totalCost.toFixed(2)}</strong></p>
                         <p class="mb-1"><strong>Final Price: $${r.finalPrice.toFixed(2)}</strong></p>
                         <p class="mb-1"><strong>Gross Profit: $${r.grossProfit.toFixed(2)}</strong></p>
-                        <p class="mb-0"><strong>Gross Margin: ${r.grossMargin.toFixed(2)}%</strong></p>
+                        <p class="mb-1"><strong>Gross Margin: ${r.grossMargin.toFixed(2)}%</strong></p>
+                        <hr>
+                        <h6 class="mt-3">NPV分析</h6>
+                        <p class="mb-1"><strong>NPV (${getVal('project_years')}年): $${r.npv.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>回本年限: ${r.paybackYears.toFixed(1)} 年</strong></p>
+                        <p class="mb-0"><strong>总节省 (${getVal('project_years')}年): $${r.totalSavings.toFixed(2)}</strong></p>
                     </div>
                 `;
             });
@@ -490,7 +554,12 @@
                         <p class="mb-1"><strong>Total Cost: $${r.totalCost.toFixed(2)}</strong></p>
                         <p class="mb-1"><strong>Final Price: $${r.finalPrice.toFixed(2)}</strong></p>
                         <p class="mb-1"><strong>Gross Profit: $${r.grossProfit.toFixed(2)}</strong></p>
-                        <p class="mb-0"><strong>Gross Margin: ${r.grossMargin.toFixed(2)}%</strong></p>
+                        <p class="mb-1"><strong>Gross Margin: ${r.grossMargin.toFixed(2)}%</strong></p>
+                        <hr>
+                        <h6 class="mt-3">NPV分析</h6>
+                        <p class="mb-1"><strong>NPV (${getVal('project_years')}年): $${r.npv.toFixed(2)}</strong></p>
+                        <p class="mb-1"><strong>回本年限: ${r.paybackYears.toFixed(1)} 年</strong></p>
+                        <p class="mb-0"><strong>总节省 (${getVal('project_years')}年): $${r.totalSavings.toFixed(2)}</strong></p>
                     </div>
                 `;
             });
@@ -546,6 +615,19 @@
                         <strong>Gross Margin:</strong> ${r.grossMargin.toFixed(2)}%
                     </div>
                 </div>
+                <div class="calculation-step">
+                    <h6>步骤8: NPV分析</h6>
+                    <div class="formula-box">
+                        NPV = -初始投资 + Σ(年度节省 / (1 + 贴现率)^年数)<br>
+                        年度节省 = 自用电量 × 电价 + 上网电量 × 上网电价<br>
+                        考虑电价年增长率和系统年衰减率
+                    </div>
+                    <div class="mt-2">
+                        <strong>NPV (${getVal('project_years')}年):</strong> $${r.npv.toFixed(2)}<br>
+                        <strong>回本年限:</strong> ${r.paybackYears.toFixed(1)} 年<br>
+                        <strong>总节省:</strong> $${r.totalSavings.toFixed(2)}
+                    </div>
+                </div>
             `;
             document.getElementById('calculationSteps').innerHTML = steps;
         }
@@ -583,6 +665,19 @@
                         <strong>Final Price:</strong> $${r.finalPrice.toFixed(2)}<br>
                         <strong>Gross Profit:</strong> $${r.grossProfit.toFixed(2)}<br>
                         <strong>Gross Margin:</strong> ${r.grossMargin.toFixed(2)}%
+                    </div>
+                </div>
+                <div class="calculation-step">
+                    <h6>步骤6: NPV分析</h6>
+                    <div class="formula-box">
+                        NPV = -初始投资 + Σ(年度节省 / (1 + 贴现率)^年数)<br>
+                        年度节省 = 自用电量 × 电价 + 上网电量 × 上网电价<br>
+                        考虑电池提升的自用率、电价年增长率和系统年衰减率
+                    </div>
+                    <div class="mt-2">
+                        <strong>NPV (${getVal('project_years')}年):</strong> $${r.npv.toFixed(2)}<br>
+                        <strong>回本年限:</strong> ${r.paybackYears.toFixed(1)} 年<br>
+                        <strong>总节省:</strong> $${r.totalSavings.toFixed(2)}
                     </div>
                 </div>
             `;
