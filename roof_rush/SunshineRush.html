@@ -80,18 +80,10 @@
 </svg>
 <h2 class="text-xl font-bold">GreenSketch</h2>
 </div>
-<nav class="hidden md:flex items-center gap-8">
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Methodology</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#">For Installers</a>
+<nav class="flex items-center gap-6">
+<a class="text-sm font-medium text-primary" href="SunshineRush.html">Home</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="full_city_ranking.html">Full Rankings</a>
 </nav>
-<div class="flex items-center gap-4">
-<a class="hidden sm:inline-block text-sm font-medium hover:text-primary transition-colors" href="#">Contact</a>
-<button class="bg-primary text-background-dark font-bold text-sm px-6 py-2.5 rounded-full hover:bg-primary/90 transition-colors">
-                Get Started
-              </button>
-</div>
 </div>
 </div>
 </header>
@@ -577,9 +569,6 @@ function setupTabs() {
   const tabCity = document.getElementById('tab-city');
   const stateList = document.getElementById('state-list');
   const cityList = document.getElementById('city-list');
-  const cityMarkers = document.getElementById('city-markers');
-  const stateRegions = document.querySelectorAll('.state-region');
-  const mapHint = document.getElementById('map-hint');
   
   tabState.addEventListener('click', () => {
     // Update tabs
@@ -591,11 +580,6 @@ function setupTabs() {
     // Update lists
     stateList.style.display = 'block';
     cityList.style.display = 'none';
-    
-    // Update map
-    cityMarkers.style.display = 'none';
-    stateRegions.forEach(r => r.style.display = 'block');
-    mapHint.textContent = 'Hover over states to see details';
   });
   
   tabCity.addEventListener('click', () => {
@@ -608,18 +592,11 @@ function setupTabs() {
     // Update lists
     stateList.style.display = 'none';
     cityList.style.display = 'block';
-    
-    // Update map
-    cityMarkers.style.display = 'block';
-    stateRegions.forEach(r => r.style.display = 'block');
-    mapHint.textContent = 'Hover over cities to see details';
   });
 }
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  createMap();
-  setupTooltips();
   setupTabs();
 });
 </script>
