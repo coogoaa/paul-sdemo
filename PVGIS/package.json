@@ -1,0 +1,25 @@
+{
+  "name": "pvgis-simulator",
+  "version": "1.0.0",
+  "description": "PVGIS 光伏性能模拟器 - 前端页面与后端代理",
+  "main": "proxy-server.js",
+  "scripts": {
+    "start": "node proxy-server.js",
+    "dev": "nodemon proxy-server.js"
+  },
+  "keywords": [
+    "pvgis",
+    "solar",
+    "photovoltaic",
+    "simulator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

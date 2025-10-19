@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PVGIS 光伏性能模拟器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;margin:0;padding:24px;background:#0b1220;color:#e5e7eb}
+    h1{font-size:20px;margin:0 0 16px;color:#f9fafb}
+    h2{font-size:16px;margin:0 0 12px;color:#f9fafb}
+    .version{font-size:12px;color:#64748b}
+    .wrap{max-width:1100px;margin:0 auto}
+    .card{background:#0f172a;border:1px solid #1f2937;border-radius:12px;padding:20px;margin-bottom:16px}
+    .tabs{display:flex;gap:8px;margin-bottom:16px}
+    .tab{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px 16px;color:#94a3b8;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s}
+    .tab:hover{background:#1e293b;border-color:#475569}
+    .tab.active{background:#2563eb;border-color:#2563eb;color:#fff}
+    .row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:12px}
+    .col-2{grid-column:span 2}
+    .col-3{grid-column:span 3}
+    .col-6{grid-column:span 6}
+    label{display:block;font-size:12px;color:#94a3b8;margin:0 0 6px}
+    input,select{width:100%;border:1px solid #334155;background:#0b1220;color:#e5e7eb;border-radius:8px;padding:10px 12px;font-size:14px;box-sizing:border-box}
+    .hint{display:block;font-size:11px;color:#64748b;margin-top:4px}
+    .btn{background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:600;cursor:pointer;font-size:14px;transition:background 0.2s}
+    .btn:hover{background:#1d4ed8}
+    .btn:disabled{opacity:0.6;cursor:not-allowed}
+    .btn-example{background:#0b1220;border:1px solid #334155;color:#94a3b8;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:12px}
+    .btn-example:hover{background:#1e293b}
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:12px}
+    .kpi{background:#0b1220;border:1px solid #334155;border-radius:10px;padding:14px}
+    .kpi h3{margin:0 0 6px;font-size:12px;color:#94a3b8}
+    .kpi .value{font-size:22px;font-weight:700;color:#f8fafc}
+    .chart-container{position:relative;height:300px;margin-top:16px}
+    .sep{height:1px;background:#1f2937;margin:16px 0}
+    .hidden{display:none!important}
+    .muted{color:#94a3b8;font-size:12px}
+    .error{background:#7f1d1d;border:1px solid #991b1b;border-radius:8px;padding:12px;color:#fecaca;margin-top:16px}
+    .success{background:#065f46;border:1px solid #047857;border-radius:8px;padding:12px;color:#a7f3d0;margin-top:16px}
+    .footer{margin-top:16px;color:#64748b;font-size:12px}
+    .loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;margin-left:8px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .checkbox-wrapper{display:flex;align-items:center;gap:8px;margin-top:8px}
+    .checkbox-wrapper input[type="checkbox"]{width:auto;margin:0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>PVGIS 光伏性能模拟器 <span class="version">v1.0</span></h1>
+    
+    <div class="tabs">
+      <button class="tab active" data-tool="PVcalc">系统性能</button>
+      <button class="tab" data-tool="seriescalc">小时序列</button>
+      <button class="tab" data-tool="printhorizon">地平线</button>
+    </div>
+    
+    <div class="card">
+      <h2>位置信息</h2>
+      <div class="row">
+        <div class="col-2">
+          <label>纬度 (lat)</label>
+          <input id="lat" type="number" step="0.01" placeholder="例如: 39.9" />
+          <span class="hint">范围: -90 ~ 90</span>
+        </div>
+        <div class="col-2">
+          <label>经度 (lon)</label>
+          <input id="lon" type="number" step="0.01" placeholder="例如: 116.4" />
+          <span class="hint">范围: -180 ~ 180</span>
+        </div>
+        <div class="col-2" style="display:flex;align-items:flex-end">
+          <button class="btn-example" id="fillExample">填充示例（北京）</button>
+        </div>
+      </div>
+      
+      <div class="sep"></div>
+      
+      <div id="params-PVcalc" class="tool-params">
+        <h2>系统参数</h2>
+        <div class="row">
+          <div class="col-2">
+            <label>峰值功率 (kWp)</label>
+            <input id="peakpower" type="number" step="0.1" value="1" />
+          </div>
+          <div class="col-2">
+            <label>系统损耗 (%)</label>
+            <input id="loss" type="number" step="0.1" value="14" />
+          </div>
+          <div class="col-2">
+            <label>倾角 (°)</label>
+            <input id="angle" type="number" step="1" value="35" />
+          </div>
+          <div class="col-2">
+            <label>方位角 (°)</label>
+            <input id="aspect" type="number" step="1" value="0" />
+            <span class="hint">0=正南, -90=东, 90=西</span>
+          </div>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="optimalangles" />
+          <label for="optimalangles" style="margin:0">自动优化倾角和方位角</label>
+        </div>
+      </div>
+      
+      <div id="params-seriescalc" class="tool-params hidden">
+        <h2>序列参数</h2>
+        <div class="row">
+          <div class="col-2">
+            <label>倾角 (°)</label>
+            <input id="series-angle" type="number" step="1" value="0" />
+          </div>
+          <div class="col-2">
+            <label>方位角 (°)</label>
+            <input id="series-aspect" type="number" step="1" value="0" />
+          </div>
+        </div>
+        <p class="muted">默认返回最近一年的小时序列数据</p>
+      </div>
+      
+      <div id="params-printhorizon" class="tool-params hidden">
+        <h2>地平线参数</h2>
+        <p class="muted">此工具无需额外参数，将返回指定位置的地平线剖面数据</p>
+      </div>
+      
+      <div class="sep"></div>
+      
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn" id="calculate">
+          <span id="btn-text">计算</span>
+          <span id="btn-loading" class="hidden">计算中<span class="loading-spinner"></span></span>
+        </button>
+        <span class="muted">点击"计算"后将调用 PVGIS API 并展示结果</span>
+      </div>
+    </div>
+    
+    <div id="results" class="card hidden"></div>
+    <div id="error" class="error hidden"><strong>错误：</strong><span id="error-message"></span></div>
+    
+    <div class="footer">
+      <strong>数据来源：</strong>PVGIS (European Commission Joint Research Centre)<br>
+      <strong>免责声明：</strong>本工具提供的数据仅供参考，实际发电量可能因现场条件而异
+    </div>
+  </div>
+  
+  <script>
+    const state = {
+      currentTool: 'PVcalc',
+      loading: false
+    };
+
+    // Tab 切换
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tool = tab.dataset.tool;
+        state.currentTool = tool;
+        
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        document.querySelectorAll('.tool-params').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`params-${tool}`).classList.remove('hidden');
+        
+        document.getElementById('results').classList.add('hidden');
+        document.getElementById('error').classList.add('hidden');
+      });
+    });
+
+    // 填充示例
+    document.getElementById('fillExample').addEventListener('click', () => {
+      document.getElementById('lat').value = 39.9;
+      document.getElementById('lon').value = 116.4;
+    });
+
+    // 计算按钮
+    document.getElementById('calculate').addEventListener('click', async () => {
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lon = parseFloat(document.getElementById('lon').value);
+      
+      // 校验
+      if (!lat || !lon) {
+        showError('请输入纬度和经度');
+        return;
+      }
+      if (lat < -90 || lat > 90) {
+        showError('纬度范围: -90 ~ 90');
+        return;
+      }
+      if (lon < -180 || lon > 180) {
+        showError('经度范围: -180 ~ 180');
+        return;
+      }
+      
+      // 构建参数
+      let params = { lat, lon, outputformat: 'json' };
+      
+      if (state.currentTool === 'PVcalc') {
+        const peakpower = parseFloat(document.getElementById('peakpower').value);
+        const loss = parseFloat(document.getElementById('loss').value);
+        const angle = parseFloat(document.getElementById('angle').value);
+        const aspect = parseFloat(document.getElementById('aspect').value);
+        const optimalangles = document.getElementById('optimalangles').checked;
+        
+        if (peakpower <= 0) {
+          showError('峰值功率必须大于 0');
+          return;
+        }
+        if (loss < 0 || loss > 100) {
+          showError('系统损耗范围: 0 ~ 100%');
+          return;
+        }
+        
+        params.peakpower = peakpower;
+        params.loss = loss;
+        if (optimalangles) {
+          params.optimalangles = 1;
+        } else {
+          params.angle = angle;
+          params.aspect = aspect;
+        }
+      } else if (state.currentTool === 'seriescalc') {
+        const angle = parseFloat(document.getElementById('series-angle').value);
+        const aspect = parseFloat(document.getElementById('series-aspect').value);
+        params.angle = angle;
+        params.aspect = aspect;
+      }
+      
+      // 调用 API
+      setLoading(true);
+      hideError();
+      
+      try {
+        const data = await callPVGIS(state.currentTool, params);
+        renderResults(state.currentTool, data);
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    function setLoading(loading) {
+      state.loading = loading;
+      const btn = document.getElementById('calculate');
+      btn.disabled = loading;
+      document.getElementById('btn-text').classList.toggle('hidden', loading);
+      document.getElementById('btn-loading').classList.toggle('hidden', !loading);
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('error');
+      document.getElementById('error-message').textContent = message;
+      errorDiv.classList.remove('hidden');
+      document.getElementById('results').classList.add('hidden');
+    }
+
+    function hideError() {
+      document.getElementById('error').classList.add('hidden');
+    }
+
+    async function callPVGIS(tool, params) {
+      // 通过后端代理调用 PVGIS API
+      const response = await fetch('/api/pvgis/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tool, params })
+      });
+      
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message || 'API 调用失败');
+      }
+      
+      return result.data;
+    }
+
+    function renderResults(tool, data) {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.classList.remove('hidden');
+      
+      if (tool === 'PVcalc') {
+        renderPVcalc(data);
+      } else if (tool === 'seriescalc') {
+        renderSeries(data);
+      } else if (tool === 'printhorizon') {
+        renderHorizon(data);
+      }
+    }
+
+    function renderPVcalc(data) {
+      const totals = data.outputs.totals.fixed;
+      const monthly = data.outputs.monthly.fixed;
+      
+      const html = `
+        <h2>系统性能结果</h2>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <h3>年度发电量</h3>
+            <div class="value">${totals.E_y.toFixed(0)} kWh</div>
+          </div>
+          <div class="kpi">
+            <h3>月均发电量</h3>
+            <div class="value">${totals.E_m.toFixed(0)} kWh</div>
+          </div>
+          <div class="kpi">
+            <h3>年度辐照</h3>
+            <div class="value">${totals['H(i)_y'].toFixed(0)} kWh/m²</div>
+          </div>
+          <div class="kpi">
+            <h3>标准差</h3>
+            <div class="value">${totals.SD_y.toFixed(1)} kWh</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      `;
+      
+      document.getElementById('results').innerHTML = html;
+      
+      // 绘制图表
+      const ctx = document.getElementById('monthlyChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: monthly.map(m => `${m.month}月`),
+          datasets: [{
+            label: '月度发电量 (kWh)',
+            data: monthly.map(m => m.E_m),
+            backgroundColor: '#2563eb'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function renderSeries(data) {
+      const hourly = data.outputs.hourly;
+      const times = hourly.map(h => h.time);
+      const radiation = hourly.map(h => h['G(i)']);
+      
+      const max = Math.max(...radiation);
+      const min = Math.min(...radiation);
+      const avg = radiation.reduce((a, b) => a + b, 0) / radiation.length;
+      const total = radiation.reduce((a, b) => a + b, 0);
+      
+      const html = `
+        <h2>小时辐照序列</h2>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <h3>最大值</h3>
+            <div class="value">${max.toFixed(0)} W/m²</div>
+          </div>
+          <div class="kpi">
+            <h3>平均值</h3>
+            <div class="value">${avg.toFixed(0)} W/m²</div>
+          </div>
+          <div class="kpi">
+            <h3>最小值</h3>
+            <div class="value">${min.toFixed(0)} W/m²</div>
+          </div>
+          <div class="kpi">
+            <h3>总计</h3>
+            <div class="value">${(total/1000).toFixed(0)} kWh/m²</div>
+          </div>
+        </div>
+        <div class="chart-container" style="height:400px">
+          <canvas id="seriesChart"></canvas>
+        </div>
+      `;
+      
+      document.getElementById('results').innerHTML = html;
+      
+      const ctx = document.getElementById('seriesChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: times,
+          datasets: [{
+            label: '辐照 (W/m²)',
+            data: radiation,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            fill: true,
+            pointRadius: 0,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true }
+          },
+          scales: {
+            x: { display: false },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function renderHorizon(data) {
+      const profile = data.outputs.horizon_profile;
+      
+      const html = `
+        <h2>地平线剖面</h2>
+        <div class="chart-container" style="height:400px">
+          <canvas id="horizonChart"></canvas>
+        </div>
+      `;
+      
+      document.getElementById('results').innerHTML = html;
+      
+      const ctx = document.getElementById('horizonChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: profile.map(p => `${p.A}°`),
+          datasets: [{
+            label: '高度角 (°)',
+            data: profile.map(p => p.H_hor),
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.2)',
+            pointBackgroundColor: '#2563eb'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 90,
+              ticks: {
+                stepSize: 15
+              }
+            }
+          }
+        }
+      });
+    }
+
+    console.log('✅ PVGIS 模拟器加载完成');
+  </script>
+</body>
+</html>
