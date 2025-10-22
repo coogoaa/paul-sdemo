@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#22C55E">
+  <title>3D屋顶模型报价（Linked）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { emerald: { DEFAULT: '#22C55E' } } } } };
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans">
+  <div class="mx-auto max-w-md min-h-screen flex flex-col">
+    <div class="sticky top-0 z-50 backdrop-blur bg-white/90 border-b border-green-100">
+      <div class="px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+            <span class="text-[15px] font-semibold text-[#22C55E]">S</span>
+          </div>
+          <div class="flex-1">
+            <div class="text-[18px] font-semibold text-gray-800">屋顶3D模型 · 报价卡片 · Linked</div>
+            <div class="text-[12px] text-gray-600">来自地图页的数值联动演示</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-1 px-3 pb-20">
+      <div class="space-y-4 mt-4">
+        <div class="rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+          <div class="p-3">
+            <div class="flex items-center justify-between mb-1.5">
+              <div class="flex items-center gap-1.5 text-[11px] text-emerald-600">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>Analysis complete</span>
+              </div>
+            </div>
+            <h3 class="text-[17px] tracking-tight font-semibold text-gray-800 leading-snug">Your 3D roof model</h3>
+
+            <div class="mt-3">
+              <div class="text-[11px] text-gray-600 mb-1.5">Choose Your Plan</div>
+              <div id="nsSchemesStrip" class="flex gap-1 overflow-x-auto no-scrollbar pr-1">
+                <button class="scheme-card-mini shrink-0 basis-1/2 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="A">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The Rebate Maximiser</div>
+                    <i data-lucide="star" class="w-4 h-4 text-amber-500"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1">Maximum Value</div>
+                </button>
+                <button class="scheme-card-mini shrink-0 basis-1/2 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="B">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The High Performer</div>
+                    <i data-lucide="gauge" class="w-4 h-4 text-gray-600"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1">Most Installed</div>
+                </button>
+                <button class="scheme-card-mini shrink-0 basis-1/2 rounded-xl border border-green-200 bg-white hover:bg-gray-50 transition p-2 text-left" data-scheme="C">
+                  <div class="flex items-center justify-between">
+                    <div class="text-[12px] font-medium text-gray-800">The Smart Starter</div>
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+                  </div>
+                  <div class="text-[9px] text-gray-600 mt-1">Optimal Fit</div>
+                </button>
+              </div>
+            </div>
+
+            <section id="nsDetailPanel" class="mt-3 space-y-3">
+              <div class="rounded-2xl border border-green-200 bg-white shadow-sm">
+                <div class="p-3">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-[13px] font-semibold text-gray-900">New System — Plan details</h3>
+                    <span id="nsSchemeTag" class="text-[12px] text-gray-600">Select a plan</span>
+                  </div>
+                  <div class="mt-3">
+                    <h4 class="text-[12px] font-medium text-gray-600 uppercase tracking-wide">Estimated Upfront Investment</h4>
+                    <div id="nsUpfront" class="mt-1 text-[22px] font-semibold text-red-500 tracking-tight">$20,000 – $25,000</div>
+                    <p id="nsRebateNote" class="mt-1 text-[11px] text-gray-600">Includes estimated Government Subsidies & Installer Limited-time Rebate of <span id="nsRebateAmount" class="font-semibold text-red-500">$2,000</span></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-50 shadow-sm">
+                <div class="p-3">
+                  <h4 class="text-[12px] font-medium text-gray-700 uppercase tracking-wide">Your Investment Return</h4>
+                  <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="badge-dollar" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="nsReturnSavings" class="text-[15px] font-semibold text-emerald-600 leading-none">$2,800 – $3,500</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Annual Bill Savings</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="nsReturnIRR" class="text-[15px] font-semibold text-emerald-600 leading-none">≈ 9.5%</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Internal Rate of Return</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rounded-xl border border-emerald-200 bg-white/90 px-3 py-2">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="timer" class="w-4 h-4 text-emerald-500"></i>
+                        <div>
+                          <div id="nsReturnPayback" class="text-[15px] font-semibold text-emerald-600 leading-none">3-4 years</div>
+                          <p class="mt-1 text-[11px] text-gray-600">Payback Period</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-gray-700 leading-5">
+                <div id="nsSummarySize">System size: 13.2 kW (≈ 28 panels)</div>
+                <div id="nsSummaryBattery">Battery capacity: 23.4 kWh</div>
+                <div id="nsSummarySelf">Self-consumption: 75% – 85%</div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const NS_CFG = {
+      A: {
+        name: 'The Rebate Maximiser',
+        upfront: '$20,000 – $25,000',
+        rebate: '$3,500',
+        size: '13.2 kW (≈ 28 panels)',
+        batt: '23.4 kWh',
+        selfConsumption: '75% – 85%',
+        returnSavings: '$2,800 – $3,500',
+        payback: '3-4 years',
+        irr: '≈ 9.5%'
+      },
+      B: {
+        name: 'The High Performer',
+        upfront: '$16,000 – $19,000',
+        rebate: '$2,600',
+        size: '9.9 kW (≈ 22 panels)',
+        batt: '15.0 kWh',
+        selfConsumption: '70% – 80%',
+        returnSavings: '$2,100 – $2,700',
+        payback: '3-4 years',
+        irr: '≈ 8.8%'
+      },
+      C: {
+        name: 'The Smart Starter',
+        upfront: '$12,000 – $15,000',
+        rebate: '$1,800',
+        size: '6.6 kW (≈ 16 panels)',
+        batt: '10.0 kWh',
+        selfConsumption: '65% – 75%',
+        returnSavings: '$1,500 – $1,900',
+        payback: '3-4 years',
+        irr: '≈ 8.0%'
+      }
+    };
+
+    function updateNS(key) {
+      const c = NS_CFG[key]; if (!c) return;
+      document.getElementById('nsSchemeTag').textContent = c.name;
+      document.getElementById('nsUpfront').textContent = c.upfront;
+      document.getElementById('nsReturnSavings').textContent = c.returnSavings;
+      document.getElementById('nsReturnPayback').textContent = c.payback;
+      document.getElementById('nsReturnIRR').textContent = c.irr;
+      document.getElementById('nsSummarySize').textContent = `System size: ${c.size}`;
+      document.getElementById('nsSummaryBattery').textContent = `Battery capacity: ${c.batt}`;
+      document.getElementById('nsSummarySelf').textContent = `Self-consumption: ${c.selfConsumption}`;
+      const nsRebateAmount = document.getElementById('nsRebateAmount');
+      if (nsRebateAmount) nsRebateAmount.textContent = c.rebate;
+      const strip = document.getElementById('nsSchemesStrip');
+      const buttons = Array.from(strip.querySelectorAll('.scheme-card-mini'));
+      buttons.forEach(btn => btn.classList.toggle('ring-2', btn.dataset.scheme === key));
+      buttons.forEach(btn => btn.classList.toggle('ring-emerald-300', btn.dataset.scheme === key));
+    }
+
+    (function bindNewCards(){
+      const nsStrip = document.getElementById('nsSchemesStrip');
+      nsStrip?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.scheme-card-mini'); if (!btn) return;
+        updateNS(btn.dataset.scheme);
+      });
+      updateNS('A');
+    })();
+
+    (function linkFromRegion(){
+      var qs=new URLSearchParams(location.search);
+      var region=qs.get('region');
+      var pbRaw=qs.get('pb');
+      var rvRaw=qs.get('rv');
+      var grade=qs.get('grade');
+      var pb=pbRaw?parseFloat(pbRaw):NaN;
+      var rv=rvRaw?parseFloat(rvRaw):NaN;
+      if(!region&&!pb&&!rv&&!grade){return;}
+      try{
+        if(region){document.title=document.title+' · '+decodeURIComponent(region);}            
+        if(pb&&isFinite(pb)&&pb>0){
+          var pbel=document.getElementById('nsReturnPayback');
+          if(pbel){pbel.textContent='≈ '+pb.toFixed(1)+' years';}
+          var upEl=document.getElementById('nsUpfront');
+          if(upEl){
+            var txt=upEl.textContent||'';
+            var m=txt.match(/([\$]?\s*[\d,\.]+)\s*[–-]\s*([\$]?\s*[\d,\.]+)/);
+            if(m){
+              var toNum=function(s){return parseFloat(String(s).replace(/[^0-9.]/g,''));};
+              var low=toNum(m[1]);
+              var high=toNum(m[2]);
+              if(low&&high){
+                var lowSav=Math.round(low/pb/50)*50;
+                var highSav=Math.round(high/pb/50)*50;
+                var fmt=function(n){return '$'+Number(n).toLocaleString('en-US');};
+                var savEl=document.getElementById('nsReturnSavings');
+                if(savEl){savEl.textContent=fmt(lowSav)+' – '+fmt(highSav);}                    
+              }
+            }
+          }
+        }
+        if(rv&&isFinite(rv)&&rv>0){
+          var note=document.getElementById('nsRebateNote');
+          if(note){
+            var extra=grade?(' · Region grade '+grade):'';
+            var rvText='$'+Number(rv).toLocaleString('en-US');
+            note.innerHTML=note.innerHTML+' <span class="text-gray-700">(Fair value ≈ '+rvText+extra+')</span>';
+          }
+        } else if(grade){
+          var note2=document.getElementById('nsRebateNote');
+          if(note2){note2.innerHTML=note2.innerHTML+' <span class="text-gray-700">(Region grade '+grade+')</span>';}
+        }
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GreenSketch - V2 (Linked)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#39E079", "background-light": "#f6f8f7", "background-dark": "#122017", "content-light": "#1a1a1a", "content-dark": "#e5e5e5", "subtle-light": "#737373", "subtle-dark": "#a3a3a3", "border-light": "#e5e5e5", "border-dark": "#404040"}, fontFamily: {display: "Space Grotesk"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}}}};</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+      body {
+        font-family: 'Space Grotesk', sans-serif;
+      }
+      
+      /* Map styles */
+      .state-region {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        stroke: #39E079;
+        stroke-width: 2;
+      }
+      
+      .state-region:hover {
+        fill-opacity: 0.8;
+        stroke-width: 3;
+      }
+      
+      .city-marker {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .city-marker:hover {
+        transform: scale(1.2);
+      }
+      
+      .tooltip {
+        position: absolute;
+        background: rgba(18, 32, 23, 0.95);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 1000;
+        border: 1px solid #39E079;
+        min-width: 200px;
+      }
+      
+      .tooltip.show {
+        opacity: 1;
+      }
+      
+      .tooltip-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: #39E079;
+      }
+      
+      .tooltip-content {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-content-light dark:text-content-dark">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-border-light dark:border-border-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-3">
+<svg class="h-8 w-8 text-primary" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+<h2 class="text-xl font-bold">GreenSketch</h2>
+</div>
+<nav class="flex items-center gap-6">
+<a class="text-sm font-medium text-primary" href="SunshineRush_linked.html">Home</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="full_city_ranking.html">Full Rankings</a>
+</nav>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<section class="relative h-[80vh] min-h-[500px] flex items-center justify-center text-white">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDeujTXoEbqivZfspM3mtPwyPxBGKz7pFO9uQ24jY8cjZ-c7ZPBoKA_7_yr2Icxn0d_t40QvAd-z_4nzBBcutBOsuWzIwsrqOtiY0Qh60gLo-5qRtZMVeB6qkJtbnN1MmITmzma4EjFRJslNT1d7bhZwekZYMvVC45uBHuq0F0VAiZjmls7SVRmsnHubcToF2BAD40oDIaabKM3bvvKa-Kl5XBBRfuECU95guntgTSn3fvJz34QjjENdhq5WaXofPvfMraVeytvKRw");'></div>
+<div class="absolute inset-0 bg-black/50"></div>
+<div class="relative z-10 text-center px-4">
+<h1 class="text-4xl md:text-6xl font-bold tracking-tight">The Sunshine Rush of 2025 is Here.</h1>
+<p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-white/90">
+              Australia's rooftops hold untapped solar gold. Discover your share in this modern gold rush.
+            </p>
+<button class="mt-8 bg-primary text-background-dark font-bold text-lg px-8 py-4 rounded-full hover:bg-primary/90 transition-transform transform hover:scale-105">
+              Calculate My Rooftop's Asset Value
+            </button>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-background-light dark:bg-background-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center">
+<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">The National Treasure</h2>
+<p class="mt-4 text-lg text-subtle-light dark:text-subtle-dark">Key metrics showcasing Australia's solar potential.</p>
+</div>
+<div class="mt-12 grid gap-8 md:grid-cols-3">
+<div class="border border-border-light dark:border-border-dark rounded-xl p-8 text-center bg-white dark:bg-background-dark/50">
+<p class="text-sm font-medium text-subtle-light dark:text-subtle-dark">Total Rooftop Potential</p>
+<p class="mt-2 text-4xl font-bold text-primary">$120B+</p>
+</div>
+<div class="border border-border-light dark:border-border-dark rounded-xl p-8 text-center bg-white dark:bg-background-dark/50">
+<p class="text-sm font-medium text-subtle-light dark:text-subtle-dark">National Sunlight Grade</p>
+<p class="mt-2 text-4xl font-bold text-primary">A+</p>
+</div>
+<div class="border border-border-light dark:border-border-dark rounded-xl p-8 text-center bg-white dark:bg-background-dark/50">
+<p class="text-sm font-medium text-subtle-light dark:text-subtle-dark">Average Payback Period</p>
+<p class="mt-2 text-4xl font-bold text-primary">4.5 Years</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-white dark:bg-background-dark/50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">The Ranking</h2>
+<p class="mt-4 text-lg text-subtle-light dark:text-subtle-dark">See how states and cities stack up in the Sunshine Rush.</p>
+</div>
+<div class="flex flex-col lg:flex-row gap-8">
+<div class="lg:w-2/3 relative">
+<div id="map-container" class="bg-background-light dark:bg-background-dark rounded-xl border border-border-light dark:border-border-dark p-6 relative">
+<img src="pic/AU_map.png" alt="Australia Map" class="w-full h-auto max-w-2xl rounded-lg"/>
+<!-- 州热点层 -->
+<div id="state-hotspots" class="absolute inset-0 pointer-events-none">
+<div class="state-hotspot pointer-events-auto" data-state="WA" style="position:absolute; left:5%; top:30%; width:22%; height:40%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="NT" style="position:absolute; left:30%; top:18%; width:18%; height:35%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="SA" style="position:absolute; left:28%; top:50%; width:25%; height:30%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="QLD" style="position:absolute; left:55%; top:20%; width:25%; height:35%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="NSW" style="position:absolute; left:55%; top:48%; width:25%; height:22%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="VIC" style="position:absolute; left:52%; top:68%; width:18%; height:16%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="TAS" style="position:absolute; left:58%; top:85%; width:10%; height:8%; cursor:pointer;"></div>
+<div class="state-hotspot pointer-events-auto" data-state="ACT" style="position:absolute; left:64%; top:58%; width:4%; height:4%; cursor:pointer;"></div>
+</div>
+<!-- 城市标记层 -->
+<div id="city-markers" class="absolute inset-0 pointer-events-none" style="display:none;">
+<div class="city-marker pointer-events-auto" data-city="Perth" style="position:absolute; left:12%; top:50%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Darwin" style="position:absolute; left:39%; top:25%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Adelaide" style="position:absolute; left:40%; top:62%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Brisbane" style="position:absolute; left:70%; top:38%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Sydney" style="position:absolute; left:72%; top:56%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Melbourne" style="position:absolute; left:60%; top:72%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Hobart" style="position:absolute; left:62%; top:88%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+<div class="city-marker pointer-events-auto" data-city="Canberra" style="position:absolute; left:65%; top:60%; width:20px; height:20px; background:#FF6B6B; border:2px solid white; border-radius:50%; cursor:pointer;"></div>
+</div>
+<!-- 信息卡片 -->
+<div id="info-card" class="absolute bg-background-dark/95 dark:bg-background-light/95 text-content-dark dark:text-content-light border border-primary rounded-lg p-4 shadow-xl min-w-[220px] hidden" style="z-index: 100;">
+<div class="font-bold text-lg mb-2 text-primary" id="card-title"></div>
+<div class="text-sm space-y-1" id="card-content"></div>
+</div>
+</div>
+</div>
+<div class="lg:w-1/3">
+<div class="flex border-b border-border-light dark:border-border-dark">
+<button id="tab-state" class="flex-1 py-3 text-sm font-bold border-b-2 border-primary text-primary">By State & Territory</button>
+<button id="tab-city" class="flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-subtle-light dark:text-subtle-dark hover:border-primary/50 hover:text-content-light dark:hover:text-content-dark transition-colors">By Major City</button>
+</div>
+<div id="state-list" class="mt-6 flow-root">
+<ul class="-my-4 divide-y divide-border-light dark:divide-border-dark" role="list">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="QLD">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">1</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Queensland</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$18,000 | A+ | 4.0 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="NSW">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">2</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">New South Wales</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$15,000 | A | 4.2 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="WA">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">3</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Western Australia</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$14,000 | A- | 4.8 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="ACT">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">4</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Australian Capital Territory</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$13,500 | A- | 4.4 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="VIC">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">5</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Victoria</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$12,000 | B+ | 4.5 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="NT">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">6</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Northern Territory</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$11,000 | A | 4.3 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="SA">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">7</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">South Australia</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$10,000 | B | 5.0 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-state="TAS">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">8</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Tasmania</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$9,000 | B- | 5.5 Years</p>
+</div>
+</li>
+</ul>
+</div>
+<div id="city-list" class="mt-6 flow-root" style="display: none;">
+<ul class="-my-4 divide-y divide-border-light dark:divide-border-dark" role="list">
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Brisbane">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">1</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Brisbane</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$18,500 | A+ | 3.9 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Sydney">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">2</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Sydney</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$15,500 | A | 4.1 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Perth">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">3</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Perth</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$14,500 | A- | 4.7 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Canberra">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">4</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Canberra</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$13,500 | A- | 4.4 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Melbourne">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">5</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Melbourne</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$12,500 | B+ | 4.4 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Darwin">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">6</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Darwin</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$11,500 | A | 4.2 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Adelaide">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">7</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Adelaide</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$10,500 | B+ | 4.9 Years</p>
+</div>
+</li>
+<li class="flex items-center space-x-4 py-4 group cursor-pointer" data-city="Hobart">
+<div class="text-lg font-bold text-subtle-light dark:text-subtle-dark w-6 text-center">8</div>
+<div class="min-w-0 flex-1">
+<p class="text-base font-semibold group-hover:text-primary transition-colors">Hobart</p>
+<p class="text-sm text-subtle-light dark:text-subtle-dark">$9,500 | B | 5.3 Years</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="mt-6 text-center">
+<a href="full_city_ranking.html" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+<span>See More Cities</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-background-light dark:bg-background-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center">
+<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">How We Mine the Data</h2>
+<p class="mt-4 text-lg text-subtle-light dark:text-subtle-dark">Our Fair Value Assessment Protocol</p>
+</div>
+<div class="mt-12 grid gap-8 md:grid-cols-3">
+<div class="flex flex-col items-center text-center p-6">
+<div class="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">travel_explore</span>
+</div>
+<h3 class="mt-6 text-lg font-bold">Surveying the Claim</h3>
+<p class="mt-2 text-base text-subtle-light dark:text-subtle-dark">We meticulously analyze satellite imagery and local weather data to understand your rooftop's solar potential.</p>
+</div>
+<div class="flex flex-col items-center text-center p-6">
+<div class="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">assessment</span>
+</div>
+<h3 class="mt-6 text-lg font-bold">Assessing the Ore Grade</h3>
+<p class="mt-2 text-base text-subtle-light dark:text-subtle-dark">Our proprietary algorithms evaluate sunlight exposure, roof orientation, and shading factors to determine the 'ore grade' of your solar claim.</p>
+</div>
+<div class="flex flex-col items-center text-center p-6">
+<div class="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-4xl">paid</span>
+</div>
+<h3 class="mt-6 text-lg font-bold">Calculating the Asset Value</h3>
+<p class="mt-2 text-base text-subtle-light dark:text-subtle-dark">We combine the 'ore grade' with current energy prices and government incentives to calculate your rooftop's exact asset value.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="relative py-24 sm:py-32">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZHjjW_1FYB5UxPg8TbuikNC9yb7FA7Xpb6nlBGJ8j3Ojqxkq4qKoJ2K1w6mbP4dJyvl0GtWyEkHyxeA7864hD0VOZQDA6uUbRHC7bh2QEBnUHt0-Al9lrHMRsYhjIrsg6Mcrm3VXr-x2Z0MzC2WVWNQ_xVl97lc1CzMdRIDjyqsKfHPpcMyM4VZhCYEVldPtwMNsDTYfU1vRngQJGN6aJgRZP7p_DPG5oj9UWITIAHsKsxu-MnBXd3Y6MS8HyXYZChGltbYfXBlo");'></div>
+<div class="absolute inset-0 bg-background-dark/70"></div>
+<div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+<h2 class="text-4xl md:text-5xl font-bold tracking-tight">Stop Guessing. Start Mining.</h2>
+<p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-white/90">
+              Enter your home address to generate your FREE report and uncover your rooftop's exact value.
+            </p>
+<form class="mt-8 max-w-xl mx-auto">
+<div class="flex flex-col sm:flex-row gap-4">
+<input class="flex-grow w-full px-5 py-4 rounded-full border-0 bg-white/90 text-background-dark placeholder-subtle-light focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Enter your home address" type="text"/>
+<button class="bg-primary text-background-dark font-bold px-8 py-4 rounded-full hover:bg-primary/90 transition-colors" type="submit">
+                  Reveal My Asset Value
+                </button>
+</div>
+</form>
+<div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-x-6 gap-y-2 text-left">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span>Accurate Asset Value</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span>Personalized Solar Report</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span>Savings & Payback Estimate</span>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-background-light dark:bg-background-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Are You a Certified Installer? Join the Rush.</h2>
+<p class="mt-4 mx-auto max-w-2xl text-lg text-subtle-light dark:text-subtle-dark">
+              Partner with GreenSketch to access valuable leads and grow your business in the booming solar market.
+            </p>
+<div class="mt-8">
+<button class="bg-primary text-background-dark font-bold text-base px-8 py-3 rounded-full hover:bg-primary/90 transition-colors">
+                Learn More for Business
+              </button>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3">
+<svg class="h-8 w-8 text-primary" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+<h2 class="text-xl font-bold">GreenSketch</h2>
+</div>
+<nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Contact Us</a>
+</nav>
+<div class="flex justify-center gap-6">
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg>
+</a>
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.153-1.772A4.902 4.902 0 016.08 2.525c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8a3 3 0 110-6 3 3 0 010 6zm5.25-9.75a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+</div>
+<div class="mt-8 text-center text-sm text-subtle-light dark:text-subtle-dark">
+<p>© 2024 GreenSketch. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</div>
+
+<script>
+// 数据
+const statesData = {
+  'WA': { name: 'Western Australia', value: '$14,000', grade: 'A-', payback: '4.8 Years' },
+  'NT': { name: 'Northern Territory', value: '$11,000', grade: 'A', payback: '4.3 Years' },
+  'SA': { name: 'South Australia', value: '$10,000', grade: 'B', payback: '5.0 Years' },
+  'QLD': { name: 'Queensland', value: '$18,000', grade: 'A+', payback: '4.0 Years' },
+  'NSW': { name: 'New South Wales', value: '$15,000', grade: 'A', payback: '4.2 Years' },
+  'VIC': { name: 'Victoria', value: '$12,000', grade: 'B+', payback: '4.5 Years' },
+  'TAS': { name: 'Tasmania', value: '$9,000', grade: 'B-', payback: '5.5 Years' },
+  'ACT': { name: 'Australian Capital Territory', value: '$13,500', grade: 'A-', payback: '4.4 Years' }
+};
+
+const citiesData = {
+  'Brisbane': { value: '$18,500', grade: 'A+', payback: '3.9 Years' },
+  'Sydney': { value: '$15,500', grade: 'A', payback: '4.1 Years' },
+  'Perth': { value: '$14,500', grade: 'A-', payback: '4.7 Years' },
+  'Canberra': { value: '$13,500', grade: 'A-', payback: '4.4 Years' },
+  'Melbourne': { value: '$12,500', grade: 'B+', payback: '4.4 Years' },
+  'Darwin': { value: '$11,500', grade: 'A', payback: '4.2 Years' },
+  'Adelaide': { value: '$10,500', grade: 'B+', payback: '4.9 Years' },
+  'Hobart': { value: '$9,500', grade: 'B', payback: '5.3 Years' }
+};
+
+// 获取锚点坐标（相对于容器）
+function getAnchorPoint(targetEl, containerEl) {
+  const targetRect = targetEl.getBoundingClientRect();
+  const containerRect = containerEl.getBoundingClientRect();
+  
+  return {
+    x: targetRect.left - containerRect.left + targetRect.width / 2,
+    y: targetRect.top - containerRect.top + targetRect.height / 2
+  };
+}
+
+// 计算卡片位置（带碰撞检测）
+function computeCardPosition(anchor, cardWidth, cardHeight, containerWidth, containerHeight) {
+  const offset = 12; // 偏移量
+  const positions = [
+    { left: anchor.x + offset, top: anchor.y - cardHeight - offset }, // 右上
+    { left: anchor.x - cardWidth - offset, top: anchor.y - cardHeight - offset }, // 左上
+    { left: anchor.x + offset, top: anchor.y + offset }, // 右下
+    { left: anchor.x - cardWidth - offset, top: anchor.y + offset }  // 左下
+  ];
+  
+  // 找到第一个不溢出的位置
+  for (const pos of positions) {
+    if (pos.left >= 0 && pos.left + cardWidth <= containerWidth &&
+        pos.top >= 0 && pos.top + cardHeight <= containerHeight) {
+      return pos;
+    }
+  }
+  
+  // 都溢出则使用右上并限制边界
+  return {
+    left: Math.max(0, Math.min(positions[0].left, containerWidth - cardWidth)),
+    top: Math.max(0, Math.min(positions[0].top, containerHeight - cardHeight))
+  };
+}
+
+// 显示信息卡片
+function showCard(id, type, targetEl) {
+  const card = document.getElementById('info-card');
+  const title = document.getElementById('card-title');
+  const content = document.getElementById('card-content');
+  const container = document.getElementById('map-container');
+  
+  const data = type === 'state' ? statesData[id] : citiesData[id];
+  if (!data) return;
+  
+  title.textContent = type === 'state' ? data.name : id;
+  const rvParam = String(data.value || '').replace(/[^0-9.]/g, '');
+  const pbParam = String(data.payback || '').replace(/[^0-9.]/g, '');
+  const gradeParam = data.grade || '';
+  const regionParam = type === 'state' ? id : ('CITY-' + id);
+  const linkHref = `../demo0925/roof-quote-cards_v6_linked.html?region=${encodeURIComponent(regionParam)}&rv=${encodeURIComponent(rvParam)}&pb=${encodeURIComponent(pbParam)}&grade=${encodeURIComponent(gradeParam)}`;
+  content.innerHTML = `
+    <div>Rooftop Value: ${data.value}</div>
+    <div>Sunlight Grade: ${data.grade}</div>
+    <div>Payback Period: ${data.payback}</div>
+    <div class="mt-2"><a class="underline text-primary" href="${linkHref}">See detailed quote</a></div>
+  `;
+  
+  card.classList.remove('hidden');
+  
+  // 计算位置
+  if (targetEl) {
+    const anchor = getAnchorPoint(targetEl, container);
+    const cardRect = card.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    const pos = computeCardPosition(
+      anchor,
+      cardRect.width || 220,
+      cardRect.height || 120,
+      containerRect.width,
+      containerRect.height
+    );
+    
+    card.style.left = pos.left + 'px';
+    card.style.top = pos.top + 'px';
+  }
+}
+
+// 隐藏信息卡片
+function hideCard() {
+  document.getElementById('info-card').classList.add('hidden');
+}
+
+// 初始化
+function init() {
+  const mapContainer = document.getElementById('map-container');
+  const stateHotspots = document.getElementById('state-hotspots');
+  const cityMarkers = document.getElementById('city-markers');
+  const tabState = document.getElementById('tab-state');
+  const tabCity = document.getElementById('tab-city');
+  const stateList = document.getElementById('state-list');
+  const cityList = document.getElementById('city-list');
+  
+  // 默认显示 QLD 卡片(州模式)
+  mapContainer.addEventListener('mouseenter', () => {
+    if (stateHotspots.style.display !== 'none') {
+      const qldHotspot = document.querySelector('.state-hotspot[data-state="QLD"]');
+      showCard('QLD', 'state', qldHotspot);
+    }
+  });
+  
+  // 州热点点击
+  document.querySelectorAll('.state-hotspot').forEach(hotspot => {
+    hotspot.addEventListener('click', () => {
+      const stateId = hotspot.getAttribute('data-state');
+      showCard(stateId, 'state', hotspot);
+    });
+  });
+  
+  // 城市标记悬停
+  document.querySelectorAll('.city-marker').forEach(marker => {
+    marker.addEventListener('mouseenter', () => {
+      const cityName = marker.getAttribute('data-city');
+      showCard(cityName, 'city', marker);
+    });
+  });
+  
+  // 州列表点击
+  document.querySelectorAll('#state-list li[data-state]').forEach(item => {
+    item.addEventListener('click', () => {
+      const stateId = item.getAttribute('data-state');
+      const hotspot = document.querySelector(`.state-hotspot[data-state="${stateId}"]`);
+      showCard(stateId, 'state', hotspot);
+    });
+  });
+  
+  // 城市列表点击 - 自动切换到 City tab
+  document.querySelectorAll('#city-list li[data-city]').forEach(item => {
+    item.addEventListener('click', () => {
+      const cityName = item.getAttribute('data-city');
+      
+      // 自动切换到 City tab
+      if (stateHotspots.style.display !== 'none') {
+        tabCity.click();
+      }
+      
+      // 延迟显示卡片，确保标记已显示
+      setTimeout(() => {
+        const marker = document.querySelector(`.city-marker[data-city="${cityName}"]`);
+        showCard(cityName, 'city', marker);
+      }, 50);
+    });
+  });
+  
+  // 标签切换
+  tabState.addEventListener('click', () => {
+    tabState.classList.add('border-primary', 'text-primary');
+    tabState.classList.remove('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
+    tabCity.classList.remove('border-primary', 'text-primary');
+    tabCity.classList.add('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
+    
+    stateList.style.display = 'block';
+    cityList.style.display = 'none';
+    stateHotspots.style.display = 'block';
+    cityMarkers.style.display = 'none';
+    hideCard();
+    const qldHotspot = document.querySelector('.state-hotspot[data-state="QLD"]');
+    showCard('QLD', 'state', qldHotspot); // 默认显示 QLD
+  });
+  
+  tabCity.addEventListener('click', () => {
+    tabCity.classList.add('border-primary', 'text-primary');
+    tabCity.classList.remove('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
+    tabState.classList.remove('border-primary', 'text-primary');
+    tabState.classList.add('border-transparent', 'text-subtle-light', 'dark:text-subtle-dark');
+    
+    stateList.style.display = 'none';
+    cityList.style.display = 'block';
+    stateHotspots.style.display = 'none';
+    cityMarkers.style.display = 'block';
+    hideCard();
+  });
+  
+  // 初始显示 QLD 卡片
+  const qldHotspot = document.querySelector('.state-hotspot[data-state="QLD"]');
+  showCard('QLD', 'state', qldHotspot);
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+});
+</script>
+</body></html>
