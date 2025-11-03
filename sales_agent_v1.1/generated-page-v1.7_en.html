@@ -194,8 +194,19 @@
               </button>
             </div>
             <h3 class="text-[18px] tracking-tight font-semibold text-gray-800">Your 3D roof model</h3>
+            
+            <!-- Tab switcher -->
+            <div class="mt-2 flex gap-2">
+              <button id="tab3DRoof" class="tab-btn flex-1 px-3 py-2 text-[13px] font-medium rounded-lg transition bg-[#22C55E] text-white border-2 border-[#22C55E]">
+                <span>3D Roof</span>
+              </button>
+              <button id="tabBattery" class="tab-btn flex-1 px-3 py-2 text-[13px] font-medium rounded-lg transition bg-white text-gray-600 border-2 border-gray-200 hover:bg-gray-50">
+                <span>Battery Wall</span>
+              </button>
+            </div>
+            
             <div class="mt-2 relative rounded-xl overflow-hidden border border-green-200 bg-gray-50" style="height: 20vh;">
-              <!-- 3D Viewer (mock) -->
+              <!-- 3D Viewer -->
               <div id="viewer3d" class="absolute inset-0">
                 <model-viewer
                   src="3d/43792833-0cb3-4884-85ef-1fb678777d5c/base_basic_shaded.glb"
@@ -207,6 +218,12 @@
                   class="absolute inset-0"
                 ></model-viewer>
                 <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Drag to rotate</div>
+              </div>
+              
+              <!-- Battery Wall Image -->
+              <div id="viewerBattery" class="absolute inset-0 hidden">
+                <img src="Pic/电池背景墙.jpeg" alt="Battery Wall" class="w-full h-full object-cover" />
+                <div class="absolute top-2 left-2 text-[11px] px-2 py-1 rounded-md bg-gray-100 border border-gray-200">Battery storage system</div>
               </div>
             </div>
             <!-- Schemes strip (horizontal) -->
@@ -833,6 +850,7 @@
       bindStep2();
       bindStep3();
       bindStep4();
+      bindStep4Tabs(); // Tab switcher for 3D roof and battery wall
       bindStep5();
       bindStep6();
       bindStep6A();
@@ -1279,6 +1297,42 @@
         const conf = getSchemeConfig(state.scheme || 'smart');
         state.subsidy = conf.subsidy;
         openLeadModal(conf.subsidy);
+      });
+    }
+
+    // Step 4 - Tab switcher for 3D roof and battery wall
+    function bindStep4Tabs() {
+      const tab3DRoof = document.getElementById('tab3DRoof');
+      const tabBattery = document.getElementById('tabBattery');
+      const viewer3d = document.getElementById('viewer3d');
+      const viewerBattery = document.getElementById('viewerBattery');
+
+      if (!tab3DRoof || !tabBattery || !viewer3d || !viewerBattery) return;
+
+      // Switch to 3D Roof
+      tab3DRoof.addEventListener('click', () => {
+        // Update tab styles
+        tab3DRoof.className = 'tab-btn flex-1 px-3 py-2 text-[13px] font-medium rounded-lg transition bg-[#22C55E] text-white border-2 border-[#22C55E]';
+        tabBattery.className = 'tab-btn flex-1 px-3 py-2 text-[13px] font-medium rounded-lg transition bg-white text-gray-600 border-2 border-gray-200 hover:bg-gray-50';
+        
+        // Show 3D viewer, hide battery image
+        viewer3d.classList.remove('hidden');
+        viewerBattery.classList.add('hidden');
+        
+        track('step4_tab_switch', { tab: '3d_roof' });
+      });
+
+      // Switch to Battery Wall
+      tabBattery.addEventListener('click', () => {
+        // Update tab styles
+        tabBattery.className = 'tab-btn flex-1 px-3 py-2 text-[13px] font-medium rounded-lg transition bg-[#22C55E] text-white border-2 border-[#22C55E]';
+        tab3DRoof.className = 'tab-btn flex-1 px-3 py-2 text-[13px] font-medium rounded-lg transition bg-white text-gray-600 border-2 border-gray-200 hover:bg-gray-50';
+        
+        // Show battery image, hide 3D viewer
+        viewerBattery.classList.remove('hidden');
+        viewer3d.classList.add('hidden');
+        
+        track('step4_tab_switch', { tab: 'battery_wall' });
       });
     }
 

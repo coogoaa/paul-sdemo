@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#22C55E">
+  <title>Invalid Link | Solar Solutions</title>
+  
+  <!-- Fonts: Inter (local first, CDN fallback) -->
+  <link id="interCss" href="../sales_agent_v1.1/vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+
+  <!-- TailwindCSS: Prefer local CSS for file:// usage, add CDN fallback below -->
+  <link rel="stylesheet" href="../sales_agent_v1.1/vendor/tailwind/tailwind.min.css">
+  <script>/* Tailwind CDN fallback for when local CSS missing */</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide icons: local first, CDN fallback -->
+  <script src="../sales_agent_v1.1/vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', 'Noto Sans', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';">
+  
+  <!-- Safe area and app container -->
+  <div class="mx-auto max-w-md min-h-screen flex flex-col items-stretch">
+    
+    <!-- Top bar / Header -->
+    <div class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/90 bg-white/90 border-b border-green-100">
+      <div class="pt-[10px]"></div>
+      <div class="px-3 pb-2">
+        <div class="w-full flex items-center gap-2 rounded-2xl px-2 py-1.5 bg-white border border-green-100">
+          <div class="flex items-center gap-1.5 pl-0.5">
+            <span class="w-2 h-2 rounded-full bg-red-500/80"></span>
+            <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
+          </div>
+          <div class="flex-1 flex items-center gap-2 px-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+            <span class="text-[13px] text-gray-600 truncate">Invalid Link</span>
+          </div>
+        </div>
+      </div>
+      <!-- Brand -->
+      <div class="px-4 pb-3">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex-1">
+            <div class="text-[18px] md:text-[20px] tracking-tight font-semibold text-gray-800">Your Installer Name</div>
+            <div class="text-[11px] text-gray-500">Powered by GreenSketch AI</div>
+          </div>
+          <div class="h-10 w-10 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center shrink-0">
+            <span class="text-[16px] tracking-tight font-semibold text-[#22C55E]">S</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 px-4 py-8 flex flex-col items-center justify-center">
+      
+      <!-- Icon -->
+      <div class="mb-6 float-animation">
+        <div class="w-24 h-24 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center">
+          <i data-lucide="link-2-off" class="w-12 h-12 text-amber-500"></i>
+        </div>
+      </div>
+
+      <!-- Page Title -->
+      <h1 class="text-[28px] md:text-[32px] tracking-tight font-bold text-gray-800 text-center mb-3">
+        Oops! This Link is Invalid
+      </h1>
+
+      <!-- Description -->
+      <p class="text-[15px] leading-6 text-gray-600 text-center max-w-sm mb-8">
+        The link you used is missing a valid installer code. Please check the link and try again, or choose an option below.
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="w-full max-w-sm space-y-3">
+        
+        <!-- Button 1: Call Your Installer -->
+        <a href="tel:+8618000000000" class="block w-full rounded-2xl bg-[#22C55E] hover:bg-[#16A34A] text-white border border-[#22C55E] shadow-lg shadow-green-100/50 transition-all duration-200 active:scale-[0.98] overflow-hidden">
+          <div class="p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <i data-lucide="phone" class="w-6 h-6 text-white"></i>
+              </div>
+              <div class="flex-1 text-left">
+                <div class="text-[16px] font-semibold">Call Your Installer</div>
+                <div class="text-[13px] text-white/90 mt-0.5">Connect directly for the correct link or assistance</div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Button 2: Request Expert Assistance -->
+        <button onclick="showContactForm()" class="block w-full rounded-2xl bg-white hover:bg-gray-50 text-gray-800 border-2 border-green-200 shadow-lg shadow-green-100/30 transition-all duration-200 active:scale-[0.98] overflow-hidden">
+          <div class="p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                <i data-lucide="mail" class="w-6 h-6 text-[#22C55E]"></i>
+              </div>
+              <div class="flex-1 text-left">
+                <div class="text-[16px] font-semibold">Request Expert Assistance</div>
+                <div class="text-[13px] text-gray-600 mt-0.5">Leave your details for a manual assessment</div>
+              </div>
+            </div>
+          </div>
+        </button>
+
+        <!-- Button 3: Visit Our Homepage -->
+        <a href="https://greensketch.ai/" target="_blank" class="block w-full rounded-2xl bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 shadow-md transition-all duration-200 active:scale-[0.98] overflow-hidden">
+          <div class="p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+                <i data-lucide="home" class="w-6 h-6 text-gray-600"></i>
+              </div>
+              <div class="flex-1 text-left">
+                <div class="text-[16px] font-semibold">Visit Our Homepage</div>
+                <div class="text-[13px] text-gray-600 mt-0.5">Explore more about our solar solutions</div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Contact Form Modal -->
+  <div id="contactModal" class="hidden fixed inset-0 z-[60]">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideContactForm()"></div>
+    <div class="absolute inset-x-3 bottom-3 max-w-md mx-auto rounded-2xl bg-white border border-green-200 p-4 shadow-2xl">
+      <div class="flex items-start gap-2 mb-4">
+        <div class="flex-1">
+          <div class="text-[12px] text-gray-600">Get in touch</div>
+          <h4 class="text-[18px] tracking-tight font-semibold text-gray-800">Request Expert Assistance</h4>
+          <p class="text-[12px] text-gray-600 mt-1">Fill in your details and our team will contact you shortly.</p>
+        </div>
+        <button onclick="hideContactForm()" class="h-8 w-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center hover:bg-gray-200 transition">
+          <i data-lucide="x" class="w-4 h-4 text-gray-600"></i>
+        </button>
+      </div>
+      
+      <form id="contactForm" class="space-y-2" onsubmit="handleSubmit(event)">
+        <div class="relative">
+          <i data-lucide="user" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <input id="userName" type="text" placeholder="Full name" required class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
+        </div>
+        <div class="relative">
+          <i data-lucide="mail" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <input id="userEmail" type="email" placeholder="Email" required class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
+        </div>
+        <div class="relative">
+          <i data-lucide="phone" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <input id="userPhone" type="tel" inputmode="tel" placeholder="Phone" required class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
+        </div>
+        <div class="relative">
+          <i data-lucide="map-pin" class="w-4.5 h-4.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <input id="userPostcode" type="text" inputmode="numeric" maxlength="4" placeholder="Postcode" required class="w-full pl-10 pr-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition">
+        </div>
+        <div class="relative">
+          <textarea id="userNote" placeholder="Note (optional): roof type, battery interest, preferred contact time" rows="3" class="w-full px-3 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[14px] placeholder:text-gray-400 focus:outline-none focus:border-[#22C55E] transition resize-none"></textarea>
+        </div>
+        <label class="flex items-start gap-2 text-[12px] text-gray-600 select-none">
+          <input id="userConsent" type="checkbox" required class="mt-0.5 w-4 h-4 rounded border-gray-300">
+          <span>I agree to be contacted and consent to the privacy policy.</span>
+        </label>
+        <div id="formError" class="hidden text-[12px] text-red-500">Please complete all required fields and consent.</div>
+        <div class="flex gap-2 pt-1">
+          <a href="tel:+8618000000000" class="px-4 py-2.5 rounded-xl bg-emerald-100 text-emerald-600 border border-emerald-200 hover:bg-emerald-200 transition inline-flex items-center gap-1.5">
+            <i data-lucide="phone-call" class="w-4.5 h-4.5"></i>
+            Call
+          </a>
+          <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">
+            <i data-lucide="send" class="w-4.5 h-4.5"></i>
+            <span class="text-[13px]">Submit to receive assistance</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Message Modal -->
+  <div id="successModal" class="hidden fixed inset-0 z-[70]">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideSuccessMessage()"></div>
+    <div class="absolute inset-x-3 top-1/2 -translate-y-1/2 max-w-sm mx-auto rounded-2xl bg-white border border-green-200 p-6 shadow-2xl">
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-full bg-emerald-50 border-2 border-emerald-200 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="check-circle" class="w-8 h-8 text-[#22C55E]"></i>
+        </div>
+        <h4 class="text-[20px] tracking-tight font-semibold text-gray-800 mb-2">Request Submitted!</h4>
+        <p class="text-[14px] text-gray-600 mb-4">Thank you for reaching out. Our team will contact you within 24 hours.</p>
+        <button onclick="hideSuccessMessage()" class="w-full px-4 py-3 rounded-xl bg-[#22C55E] text-white border border-[#22C55E] hover:bg-[#16A34A] transition">
+          <span class="text-[14px] font-medium">Got it</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+
+    // Show contact form modal
+    function showContactForm() {
+      document.getElementById('contactModal').classList.remove('hidden');
+      if (typeof lucide !== 'undefined') {
+        setTimeout(() => lucide.createIcons(), 50);
+      }
+    }
+
+    // Hide contact form modal
+    function hideContactForm() {
+      document.getElementById('contactModal').classList.add('hidden');
+    }
+
+    // Show success message
+    function showSuccessMessage() {
+      document.getElementById('successModal').classList.remove('hidden');
+      if (typeof lucide !== 'undefined') {
+        setTimeout(() => lucide.createIcons(), 50);
+      }
+    }
+
+    // Hide success message
+    function hideSuccessMessage() {
+      document.getElementById('successModal').classList.add('hidden');
+    }
+
+    // Handle form submission
+    function handleSubmit(event) {
+      event.preventDefault();
+      
+      // Get form values
+      const name = document.getElementById('userName').value;
+      const email = document.getElementById('userEmail').value;
+      const phone = document.getElementById('userPhone').value;
+      const postcode = document.getElementById('userPostcode').value;
+      const note = document.getElementById('userNote').value;
+      const consent = document.getElementById('userConsent').checked;
+
+      // Validate
+      if (!name || !email || !phone || !postcode || !consent) {
+        document.getElementById('formError').classList.remove('hidden');
+        return;
+      }
+
+      // Validate postcode (4 digits)
+      if (!/^\d{4}$/.test(postcode)) {
+        document.getElementById('formError').textContent = 'Please provide a valid 4-digit postcode.';
+        document.getElementById('formError').classList.remove('hidden');
+        return;
+      }
+
+      // Hide error
+      document.getElementById('formError').classList.add('hidden');
+
+      // Here you would normally send the data to your server
+      console.log('Form submitted:', { name, email, phone, postcode, note, consent });
+
+      // Hide contact form and show success message
+      hideContactForm();
+      showSuccessMessage();
+
+      // Reset form
+      document.getElementById('contactForm').reset();
+    }
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        hideContactForm();
+        hideSuccessMessage();
+      }
+    });
+  </script>
+
+</body>
+</html>
