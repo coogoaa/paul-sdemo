@@ -1,0 +1,36 @@
+=== 屋顶发电量数据导出文件清单 ===
+
+一、JSON 解析文件 (4个)
+  1. parsed_creat_battery_payload.json    - 电池系统 payload 解析
+  2. parsed_creat_battery_view.json       - 电池系统视图解析（含 rowLayout_parsed）
+  3. parsed_creat_newsys_payload.json     - 新系统 payload 解析
+  4. parsed_creat_newsys_preview.json     - 新系统预览解析（含 layout_parsed）
+
+二、CSV 导出文件 (5个)
+  1. 项目信息.csv                         - 2条记录，项目基本信息
+  2. 设计方案.csv                         - 6条记录，所有设计方案的财务和技术指标
+  3. 面板位置_payload.csv                 - 10条记录，原始面板布局数据
+  4. 面板位置与发电量_layout.csv         - 9条记录，面板位置+月度发电量
+  5. 月度发电量汇总.csv                   - 3条记录，按设计方案汇总的月度发电量
+
+三、说明文档 (3个)
+  1. README.md                            - JSON 解析结果详细说明
+  2. 解析摘要.md                          - 中文解析摘要
+  3. CSV导出说明.md                       - CSV 文件字段和使用说明
+
+四、生成脚本 (2个)
+  1. parse_samples.py                     - JSON 解析脚本
+  2. export_to_csv.py                     - CSV 导出脚本
+
+=== 数据统计 ===
+- 项目数量: 2 个（项目524和525）
+- 设计方案: 6 个（每个项目3个方案）
+- 面板位置: 10 个（payload）+ 9 个（layout）
+- 月度数据: 3 个设计方案 × 12 个月
+
+=== Git 提交 ===
+✓ 已提交到本地仓库
+  - Commit 1: 添加 JSON 解析脚本和输出结果
+  - Commit 2: 添加 CSV 导出功能
+
+生成时间: 2025-11-07 14:30
