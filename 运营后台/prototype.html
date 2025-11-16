@@ -6,20 +6,17 @@
     <title>运营后台原型</title>
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --primary-dark: #4f46e5;
-            --accent: #ec4899;
-            --accent-hover: #db2777;
-            --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f8fafc;
             --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --text: #111827;
-            --text-muted: #6b7280;
+            --border: #cbd5e1;
+            --text: #1e293b;
+            --text-muted: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
-            --radius: 16px;
-            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -33,18 +30,7 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            z-index: -1;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .login-view,
@@ -58,9 +44,10 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             padding: 48px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
-            backdrop-filter: blur(10px);
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .login-card h1 {
@@ -108,25 +95,33 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: var(--primary);
             color: #fff;
             border: none;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
+            border-radius: 6px;
+            padding: 8px 16px;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            background: var(--primary-hover);
         }
 
         .btn-secondary {
-            background: #fff;
-            color: var(--text);
-            border: 1px solid var(--border);
-            font-weight: 600;
+            background: #f1f5f9;
+            color: #334155;
+            border: none;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+            padding: 8px 16px;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
         }
 
         .brand {
@@ -158,90 +153,67 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-        }
-
-        .dashboard {
-            display: flex;
-            gap: 24px;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: var(--radius);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-        }
-
-        .sidebar .user-badge {
-            width: 100%;
-            border-radius: 12px;
+            padding: 24px;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow);
         }
 
-        .menu {
+        .header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .menu-btn {
-            background: #f9fafb;
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            background: transparent;
             border: none;
-            padding: 14px 18px;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-size: 15px;
-            text-align: left;
             color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s;
         }
 
-        .menu-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--primary);
-            transform: scaleY(0);
-            transition: transform 0.3s;
+        .nav-tab.active {
+            background: #e0f2fe;
+            color: var(--primary);
+            font-weight: 500;
         }
 
-        .menu-btn.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: #fff;
-            transform: translateX(4px);
+        .nav-tab:hover:not(.active) {
+            background: #f1f5f9;
         }
 
-        .menu-btn.active::before {
-            transform: scaleY(1);
-        }
-
-        .menu-btn:hover:not(.active) {
-            background: #f3f4f6;
-            transform: translateX(2px);
-        }
-
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
         }
 
         .filters {
@@ -448,27 +420,21 @@
             </div>
         </section>
 
-        <section id="appView" class="app-view" style="display:none;">
-            <div class="dashboard">
-                <aside class="sidebar">
-                    <div>
-                        <div class="brand">SunshineOps</div>
-                        <p style="color:var(--text-muted);font-size:13px;margin-top:6px;">简洁实用的运营控制台</p>
-                    </div>
-                    <div class="user-badge">
-                        <div class="user-avatar">OP</div>
-                        <div>
-                            <div style="font-size:14px;font-weight:600;">运营 - Olivia</div>
-                            <div style="font-size:12px;color:var(--text-muted);">运营专员</div>
-                        </div>
-                    </div>
-                    <nav class="menu">
-                        <button class="menu-btn active" data-target="dataExport">数据导出</button>
-                        <button class="menu-btn" data-target="paramConfig">参数配置</button>
+        <section id="appView" style="display:none;">
+            <header class="header">
+                <div class="header-content">
+                    <div class="logo">运营管理后台</div>
+                    <nav class="nav-tabs">
+                        <button class="nav-tab active" data-target="dataExport">数据导出</button>
+                        <button class="nav-tab" data-target="paramConfig">参数配置</button>
                     </nav>
-                </aside>
+                    <div class="user-badge">
+                        <span style="color:var(--text-muted);font-size:14px;">管理员</span>
+                    </div>
+                </div>
+            </header>
 
-                <div class="content">
+            <main class="main-content">
                     <section id="dataExport" class="card">
                         <div class="section-title">数据导出</div>
                         <div class="filters">
@@ -714,14 +680,13 @@
                             <button class="btn-primary">保存配置</button>
                         </div>
                     </section>
-                </div>
-            </div>
+            </main>
         </section>
         <script>
             const loginBtn = document.getElementById('loginBtn');
             const loginView = document.getElementById('loginView');
             const appView = document.getElementById('appView');
-            const menuButtons = document.querySelectorAll('.menu-btn');
+            const navTabs = document.querySelectorAll('.nav-tab');
             const sections = {
                 dataExport: document.getElementById('dataExport'),
                 paramConfig: document.getElementById('paramConfig')
@@ -732,9 +697,9 @@
                 appView.style.display = 'block';
             });
 
-            menuButtons.forEach(btn => {
+            navTabs.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    menuButtons.forEach(b => b.classList.remove('active'));
+                    navTabs.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     Object.values(sections).forEach(section => section.style.display = 'none');
                     const target = btn.dataset.target;
