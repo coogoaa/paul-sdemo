@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运营后台原型</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #cbd5e1;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .login-view,
+        .app-view {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px 64px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 48px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-card h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        input,
+        select,
+        button,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 15px;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+            padding: 8px 16px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+            padding: 8px 16px;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 15px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            background: #e0f2fe;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .filters .actions {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th,
+        td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-item {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-item span {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .summary-item strong {
+            font-size: 24px;
+        }
+
+        .accordion {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .accordion + .accordion {
+            margin-top: 16px;
+        }
+
+        .accordion-header {
+            background: #f9fafb;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .accordion-body {
+            padding: 20px;
+            display: none;
+            background: #fff;
+        }
+
+        .accordion.open .accordion-body {
+            display: block;
+        }
+
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 13px;
+            background: #f9fafb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .mapping-table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .mapping-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .mapping-table tbody tr:hover {
+            background: #f3f4f6;
+        }
+
+        .mapping-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 640px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .filters .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section id="loginView" class="login-view">
+            <div class="login-card">
+                <h1>运营后台登录</h1>
+                <p>账号由技术团队统一分配，暂无自助注册。</p>
+                <div class="form-grid">
+                    <div>
+                        <label for="loginAccount">用户名 / 邮箱</label>
+                        <input id="loginAccount" type="text" placeholder="name@company.com">
+                    </div>
+                    <div>
+                        <label for="loginPassword">密码</label>
+                        <input id="loginPassword" type="password" placeholder="••••••••">
+                    </div>
+                </div>
+                <button id="loginBtn" class="btn-primary">登录</button>
+                <p style="margin-top:16px;font-size:13px;color:var(--text-muted);">
+                    如需开通账号，请联系开发同事。
+                </p>
+            </div>
+        </section>
+
+        <section id="appView" style="display:none;">
+            <header class="header">
+                <div class="header-content">
+                    <div class="logo">运营管理后台</div>
+                    <nav class="nav-tabs">
+                        <button class="nav-tab active" data-target="dataExport">数据导出</button>
+                        <button class="nav-tab" data-target="paramConfig">参数配置</button>
+                    </nav>
+                    <div class="user-badge">
+                        <span style="color:var(--text-muted);font-size:14px;">管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                    <section id="dataExport" class="card">
+                        <div class="section-title">数据导出</div>
+                        <div class="filters">
+                            <div style="grid-column: span 2;">
+                                <label>项目创建时间</label>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                    <input type="date" value="2025-01-01">
+                                    <input type="date" value="2025-01-31">
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-secondary">搜索 / 筛选</button>
+                                <button class="btn-primary">导出 CSV</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>project_id</th>
+                                    <th>analysis_address</th>
+                                    <th>design_type</th>
+                                    <th>system_size_kw</th>
+                                    <th>annual_bill_savings_base</th>
+                                    <th>payback_years</th>
+                                    <th>lead_type</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#P-20250121</td>
+                                    <td>12 Baker St, NSW</td>
+                                    <td>Rebate Maximiser</td>
+                                    <td>12.5</td>
+                                    <td>AUD 2,380</td>
+                                    <td>5.6</td>
+                                    <td><span class="badge">高价值</span></td>
+                                    <td>已留资</td>
+                                </tr>
+                                <tr>
+                                    <td>#P-20250118</td>
+                                    <td>88 Green Rd, VIC</td>
+                                    <td>Battery Upgrade</td>
+                                    <td>9.8</td>
+                                    <td>AUD 1,920</td>
+                                    <td>7.2</td>
+                                    <td>初步提案</td>
+                                    <td>未留资</td>
+                                </tr>
+                                <tr>
+                                    <td>#P-20250115</td>
+                                    <td>25 Ocean Dr, QLD</td>
+                                    <td>Storage Ready</td>
+                                    <td>15.0</td>
+                                    <td>AUD 2,980</td>
+                                    <td>6.0</td>
+                                    <td>需人工评估</td>
+                                    <td>已留资</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="paramConfig" class="card" style="display:none;">
+                        <div class="section-title">核心参数配置</div>
+                        <p style="color:var(--text-muted);margin-bottom:16px;font-size:14px;">
+                            调整后请保存，若出现异常可恢复默认值。系统会记录最新修改时间与操作者。
+                        </p>
+                        <div class="accordion open">
+                            <div class="accordion-header">
+                                <strong>GIS 参数</strong>
+                                <span>2 个参数</span>
+                            </div>
+                            <div class="accordion-body">
+                                <div class="param-grid">
+                                    <div>
+                                        <label>min_2D_area_filter_m2</label>
+                                        <input type="number" value="50">
+                                    </div>
+                                    <div>
+                                        <label>max_2D_area_filter_m2</label>
+                                        <input type="number" value="600">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <strong>方案参数</strong>
+                                <span>5 个参数</span>
+                            </div>
+                            <div class="accordion-body">
+                                <div class="param-grid">
+                                    <div>
+                                        <label>plan_c_capacity_factor</label>
+                                        <input type="number" step="0.1" value="0.9">
+                                    </div>
+                                    <div>
+                                        <label>plan_c_target_sc_rate (%)</label>
+                                        <input type="number" value="50">
+                                    </div>
+                                    <div>
+                                        <label>dc_ac_ratio</label>
+                                        <input type="number" step="0.1" value="1.5">
+                                    </div>
+                                    <div>
+                                        <label>rooftop_use_factor</label>
+                                        <input type="number" step="0.1" value="0.7">
+                                    </div>
+                                    <div>
+                                        <label>baseline_self_consumption_rate (%)</label>
+                                        <input type="number" value="30">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <strong>经济参数</strong>
+                                <span>7 个参数</span>
+                            </div>
+                            <div class="accordion-body">
+                                <div class="param-grid">
+                                    <div>
+                                        <label>grid_buy_rate (AUD/kWh)</label>
+                                        <input type="number" step="0.01" value="0.30">
+                                    </div>
+                                    <div>
+                                        <label>grid_sell_rate (AUD/kWh)</label>
+                                        <input type="number" step="0.01" value="0.07">
+                                    </div>
+                                    <div>
+                                        <label>daily_fixed_charge (AUD/day)</label>
+                                        <input type="number" step="0.01" value="0.35">
+                                    </div>
+                                    <div>
+                                        <label>electricity_inflation_rate (%)</label>
+                                        <input type="number" step="0.1" value="3.97">
+                                    </div>
+                                    <div>
+                                        <label>cash_interest_rate (%)</label>
+                                        <input type="number" step="0.1" value="1.36">
+                                    </div>
+                                    <div>
+                                        <label>existing_sc_rate (%)</label>
+                                        <input type="number" value="30">
+                                    </div>
+                                    <div>
+                                        <label>battery_replacement_year (年)</label>
+                                        <input type="number" value="10">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <strong>映射数据</strong>
+                                <span>3 张表格</span>
+                            </div>
+                            <div class="accordion-body">
+                                <div style="margin-bottom:24px;">
+                                    <label style="font-weight:600;margin-bottom:8px;display:block;">GS 功率映射表</label>
+                                    <div class="table-container">
+                                        <table class="mapping-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>起始值</th>
+                                                    <th>区间值</th>
+                                                    <th>nominal_battery_capacity_kwh</th>
+                                                    <th>usable_battery_capacity_kwh</th>
+                                                    <th>inverter_kw</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td>0</td><td>(0,5]</td><td>22.44</td><td>20.2</td><td>8</td></tr>
+                                                <tr><td>5</td><td>(5,7.5]</td><td>22.22</td><td>20</td><td>9.6</td></tr>
+                                                <tr><td>7.5</td><td>(7.5,12]</td><td>29.33</td><td>26.4</td><td>9.994</td></tr>
+                                                <tr><td>12</td><td>(12,20]</td><td>28.04</td><td>25.24</td><td>9.3</td></tr>
+                                                <tr><td>20</td><td>(20,100]</td><td>50.32</td><td>45.29</td><td>19.50</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom:24px;">
+                                    <label style="font-weight:600;margin-bottom:8px;display:block;">GD 功率映射表</label>
+                                    <div class="table-container">
+                                        <table class="mapping-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>起始值</th>
+                                                    <th>区间值</th>
+                                                    <th>nominal_battery_capacity_kwh</th>
+                                                    <th>usable_battery_capacity_kwh</th>
+                                                    <th>inverter_kw</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td>0</td><td>(0,5]</td><td>15.00</td><td>13.50</td><td>5.00</td></tr>
+                                                <tr><td>5</td><td>(5,7.5]</td><td>14.82</td><td>13.34</td><td>5.00</td></tr>
+                                                <tr><td>7.5</td><td>(7.5,12]</td><td>17.33</td><td>15.60</td><td>7.22</td></tr>
+                                                <tr><td>12</td><td>(12,20]</td><td>22.22</td><td>20.00</td><td>10.00</td></tr>
+                                                <tr><td>20</td><td>(20,100]</td><td>41.93</td><td>37.74</td><td>15.00</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label style="font-weight:600;margin-bottom:8px;display:block;">储能扩容功率映射表</label>
+                                    <div class="table-container">
+                                        <table class="mapping-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>起始值</th>
+                                                    <th>pv kw</th>
+                                                    <th>标称容量 A</th>
+                                                    <th>可用容量 A</th>
+                                                    <th>标称容量 B</th>
+                                                    <th>可用容量 B</th>
+                                                    <th>标称容量 C</th>
+                                                    <th>可用容量 C</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td>0</td><td>(0,5]</td><td>11.11</td><td>10.00</td><td>15.00</td><td>13.50</td><td>16.67</td><td>15.00</td></tr>
+                                                <tr><td>5</td><td>(5,7.5]</td><td>11.11</td><td>10.00</td><td>15.00</td><td>13.50</td><td>21.33</td><td>19.20</td></tr>
+                                                <tr><td>7.5</td><td>(7.5,12]</td><td>15.33</td><td>13.80</td><td>17.78</td><td>16.00</td><td>26.00</td><td>23.40</td></tr>
+                                                <tr><td>12</td><td>(12,20]</td><td>21.33</td><td>19.20</td><td>26.00</td><td>23.40</td><td>33.33</td><td>30.00</td></tr>
+                                                <tr><td>20</td><td>(20,100]</td><td>33.33</td><td>30.00</td><td>47.78</td><td>43.00</td><td>55.56</td><td>50.00</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <button class="btn-secondary">恢复默认值</button>
+                            <button class="btn-primary">保存配置</button>
+                        </div>
+                    </section>
+            </main>
+        </section>
+        <script>
+            const loginBtn = document.getElementById('loginBtn');
+            const loginView = document.getElementById('loginView');
+            const appView = document.getElementById('appView');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const sections = {
+                dataExport: document.getElementById('dataExport'),
+                paramConfig: document.getElementById('paramConfig')
+            };
+
+            loginBtn.addEventListener('click', () => {
+                loginView.style.display = 'none';
+                appView.style.display = 'block';
+            });
+
+            navTabs.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    navTabs.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    Object.values(sections).forEach(section => section.style.display = 'none');
+                    const target = btn.dataset.target;
+                    sections[target].style.display = 'block';
+                });
+            });
+
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.parentElement.classList.toggle('open');
+                });
+            });
+        </script>
+</body>
+</html>
