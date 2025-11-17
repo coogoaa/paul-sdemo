@@ -26,20 +26,24 @@ jobs:
         
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
+      - name: Prepare static site directory
+        run: |
+          mkdir -p site
+          cp -f index.html site/ 2>/dev/null || true
+          [ -d gs-admin ] && cp -R gs-admin site/gs-admin
+          [ -d demo_html ] && cp -R demo_html site/demo_html
+          [ -d 404page ] && cp -R 404page site/404page
+          [ -d installer_page ] && cp -R installer_page site/installer_page
+          [ -d sales_agent_v1.1 ] && cp -R "sales_agent_v1.1" "site/sales_agent_v1.1"
+          [ -d roof_rush ] && cp -R roof_rush site/roof_rush
+          [ -d Payback ] && cp -R Payback site/Payback
+          [ -d Review_page ] && cp -R Review_page site/Review_page
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            ./index.html
-            ./gs-admin
-            ./demo_html
-            ./404page
-            ./installer_page
-            ./sales_agent_v1.1
-            ./roof_rush
-            ./Payback
-            ./Review_page
+          path: ./site
           
       - name: Deploy to GitHub Pages
         id: deployment
