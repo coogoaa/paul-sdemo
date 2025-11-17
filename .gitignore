@@ -34,3 +34,11 @@ Thumbs.db
 # Other
 *.log
 .codebuddy/
+
+# Large data directories (not needed for GitHub Pages)
+datas/
+方案计算 1014/
+屋顶发电量/
+
+# CSV data files
+*.csv
