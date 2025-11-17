@@ -40,5 +40,23 @@ datas/
 方案计算 1014/
 屋顶发电量/
 
+# Output directories
+output/
+outputs/
+**/output/
+**/outputs/
+
 # CSV data files
 *.csv
+
+# Python files (not needed for static site)
+*.py
+*.pyc
+*.pyo
+*.pyd
+
+# Documentation and notes (keep only essential docs)
+prd/
+docs/proposal_logic.md
+docs/jilu.md
+docs/xu.md
