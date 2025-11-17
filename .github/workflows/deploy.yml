@@ -30,7 +30,16 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: |
+            ./index.html
+            ./gs-admin
+            ./demo_html
+            ./404page
+            ./installer_page
+            ./sales_agent_v1.1
+            ./roof_rush
+            ./Payback
+            ./Review_page
           
       - name: Deploy to GitHub Pages
         id: deployment
