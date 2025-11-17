@@ -3,7 +3,7 @@ const pages = {
   export: `
     <div class="topbar">
       <div>
-        <div class="breadcrumbs">Sales Agent Management / 数据导出</div>
+        <div class="breadcrumbs">Emily Data Export</div>
         <h1>线上数据自助导出</h1>
       </div>
     </div>
@@ -126,7 +126,7 @@ const pages = {
   params: `
     <div class="topbar">
       <div>
-        <div class="breadcrumbs">Sales Agent Management / 参数配置</div>
+        <div class="breadcrumbs">Emily Configuration</div>
         <h1>核心参数配置</h1>
       </div>
     </div>
@@ -208,6 +208,24 @@ const pages = {
           <div class="param-item"><label>existing_sc_rate</label><input type="number" value="30"><small>已有系统基线自用率 (%)</small></div>
           <div class="param-item"><label>battery_replacement_year</label><input type="number" value="10"><small>更换电池年限 (年)</small></div>
         </div>
+        
+        <h3 style="margin-top:32px">各州领地年用电量配置</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>States</th><th>Avg. Annual kWh Usage</th></tr></thead>
+            <tbody>
+              <tr><td>TAS</td><td><input type="number" value="10148" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>NT</td><td><input type="number" value="10008" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>ACT</td><td><input type="number" value="8632" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>SA</td><td><input type="number" value="7129" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>NSW</td><td><input type="number" value="7778" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>QLD</td><td><input type="number" value="7270" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>WA</td><td><input type="number" value="7634" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>VIC</td><td><input type="number" value="6778" style="width:120px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        
         <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
       </div>
       <div class="tab-content" id="tab-display">
@@ -220,32 +238,88 @@ const pages = {
         <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
       </div>
       <div class="tab-content" id="tab-fallback">
+        <h3>第一部分：小时发电兜底配置</h3>
         <div class="params-grid">
-          <div class="param-item"><label>yield_per_kw_per_year_fallback</label><input type="number" value="1526"><small>每 kW 年发电量 (兜底) (kWh/kW/yr)</small></div>
+          <div class="param-item"><label>yield_per_kw_per_year_fallback</label><input type="number" value="1526"><small>年发电系数 (kWh/kW/yr)</small></div>
         </div>
         
-        <h3 style="margin-top:32px">小时发电量兜底数据</h3>
+        <h3 style="margin-top:24px">月发电量占比兜底配置</h3>
         <div class="upload-area">
-          <p>支持上传 Excel 或 CSV 文件替换现有兜底数据</p>
-          <input type="file" id="upload-hourly" accept=".xlsx,.xls,.csv">
-          <label for="upload-hourly" class="upload-label">选择文件上传</label>
+          <p>支持上传 Excel 或 CSV 文件替换现有配置</p>
+          <input type="file" id="upload-monthly-ratio" accept=".xlsx,.xls,.csv">
+          <label for="upload-monthly-ratio" class="upload-label">选择文件上传</label>
         </div>
         <div style="overflow-x:auto">
           <table>
-            <thead><tr><th>月</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th><th>23</th><th>24</th></tr></thead>
+            <thead><tr><th>月份</th><th>发电量占比 (%)</th></tr></thead>
             <tbody>
-              <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.693099355</td><td>1.38619871</td><td>2.425847742</td><td>3.465496774</td><td>4.505145806</td><td>4.851695484</td><td>4.851695484</td><td>4.505145806</td><td>3.465496774</td><td>2.425847742</td><td>1.38619871</td><td>0.693099355</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.690624</td><td>1.381248</td><td>2.417184</td><td>3.45312</td><td>4.489056</td><td>4.834368</td><td>4.834368</td><td>4.489056</td><td>3.45312</td><td>2.417184</td><td>1.381248</td><td>0.690624</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.623789419</td><td>1.247578839</td><td>2.183262968</td><td>3.118947097</td><td>4.054631226</td><td>4.366525935</td><td>4.366525935</td><td>4.054631226</td><td>3.118947097</td><td>2.183262968</td><td>1.247578839</td><td>0.623789419</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.572962133</td><td>1.145924267</td><td>2.005367467</td><td>2.864810667</td><td>3.724253867</td><td>4.010734933</td><td>4.010734933</td><td>3.724253867</td><td>2.864810667</td><td>2.005367467</td><td>1.145924267</td><td>0.572962133</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.485169548</td><td>0.970339097</td><td>1.698093419</td><td>2.425847742</td><td>3.153602065</td><td>3.396186839</td><td>3.396186839</td><td>3.153602065</td><td>2.425847742</td><td>1.698093419</td><td>0.970339097</td><td>0.485169548</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>6</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.4297216</td><td>0.8594432</td><td>1.5040256</td><td>2.148608</td><td>2.7931904</td><td>3.0080512</td><td>3.0080512</td><td>2.7931904</td><td>2.148608</td><td>1.5040256</td><td>0.8594432</td><td>0.4297216</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>7</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.485169548</td><td>0.970339097</td><td>1.698093419</td><td>2.425847742</td><td>3.153602065</td><td>3.396186839</td><td>3.396186839</td><td>3.153602065</td><td>2.425847742</td><td>1.698093419</td><td>0.970339097</td><td>0.485169548</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>8</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.554479484</td><td>1.108958968</td><td>1.940678194</td><td>2.772397419</td><td>3.604116645</td><td>3.881356387</td><td>3.881356387</td><td>3.604116645</td><td>2.772397419</td><td>1.940678194</td><td>1.108958968</td><td>0.554479484</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>9</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.6445824</td><td>1.2891648</td><td>2.2560384</td><td>3.222912</td><td>4.1897856</td><td>4.5120768</td><td>4.5120768</td><td>4.1897856</td><td>3.222912</td><td>2.2560384</td><td>1.2891648</td><td>0.6445824</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.623789419</td><td>1.247578839</td><td>2.183262968</td><td>3.118947097</td><td>4.054631226</td><td>4.366525935</td><td>4.366525935</td><td>4.054631226</td><td>3.118947097</td><td>2.183262968</td><td>1.247578839</td><td>0.623789419</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>11</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.6445824</td><td>1.2891648</td><td>2.2560384</td><td>3.222912</td><td>4.1897856</td><td>4.5120768</td><td>4.5120768</td><td>4.1897856</td><td>3.222912</td><td>2.2560384</td><td>1.2891648</td><td>0.6445824</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>12</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.623789419</td><td>1.247578839</td><td>2.183262968</td><td>3.118947097</td><td>4.054631226</td><td>4.366525935</td><td>4.366525935</td><td>4.054631226</td><td>3.118947097</td><td>2.183262968</td><td>1.247578839</td><td>0.623789419</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>1月</td><td>8.5</td></tr>
+              <tr><td>2月</td><td>8.2</td></tr>
+              <tr><td>3月</td><td>8.8</td></tr>
+              <tr><td>4月</td><td>8.0</td></tr>
+              <tr><td>5月</td><td>7.5</td></tr>
+              <tr><td>6月</td><td>7.0</td></tr>
+              <tr><td>7月</td><td>7.5</td></tr>
+              <tr><td>8月</td><td>8.0</td></tr>
+              <tr><td>9月</td><td>8.5</td></tr>
+              <tr><td>10月</td><td>9.0</td></tr>
+              <tr><td>11月</td><td>9.5</td></tr>
+              <tr><td>12月</td><td>9.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <h3 style="margin-top:24px">24小时发电量占比兜底配置</h3>
+        <div class="upload-area">
+          <p>支持上传 Excel 或 CSV 文件替换现有配置</p>
+          <input type="file" id="upload-hourly-ratio" accept=".xlsx,.xls,.csv">
+          <label for="upload-hourly-ratio" class="upload-label">选择文件上传</label>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>小时</th><th>发电量占比 (%)</th></tr></thead>
+            <tbody>
+              <tr><td>0-1</td><td>0</td></tr>
+              <tr><td>1-2</td><td>0</td></tr>
+              <tr><td>2-3</td><td>0</td></tr>
+              <tr><td>3-4</td><td>0</td></tr>
+              <tr><td>4-5</td><td>0</td></tr>
+              <tr><td>5-6</td><td>0</td></tr>
+              <tr><td>6-7</td><td>2.5</td></tr>
+              <tr><td>7-8</td><td>5.0</td></tr>
+              <tr><td>8-9</td><td>8.5</td></tr>
+              <tr><td>9-10</td><td>11.0</td></tr>
+              <tr><td>10-11</td><td>13.0</td></tr>
+              <tr><td>11-12</td><td>14.5</td></tr>
+              <tr><td>12-13</td><td>15.0</td></tr>
+              <tr><td>13-14</td><td>14.5</td></tr>
+              <tr><td>14-15</td><td>13.0</td></tr>
+              <tr><td>15-16</td><td>11.0</td></tr>
+              <tr><td>16-17</td><td>8.5</td></tr>
+              <tr><td>17-18</td><td>5.0</td></tr>
+              <tr><td>18-19</td><td>2.5</td></tr>
+              <tr><td>19-20</td><td>0</td></tr>
+              <tr><td>20-21</td><td>0</td></tr>
+              <tr><td>21-22</td><td>0</td></tr>
+              <tr><td>22-23</td><td>0</td></tr>
+              <tr><td>23-24</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <h3 style="margin-top:32px">第二部分：各州邮编兜底配置</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>州/领地 (State/Territory)</th><th>兜底邮编</th></tr></thead>
+            <tbody>
+              <tr><td>新南威尔士州 (NSW)</td><td><input type="text" value="2000" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>维多利亚州 (VIC)</td><td><input type="text" value="3000" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>昆士兰州 (QLD)</td><td><input type="text" value="4000" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>南澳大利亚州 (SA)</td><td><input type="text" value="5000" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>西澳大利亚州 (WA)</td><td><input type="text" value="6000" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>塔斯马尼亚州 (TAS)</td><td><input type="text" value="7000" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>北领地 (NT)</td><td><input type="text" value="0800" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
+              <tr><td>澳大利亚首都领地 (ACT)</td><td><input type="text" value="2600" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px"></td></tr>
             </tbody>
           </table>
         </div>
@@ -312,29 +386,6 @@ const pages = {
           </table>
         </div>
         <div class="button-row"><button class="btn btn-primary">保存映射数据</button></div>
-        
-        <h3 style="margin-top:32px">各州领地年用电量配置</h3>
-        <div class="upload-area">
-          <p>支持上传 Excel 或 CSV 文件替换现有配置数据</p>
-          <input type="file" id="upload-states" accept=".xlsx,.xls,.csv">
-          <label for="upload-states" class="upload-label">选择文件上传</label>
-        </div>
-        <div style="overflow-x:auto">
-          <table>
-            <thead><tr><th>States</th><th>Avg. Annual kWh Usage</th></tr></thead>
-            <tbody>
-              <tr><td>TAS</td><td>10148</td></tr>
-              <tr><td>NT</td><td>10008</td></tr>
-              <tr><td>ACT</td><td>8632</td></tr>
-              <tr><td>SA</td><td>7129</td></tr>
-              <tr><td>NSW</td><td>7778</td></tr>
-              <tr><td>QLD</td><td>7270</td></tr>
-              <tr><td>WA</td><td>7634</td></tr>
-              <tr><td>VIC</td><td>6778</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="button-row"><button class="btn btn-primary">保存配置数据</button></div>
       </div>
     </div>
   `
@@ -401,6 +452,11 @@ document.addEventListener('DOMContentLoaded', () => {
   menuItems.forEach(item => {
     item.addEventListener('click', () => {
       const pageName = item.dataset.page;
+      // Accounts菜单跳转到外部链接
+      if (pageName === 'accounts') {
+        window.location.href = 'https://gs-admin.greensketch.ai/accounts';
+        return;
+      }
       switchPage(pageName);
     });
   });
