@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Agent Management 登录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2f7be5;
+        --primary-dark: #1f5db3;
+        --text-dark: #0f172a;
+        --text-muted: #4c5d76;
+        --border: #c6d5f5;
+        --bg: #f5f7fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, #f4f7ff 0%, #e9f0fb 60%, #f8fbff 100%);
+        color: var(--text-dark);
+        padding: 24px;
+      }
+
+      .card {
+        width: min(430px, 100%);
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 36px 48px;
+        box-shadow: 0 24px 60px rgba(47, 123, 229, 0.18);
+      }
+
+      .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 40px;
+      }
+
+      .logo img {
+        width: 160px;
+        height: auto;
+      }
+
+      .logo small {
+        font-size: 13px;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+      }
+
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #23324d;
+        margin-bottom: 8px;
+      }
+
+      .input-wrapper {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: #f1f5ff;
+        font-size: 15px;
+        color: var(--text-dark);
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(47, 123, 229, 0.2);
+      }
+
+      .toggle-visibility {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: var(--text-muted);
+        padding: 4px;
+        display: flex;
+        align-items: center;
+      }
+
+      .toggle-visibility:hover {
+        color: var(--primary);
+      }
+
+      .toggle-visibility svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        margin-top: 12px;
+        border: none;
+        border-radius: 999px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 14px 20px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+
+      button[type="submit"]:hover {
+        background: var(--primary-dark);
+        box-shadow: 0 12px 24px rgba(47, 123, 229, 0.3);
+        transform: translateY(-1px);
+      }
+
+    </style>
+  </head>
+  <body>
+    <section class="card">
+      <div class="logo">
+        <img src="https://gs-admin.staging.client.com.au/imgs/gs-logo.svg" alt="GreenSketch Logo" />
+        <small>Sales Agent Management System</small>
+      </div>
+      <form novalidate>
+        <label for="account">账号 / 邮箱</label>
+        <div class="input-wrapper">
+          <input id="account" type="text" placeholder="" autocomplete="username" />
+        </div>
+
+        <label for="password">密码</label>
+        <div class="input-wrapper">
+          <input id="password" type="password" placeholder="" autocomplete="current-password" />
+          <button type="button" class="toggle-visibility" aria-label="切换密码可见性">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <button type="submit">登录后台</button>
+      </form>
+    </section>
+
+    <script>
+      const toggleBtn = document.querySelector('.toggle-visibility');
+      const passwordInput = document.getElementById('password');
+      const form = document.querySelector('form');
+
+      toggleBtn.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // 切换图标
+        if (type === 'text') {
+          toggleBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          `;
+        } else {
+          toggleBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          `;
+        }
+      });
+
+      // 表单提交跳转
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        window.location.href = 'dashboard.html';
+      });
+    </script>
+  </body>
+</html>
