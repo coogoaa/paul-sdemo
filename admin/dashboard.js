@@ -12,6 +12,18 @@ const pages = {
       <div class="filter-grid" style="margin-top:18px">
         <div><label>项目创建时间 - 起</label><input type="date" id="startDate"></div>
         <div><label>项目创建时间 - 止</label><input type="date" id="endDate"></div>
+        <div>
+          <label>线索类型</label>
+          <select id="clueType">
+            <option value="">不限</option>
+            <option value="new">new</option>
+            <option value="battery">battery</option>
+            <option value="non_au">非澳地址</option>
+            <option value="large_home">大面积房屋留资</option>
+            <option value="get_help">get help & Quote</option>
+            <option value="fallback">兜底留资</option>
+          </select>
+        </div>
       </div>
       <div class="button-row">
         <button class="btn btn-primary" id="filterBtn">筛选</button>
@@ -143,11 +155,12 @@ const pages = {
         <button class="tab" data-tab="fallback">兜底参数</button>
       </div>
       <div class="tab-content active" id="tab-gis">
+        <h3>2D 面积参数</h3>
         <div class="params-grid">
           <div class="param-item"><label>min_2D_area_filter_m2</label><input type="number" value="50"><small>最小屋顶面积过滤 (m²)</small></div>
           <div class="param-item"><label>max_2D_area_filter_m2</label><input type="number" value="600"><small>最大屋顶面积过滤 (m²)</small></div>
         </div>
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-house3d">
         <h3>面板尺寸</h3>
@@ -167,9 +180,10 @@ const pages = {
           <div class="param-item"><label>battery_width_mm</label><input type="number" value="1100"><small>Width (mm)</small></div>
           <div class="param-item"><label>battery_height_mm</label><input type="number" value="2000"><small>Height (mm)</small></div>
         </div>
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-plan">
+        <h3>方案参数</h3>
         <div class="params-grid">
           <div class="param-item"><label>plan_c_capacity_factor</label><input type="number" step="0.01" value="0.9"><small>方案 C 容量系数</small></div>
           <div class="param-item"><label>plan_c_target_sc_rate</label><input type="number" value="50"><small>方案 C 目标自用率 (%)</small></div>
@@ -177,28 +191,40 @@ const pages = {
           <div class="param-item"><label>rooftop_use_factor</label><input type="number" step="0.1" value="0.7"><small>屋顶理论最大容量使用系数</small></div>
           <div class="param-item"><label>baseline_self_consumption_rate</label><input type="number" value="30"><small>基线自用率 (无电池) %</small></div>
         </div>
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-device">
+        <h3>面板参数</h3>
         <div class="params-grid">
-          <div class="param-item"><label>battery_dod</label><input type="number" value="90"><small>电池放电深度 DoD (%)</small></div>
-          <div class="param-item"><label>battery_rte</label><input type="number" value="95"><small>电池往返效率 RTE (%)</small></div>
           <div class="param-item"><label>panel_power_kw</label><input type="number" step="0.01" value="0.44"><small>标准化面板单元功率 (kW)</small></div>
           <div class="param-item"><label>panel_first_year_degradation_rate</label><input type="number" value="0"><small>面板首年衰减率 (%)</small></div>
           <div class="param-item"><label>panel_annual_degradation_rate</label><input type="number" step="0.01" value="0.40"><small>面板次年起衰减率 (%)</small></div>
           <div class="param-item"><label>pv_system_efficiency</label><input type="number" value="85"><small>系统效率 (%)</small></div>
         </div>
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        
+        <h3 style="margin-top:24px">电池参数</h3>
+        <div class="params-grid">
+          <div class="param-item"><label>battery_dod</label><input type="number" value="90"><small>电池放电深度 DoD (%)</small></div>
+          <div class="param-item"><label>battery_rte</label><input type="number" value="95"><small>电池往返效率 RTE (%)</small></div>
+        </div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-cost">
+        <h3>税前报价参数</h3>
         <div class="params-grid">
           <div class="param-item"><label>panel_unit_price_per_kw</label><input type="number" value="540"><small>每 kW 面板税前报价 (AUD/kW)</small></div>
           <div class="param-item"><label>inverter_unit_price_per_kw</label><input type="number" value="280"><small>每 kW 逆变器税前报价 (AUD/kW)</small></div>
           <div class="param-item"><label>battery_unit_price_per_kwh</label><input type="number" value="865"><small>每 kWh 电池税前报价 (AUD/kWh)</small></div>
         </div>
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        
+        <h3 style="margin-top:24px">税率参数</h3>
+        <div class="params-grid">
+          <div class="param-item"><label>tax_rate</label><input type="number" step="0.01" value="10"><small>税率 (%)</small></div>
+        </div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-economic">
+        <h3>电价与经济参数</h3>
         <div class="params-grid">
           <div class="param-item"><label>grid_buy_rate</label><input type="number" step="0.01" value="0.3"><small>购电价 (AUD/kWh)</small></div>
           <div class="param-item"><label>grid_sell_rate</label><input type="number" step="0.01" value="0.07"><small>售电价 (AUD/kWh)</small></div>
@@ -208,6 +234,7 @@ const pages = {
           <div class="param-item"><label>existing_sc_rate</label><input type="number" value="30"><small>已有系统基线自用率 (%)</small></div>
           <div class="param-item"><label>battery_replacement_year</label><input type="number" value="10"><small>更换电池年限 (年)</small></div>
         </div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
         
         <h3 style="margin-top:32px">各州领地年用电量配置</h3>
         <div style="overflow-x:auto">
@@ -225,23 +252,24 @@ const pages = {
             </tbody>
           </table>
         </div>
-        
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-display">
+        <h3>浮动范围参数</h3>
         <div class="params-grid">
           <div class="param-item"><label>display_range_percent_self_consumption</label><input type="number" value="5"><small>自用率展示浮动范围 (%)</small></div>
           <div class="param-item"><label>display_range_percent_annual_savings</label><input type="number" value="5"><small>年度节省浮动范围 (%)</small></div>
           <div class="param-item"><label>display_range_percent_payback_period</label><input type="number" value="5"><small>回本周期浮动范围 (%)</small></div>
           <div class="param-item"><label>display_range_percent_final_price</label><input type="number" value="5"><small>最终报价浮动范围 (%)</small></div>
         </div>
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-fallback">
-        <h3>第一部分：小时发电兜底配置</h3>
+        <h3>第一部分：小时发电兜底</h3>
         <div class="params-grid">
           <div class="param-item"><label>yield_per_kw_per_year_fallback</label><input type="number" value="1526"><small>年发电系数 (kWh/kW/yr)</small></div>
         </div>
+        <div class="button-row" style="justify-content:flex-start"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
         
         <h3 style="margin-top:24px">月发电量占比兜底配置</h3>
         <div class="upload-area">
@@ -268,6 +296,7 @@ const pages = {
             </tbody>
           </table>
         </div>
+        <div class="button-row" style="justify-content:flex-start"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
         
         <h3 style="margin-top:24px">24小时发电量占比兜底配置</h3>
         <div class="upload-area">
@@ -306,8 +335,9 @@ const pages = {
             </tbody>
           </table>
         </div>
+        <div class="button-row" style="justify-content:flex-start"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
         
-        <h3 style="margin-top:32px">第二部分：各州邮编兜底配置</h3>
+        <h3 style="margin-top:32px">第二部分：各州邮编兜底</h3>
         <div style="overflow-x:auto">
           <table>
             <thead><tr><th>州/领地 (State/Territory)</th><th>兜底邮编</th></tr></thead>
@@ -323,8 +353,7 @@ const pages = {
             </tbody>
           </table>
         </div>
-        
-        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
       <div class="tab-content" id="tab-mapping">
         <h3>GS 功率映射表</h3>
@@ -345,7 +374,7 @@ const pages = {
             </tbody>
           </table>
         </div>
-        <div class="button-row"><button class="btn btn-primary">保存映射数据</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
         
         <h3 style="margin-top:32px">GD 功率映射表</h3>
         <div class="upload-area">
@@ -365,7 +394,7 @@ const pages = {
             </tbody>
           </table>
         </div>
-        <div class="button-row"><button class="btn btn-primary">保存映射数据</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
         
         <h3 style="margin-top:32px">储能扩容功率映射表</h3>
         <div class="upload-area">
@@ -385,7 +414,7 @@ const pages = {
             </tbody>
           </table>
         </div>
-        <div class="button-row"><button class="btn btn-primary">保存映射数据</button></div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认配置</button><button class="btn btn-primary">保存配置</button><button class="btn btn-outline">设为默认值</button></div>
       </div>
     </div>
   `
