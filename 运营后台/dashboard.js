@@ -133,6 +133,7 @@ const pages = {
     <div class="card">
       <div class="tabs">
         <button class="tab active" data-tab="gis">GIS参数</button>
+        <button class="tab" data-tab="house3d">3D房屋参数</button>
         <button class="tab" data-tab="plan">方案参数</button>
         <button class="tab" data-tab="device">设备参数</button>
         <button class="tab" data-tab="cost">成本参数</button>
@@ -145,6 +146,26 @@ const pages = {
         <div class="params-grid">
           <div class="param-item"><label>min_2D_area_filter_m2</label><input type="number" value="50"><small>最小屋顶面积过滤 (m²)</small></div>
           <div class="param-item"><label>max_2D_area_filter_m2</label><input type="number" value="600"><small>最大屋顶面积过滤 (m²)</small></div>
+        </div>
+        <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
+      </div>
+      <div class="tab-content" id="tab-house3d">
+        <h3>面板尺寸</h3>
+        <div class="params-grid">
+          <div class="param-item"><label>panel_length_mm</label><input type="number" value="1762"><small>长度 (mm)</small></div>
+          <div class="param-item"><label>panel_width_mm</label><input type="number" value="1134"><small>宽度 (mm)</small></div>
+          <div class="param-item"><label>panel_thickness_mm</label><input type="number" value="30"><small>厚度 (mm)</small></div>
+        </div>
+        <h3 style="margin-top:24px">排布间距</h3>
+        <div class="params-grid">
+          <div class="param-item"><label>inter_module_spacing_mm</label><input type="number" value="20"><small>Inter-module spacing (mm)</small></div>
+          <div class="param-item"><label>inter_row_spacing_mm</label><input type="number" value="20"><small>Inter-row spacing (mm)</small></div>
+        </div>
+        <h3 style="margin-top:24px">电池尺寸</h3>
+        <div class="params-grid">
+          <div class="param-item"><label>battery_length_mm</label><input type="number" value="900"><small>Length (mm)</small></div>
+          <div class="param-item"><label>battery_width_mm</label><input type="number" value="1100"><small>Width (mm)</small></div>
+          <div class="param-item"><label>battery_height_mm</label><input type="number" value="2000"><small>Height (mm)</small></div>
         </div>
         <div class="button-row"><button class="btn btn-outline">恢复默认值</button><button class="btn btn-primary">保存配置</button></div>
       </div>
