@@ -15,12 +15,12 @@ const pages = {
         <div>
           <label>Lead Type</label>
           <select id="clueType">
-            <option value="">All</option>
-            <option value="normal_flow">Normal Flow</option>
-            <option value="non_au">NonAU</option>
-            <option value="large_home">Large Roof</option>
-            <option value="get_help">Get Help</option>
-            <option value="fallback">Fallback</option>
+            <option value="" disabled selected>Please select Leads Type</option>
+            <option value="base-design">base-design</option>
+            <option value="high-value">High-Value Lead</option>
+            <option value="future-opportunity">Future Opportunity Lead</option>
+            <option value="manual-assessment">Manual Assessment Lead</option>
+            <option value="quote-help">Quote and Help Lead</option>
           </select>
         </div>
       </div>
@@ -56,7 +56,7 @@ const pages = {
               <td>1407.554532</td><td>1481.63635</td><td>0.120304</td><td>9.1875</td>
               <td>8.3125</td><td>8.75</td><td>15</td><td>0.997508</td>
               <td>0.902508</td><td>0.950008</td><td>-</td><td>-</td>
-              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Normal Flow</td>
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>base-design</td>
             </tr>
             <tr>
               <td>2025-08-19 14:25:32</td><td>321</td><td>7XM7+8XQ, Fawkner VIC 3060, Australia</td><td>7XM7+8XQ, Fawkner VIC 3060, Australia</td>
@@ -66,7 +66,7 @@ const pages = {
               <td>1407.554532</td><td>1481.63635</td><td>0.100371</td><td>10.416</td>
               <td>9.424</td><td>9.92</td><td>16.67</td><td>0.997508</td>
               <td>0.902508</td><td>0.950008</td><td><a href="https://file.greensketch.ai/green-sketch/prod/2025/10/28/rendering/321/423/a77bfb06-f8ad-4195-814f-0c37c287f75a.png" target="_blank">View</a></td><td>-</td>
-              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Normal Flow</td>
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>base-design</td>
             </tr>
             <tr>
               <td>2025-08-20 09:15:48</td><td>322</td><td>Melbourne VIC 3000, Australia</td><td>Melbourne VIC 3000, Australia</td>
@@ -76,7 +76,7 @@ const pages = {
               <td>1997.56864</td><td>2102.703832</td><td>0.094849</td><td>10.1535</td>
               <td>9.1865</td><td>9.67</td><td>17.33</td><td>0.597736</td>
               <td>0.540809</td><td>0.569272</td><td>-</td><td>-</td>
-              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Normal Flow</td>
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>base-design</td>
             </tr>
             <tr>
               <td>2025-08-20 09:18:22</td><td>322</td><td>Melbourne VIC 3000, Australia</td><td>Melbourne VIC 3000, Australia</td>
@@ -86,7 +86,7 @@ const pages = {
               <td>1997.56864</td><td>2102.703832</td><td>0.026538</td><td>14.8785</td>
               <td>13.4615</td><td>14.17</td><td>29.33</td><td>0.597736</td>
               <td>0.540809</td><td>0.569272</td><td><a href="https://file.greensketch.ai/green-sketch/prod/2025/10/29/rendering/322/426/3140b244-8c77-492a-b525-4ef3b0e23da9.png" target="_blank">View</a></td><td><a href="https://file.greensketch.ai/green-sketch/prod/2025/10/29/card/322/426/1c2fbaac-44c3-4f26-b2ab-c707737ff0f6.png" target="_blank">View</a></td>
-              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Normal Flow</td>
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>base-design</td>
             </tr>
             <tr>
               <td>2025-09-14 16:42:09</td><td>323</td><td>11 Marvin Way, Paralowie SA 5108, Australia</td><td>11 Marvin Way, Paralowie SA 5108, Australia</td>
@@ -96,7 +96,7 @@ const pages = {
               <td>1918.242354</td><td>2019.202478</td><td>0.11992</td><td>9.45</td>
               <td>8.55</td><td>9</td><td>21.33</td><td>0.732653</td>
               <td>0.662877</td><td>0.697765</td><td><a href="https://file.greensketch.ai/green-sketch/prod/2025/10/29/rendering/323/428/24b80230-6c3d-4148-bd69-6527d59ec4cf.png" target="_blank">View</a></td><td><a href="https://file.greensketch.ai/green-sketch/prod/2025/10/29/card/323/428/e5bf835d-0d45-4eab-9a4b-43f0885c28e0.png" target="_blank">View</a></td>
-              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Normal Flow</td>
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>base-design</td>
             </tr>
             <tr>
               <td>2025-09-14 18:25:33</td><td>333</td><td>JVWP+3VH, Lyons NT 0810, Australia</td><td>JVWP+3VH, Lyons NT 0810, Australia</td>
@@ -106,7 +106,7 @@ const pages = {
               <td>3943.618243</td><td>4151.177097</td><td>0.174855</td><td>5.775</td>
               <td>5.225</td><td>5.5</td><td>22.22</td><td>0.397757</td>
               <td>0.359875</td><td>0.378816</td><td>-</td><td>-</td>
-              <td>p1</td><td>123@gmail.com</td><td>123456789</td><td>810</td><td>-</td><td>Normal Flow</td>
+              <td>p1</td><td>123@gmail.com</td><td>123456789</td><td>810</td><td>-</td><td>base-design</td>
             </tr>
           </tbody>
         </table>
