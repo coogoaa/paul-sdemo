@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#22C55E">
+    <title>Feedback - Emily's Smart Quote</title>
+    <!-- 复用 generated-page-v1.8_en.html 的资源引用 -->
+    <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+    <script src="../vendor/tailwind/tailwind.cdn.min.js"></script>
+    <script>
+        if (!window.tailwind) {
+            var s = document.createElement('script');
+            s.src = 'https://cdn.tailwindcss.com';
+            document.head.appendChild(s);
+        }
+    </script>
+    <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+    <style>
+        /* 简单的动画 */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .star-rating i { cursor: pointer; transition: color 0.2s, transform 0.1s; }
+        .star-rating i:active { transform: scale(0.9); }
+        .option-btn.selected { background-color: #DCFCE7; border-color: #22C55E; color: #166534; }
+        .option-btn.selected i { color: #166534; }
+    </style>
+</head>
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen font-sans" style="font-family: 'InterVariable', 'Inter', sans-serif;">
+    <div class="mx-auto max-w-md min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-green-100 px-4 py-3">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+                    <span class="text-[15px] tracking-tight font-semibold text-[#22C55E]">S</span>
+                </div>
+                <div>
+                    <div class="text-[16px] font-semibold text-gray-800">Emily's Smart Quote</div>
+                    <div class="text-[11px] text-gray-500">Feedback Center</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-4 space-y-6 pb-20">
+            <!-- Stage 1 Container -->
+            <div id="stage1" class="hidden space-y-4 fade-in">
+                <!-- Title Card -->
+                <div class="text-center space-y-2 py-2">
+                    <h1 class="text-xl font-bold text-gray-900">Quick Check on Your Solar Plan</h1>
+                    <p class="text-sm text-gray-600 px-4">Help us ensure you're getting the best service.</p>
+                </div>
+
+                <!-- Welcome Card -->
+                <div class="bg-white rounded-2xl border border-green-100 p-5 shadow-sm">
+                    <p class="text-[14px] leading-relaxed text-gray-700">
+                        Hi <span class="font-semibold text-gray-900" id="s1_customer_name">Alex</span>,<br><br>
+                        Thanks for helping us check in on your plan for <span class="font-semibold text-gray-900" id="s1_address">120 Collins St</span> with <span class="font-semibold text-gray-900" id="s1_installer">Solar Experts Pty</span>.
+                    </p>
+                </div>
+
+                <!-- Q1 -->
+                <div class="bg-white rounded-2xl border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+                    <div class="p-5 space-y-4">
+                        <div class="font-medium text-gray-900">1. Has the installer contacted you yet?</div>
+                        <div class="grid grid-cols-2 gap-3" id="q1-group">
+                            <button class="option-btn group flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition w-full" onclick="selectOption(this, 'q1-group')">
+                                <i data-lucide="check-circle-2" class="w-6 h-6 text-gray-400 group-hover:text-green-600 transition"></i>
+                                <span class="text-sm font-medium">Yes</span>
+                            </button>
+                            <button class="option-btn group flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition w-full" onclick="selectOption(this, 'q1-group')">
+                                <i data-lucide="clock" class="w-6 h-6 text-gray-400 group-hover:text-amber-500 transition"></i>
+                                <span class="text-sm font-medium">No (Still waiting)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="bg-white rounded-2xl border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+                    <div class="p-5 space-y-4">
+                        <div class="font-medium text-gray-900">2. Was the final quote close to our AI estimate?</div>
+                        <div class="flex flex-col gap-2" id="q2-group">
+                            <button class="option-btn w-full text-left px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                <span class="text-sm font-medium">Cheaper than AI</span>
+                                <i data-lucide="arrow-down-circle" class="w-5 h-5 text-gray-400 group-hover:text-green-600 transition"></i>
+                            </button>
+                            <button class="option-btn w-full text-left px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                <span class="text-sm font-medium">Similar to AI</span>
+                                <i data-lucide="minus-circle" class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition"></i>
+                            </button>
+                            <button class="option-btn w-full text-left px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                <span class="text-sm font-medium">More expensive</span>
+                                <i data-lucide="arrow-up-circle" class="w-5 h-5 text-gray-400 group-hover:text-red-500 transition"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="bg-white rounded-2xl border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+                    <div class="p-5 space-y-4">
+                        <div class="font-medium text-gray-900">3. How easy was it to use our AI Sales Agent?</div>
+                        <div class="flex justify-center gap-2 star-rating" data-name="q3">
+                            <i data-lucide="star" class="w-9 h-9 text-gray-300 fill-current" onclick="rate(1, 'q3')"></i>
+                            <i data-lucide="star" class="w-9 h-9 text-gray-300 fill-current" onclick="rate(2, 'q3')"></i>
+                            <i data-lucide="star" class="w-9 h-9 text-gray-300 fill-current" onclick="rate(3, 'q3')"></i>
+                            <i data-lucide="star" class="w-9 h-9 text-gray-300 fill-current" onclick="rate(4, 'q3')"></i>
+                            <i data-lucide="star" class="w-9 h-9 text-gray-300 fill-current" onclick="rate(5, 'q3')"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button onclick="submitFeedback('stage1')" class="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-green-200 transition active:scale-[0.98]">
+                    Submit Feedback
+                </button>
+                
+                <div class="text-center text-[11px] text-gray-500 pt-2 pb-8">
+                    Your feedback helps us keep our service high-quality.<br>The GreenSketch Team
+                </div>
+            </div>
+
+            <!-- Stage 2 Container -->
+            <div id="stage2" class="hidden space-y-4 fade-in">
+                <!-- Title Card -->
+                <div class="text-center space-y-2 py-2">
+                    <h1 class="text-xl font-bold text-gray-900">Review Your Solar Installation</h1>
+                    <p class="text-sm text-gray-600 px-4">Share your experience with your new system.</p>
+                </div>
+
+                <!-- Welcome Card -->
+                <div class="bg-white rounded-2xl border border-green-100 p-5 shadow-sm">
+                    <p class="text-[14px] leading-relaxed text-gray-700">
+                        Hi <span class="font-semibold text-gray-900" id="s2_customer_name">Alex</span>,<br><br>
+                        We hope you're enjoying your new solar system! Please take a moment to review your experience with <span class="font-semibold text-gray-900" id="s2_installer">Solar Experts Pty</span>.
+                    </p>
+                </div>
+
+                <!-- Ratings Card -->
+                <div class="bg-white rounded-2xl border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+                    <div class="p-5 space-y-6">
+                        <div class="text-sm text-gray-500 uppercase tracking-wide font-semibold text-center border-b border-gray-100 pb-2">Please rate the service</div>
+                        
+                        <!-- Value for Money -->
+                        <div class="space-y-2">
+                            <div class="text-sm font-medium text-gray-900 text-center">Value for Money</div>
+                            <div class="flex justify-center gap-1 star-rating" data-name="s2_value">
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(1, 's2_value')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(2, 's2_value')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(3, 's2_value')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(4, 's2_value')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(5, 's2_value')"></i>
+                            </div>
+                        </div>
+
+                        <!-- Quality of System -->
+                        <div class="space-y-2 pt-2 border-t border-gray-50">
+                            <div class="text-sm font-medium text-gray-900 text-center">Quality of System</div>
+                            <div class="flex justify-center gap-1 star-rating" data-name="s2_quality">
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(1, 's2_quality')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(2, 's2_quality')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(3, 's2_quality')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(4, 's2_quality')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(5, 's2_quality')"></i>
+                            </div>
+                        </div>
+
+                        <!-- Installation Quality -->
+                        <div class="space-y-2 pt-2 border-t border-gray-50">
+                            <div class="text-sm font-medium text-gray-900 text-center">Installation Quality & Experience</div>
+                            <div class="flex justify-center gap-1 star-rating" data-name="s2_install">
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(1, 's2_install')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(2, 's2_install')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(3, 's2_install')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(4, 's2_install')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(5, 's2_install')"></i>
+                            </div>
+                        </div>
+
+                        <!-- Customer Service -->
+                        <div class="space-y-2 pt-2 border-t border-gray-50">
+                            <div class="text-sm font-medium text-gray-900 text-center">Customer Service</div>
+                            <div class="flex justify-center gap-1 star-rating" data-name="s2_service">
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(1, 's2_service')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(2, 's2_service')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(3, 's2_service')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(4, 's2_service')"></i>
+                                <i data-lucide="star" class="w-8 h-8 text-gray-300 fill-current" onclick="rate(5, 's2_service')"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="bg-white rounded-2xl border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden">
+                    <div class="p-5 space-y-3">
+                        <label class="font-medium text-gray-900 block">Any other comments? (Optional)</label>
+                        <p class="text-[12px] text-gray-500">What went well? What could be improved?</p>
+                        <textarea class="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[#22C55E] focus:bg-white transition" rows="4" placeholder="Share your thoughts..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button onclick="submitFeedback('stage2')" class="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-green-200 transition active:scale-[0.98]">
+                    Submit Review
+                </button>
+
+                <div class="text-center text-[11px] text-gray-500 pt-2 pb-8">
+                    Thank you for sharing your experience.<br>It's invaluable for us and future customers.
+                </div>
+            </div>
+
+            <!-- Thank You Page (Hidden by default) -->
+            <div id="thankYou" class="hidden flex flex-col items-center justify-center pt-20 text-center space-y-4 fade-in">
+                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-2 shadow-sm">
+                    <i data-lucide="check" class="w-12 h-12 text-green-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900">Thank You!</h2>
+                <p class="text-gray-600 px-8 leading-relaxed">Your feedback has been received and helps us improve our service.</p>
+                <div class="pt-8">
+                    <button onclick="location.reload()" class="inline-flex items-center gap-2 text-[#22C55E] font-medium text-sm px-4 py-2 rounded-lg bg-green-50 hover:bg-green-100 transition">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        Return to Start
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Dev Tools (For Demo) -->
+        <div class="fixed bottom-4 right-4 z-50 opacity-60 hover:opacity-100 transition shadow-lg rounded-lg overflow-hidden">
+            <div class="flex gap-px text-[11px] font-medium bg-white border border-gray-200">
+                <button onclick="setStage(1)" class="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 border-r border-gray-200">Stage 1</button>
+                <button onclick="setStage(2)" class="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600">Stage 2</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+
+        // 模拟数据注入
+        const data = {
+            customer_name: "Alex",
+            address: "120 Collins St",
+            installer: "Solar Experts Pty"
+        };
+
+        // 填充数据
+        document.querySelectorAll('[id^="s1_"], [id^="s2_"]').forEach(el => {
+            if(el.id.includes('customer_name')) el.textContent = data.customer_name;
+            if(el.id.includes('address')) el.textContent = data.address;
+            if(el.id.includes('installer')) el.textContent = data.installer;
+        });
+
+        // 阶段控制
+        function setStage(stage) {
+            document.getElementById('stage1').classList.add('hidden');
+            document.getElementById('stage2').classList.add('hidden');
+            document.getElementById('thankYou').classList.add('hidden');
+            
+            if (stage === 1) document.getElementById('stage1').classList.remove('hidden');
+            if (stage === 2) document.getElementById('stage2').classList.remove('hidden');
+            
+            // 更新 URL 参数
+            const url = new URL(window.location);
+            url.searchParams.set('stage', stage);
+            window.history.pushState({}, '', url);
+            
+            // 滚动到顶部
+            window.scrollTo(0, 0);
+        }
+
+        // 初始化阶段
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialStage = parseInt(urlParams.get('stage')) || 1;
+        setStage(initialStage);
+
+        // 交互逻辑
+        function selectOption(btn, groupId) {
+            const container = document.getElementById(groupId);
+            if (!container) return;
+            
+            const siblings = container.querySelectorAll('.option-btn');
+            siblings.forEach(s => s.classList.remove('selected'));
+            
+            btn.classList.add('selected');
+        }
+
+        function rate(stars, groupName) {
+            const container = document.querySelector(`.star-rating[data-name="${groupName}"]`);
+            if(!container) return;
+            
+            const starIcons = container.querySelectorAll('i');
+            starIcons.forEach((icon, index) => {
+                // 重置所有星的颜色
+                icon.classList.remove('text-amber-400', 'fill-amber-400');
+                icon.classList.add('text-gray-300');
+                
+                // 点亮前 N 颗星
+                if (index < stars) {
+                    icon.classList.remove('text-gray-300');
+                    icon.classList.add('text-amber-400', 'fill-amber-400');
+                }
+            });
+        }
+
+        function submitFeedback(stage) {
+            // 简单的加载动画模拟
+            const btn = event.currentTarget;
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5 mx-auto"></i>';
+            lucide.createIcons();
+
+            setTimeout(() => {
+                document.getElementById(stage).classList.add('hidden');
+                document.getElementById('thankYou').classList.remove('hidden');
+                // 恢复按钮状态以便下次（如果需要）
+                btn.disabled = false;
+                btn.innerText = originalText;
+                window.scrollTo(0, 0);
+            }, 800);
+        }
+    </script>
+</body>
+</html>
