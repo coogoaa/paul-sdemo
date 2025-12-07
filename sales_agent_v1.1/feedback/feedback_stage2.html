@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#22C55E">
+    <title>Review - Emily's Smart Quote</title>
+    <link id="interCss" href="../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
+    <script src="../vendor/tailwind/tailwind.cdn.min.js"></script>
+    <script>
+        if (!window.tailwind) {
+            var s = document.createElement('script');
+            s.src = 'https://cdn.tailwindcss.com';
+            document.head.appendChild(s);
+        }
+    </script>
+    <script src="../vendor/lucide/lucide.min.js" onerror="this.onerror=null; this.src='https://unpkg.com/lucide@latest'"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Star Rating Interaction */
+        .star-rating-group { display: flex; gap: 0.25rem; cursor: pointer; }
+        .star-rating-group i { transition: color 0.2s, transform 0.1s; color: #D1D5DB; }
+        
+        @media (hover: hover) {
+            .star-rating-group:hover i { color: #FBBF24; } 
+            .star-rating-group i:hover ~ i { color: #D1D5DB; }
+        }
+        
+        .star-rating-group i.active { color: #FBBF24; fill: #FBBF24; }
+
+        body { background-color: #FAFFFE; }
+        @media (min-width: 768px) {
+            body { background-image: linear-gradient(to bottom right, #f0fdf4, #f7fee7); }
+            .responsive-container { max-width: 28rem; margin: 2rem auto; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); border-radius: 1.5rem; background-color: white; overflow: hidden; border: 1px solid #e5e7eb; }
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen font-sans" style="font-family: 'InterVariable', 'Inter', sans-serif;">
+
+    <div class="responsive-container min-h-screen md:min-h-0 flex flex-col">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-green-100 px-4 py-3 md:rounded-t-3xl">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+                    <span class="text-[15px] tracking-tight font-semibold text-[#22C55E]">S</span>
+                </div>
+                <div>
+                    <div class="text-[16px] font-semibold text-gray-800">Emily's Smart Quote</div>
+                    <div class="text-[11px] text-gray-500">Installation Review</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-4 space-y-5 pb-8 fade-in">
+            <!-- Title -->
+            <div class="text-center space-y-1 py-1">
+                <h1 class="text-xl font-bold text-gray-900">Review Your Solar Installation</h1>
+            </div>
+
+            <!-- Welcome Card -->
+            <div class="bg-white rounded-2xl border border-green-100 p-5 shadow-sm">
+                <p class="text-[14px] leading-relaxed text-gray-700">
+                    Hi <span class="font-semibold text-gray-900" id="customer_name">Alex</span>,<br><br>
+                    We hope you're enjoying your new solar system! Please take a moment to review your experience with <span class="font-semibold text-gray-900" id="installer">Solar Experts Pty</span>.
+                </p>
+            </div>
+
+            <!-- Ratings Card -->
+            <div class="bg-white rounded-2xl border border-green-200 shadow-sm overflow-hidden">
+                <div class="p-5 space-y-6">
+                    <div class="text-sm text-gray-500 uppercase tracking-wide font-semibold text-center border-b border-gray-100 pb-2">Please rate the service</div>
+                    
+                    <!-- Value for Money -->
+                    <div class="space-y-2">
+                        <div class="text-sm font-medium text-gray-900 text-center">Value for Money</div>
+                        <div class="flex justify-center gap-1 star-rating-group" id="s2_value">
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(1, 's2_value')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(2, 's2_value')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(3, 's2_value')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(4, 's2_value')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(5, 's2_value')"></i>
+                        </div>
+                    </div>
+
+                    <!-- Quality of System -->
+                    <div class="space-y-2 pt-2 border-t border-gray-50">
+                        <div class="text-sm font-medium text-gray-900 text-center">Quality of System</div>
+                        <div class="flex justify-center gap-1 star-rating-group" id="s2_quality">
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(1, 's2_quality')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(2, 's2_quality')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(3, 's2_quality')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(4, 's2_quality')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(5, 's2_quality')"></i>
+                        </div>
+                    </div>
+
+                    <!-- Installation Quality -->
+                    <div class="space-y-2 pt-2 border-t border-gray-50">
+                        <div class="text-sm font-medium text-gray-900 text-center">Installation Quality & Experience</div>
+                        <div class="flex justify-center gap-1 star-rating-group" id="s2_install">
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(1, 's2_install')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(2, 's2_install')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(3, 's2_install')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(4, 's2_install')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(5, 's2_install')"></i>
+                        </div>
+                    </div>
+
+                    <!-- Customer Service -->
+                    <div class="space-y-2 pt-2 border-t border-gray-50">
+                        <div class="text-sm font-medium text-gray-900 text-center">Customer Service</div>
+                        <div class="flex justify-center gap-1 star-rating-group" id="s2_service">
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(1, 's2_service')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(2, 's2_service')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(3, 's2_service')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(4, 's2_service')"></i>
+                            <i data-lucide="star" class="w-8 h-8 fill-current" onclick="rate(5, 's2_service')"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="bg-white rounded-2xl border border-green-200 shadow-sm overflow-hidden">
+                <div class="p-5 space-y-3">
+                    <label class="font-medium text-gray-900 block">Any other comments? (Optional)</label>
+                    <p class="text-[12px] text-gray-500">What went well? What could be improved?</p>
+                    <textarea class="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[#22C55E] focus:bg-white transition resize-none" rows="4" placeholder="Share your thoughts..."></textarea>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button onclick="submitForm()" class="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-green-200 transition active:scale-[0.98] flex items-center justify-center gap-2">
+                Submit Review
+            </button>
+
+            <div class="text-center text-[11px] text-gray-500 pt-2">
+                Thank you for sharing your experience.<br>It's invaluable for us and future customers.
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mock Data
+        const data = { customer_name: "Alex", installer: "Solar Experts Pty" };
+        document.getElementById('customer_name').textContent = data.customer_name;
+        document.getElementById('installer').textContent = data.installer;
+
+        function rate(stars, containerId) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            const starIcons = container.querySelectorAll('i');
+            starIcons.forEach((icon, index) => {
+                if (index < stars) {
+                    icon.classList.add('active');
+                } else {
+                    icon.classList.remove('active');
+                }
+            });
+        }
+
+        function submitForm() {
+            const btn = event.currentTarget;
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Submitting...';
+            lucide.createIcons();
+            setTimeout(() => {
+                window.location.href = 'feedback_thankyou.html';
+            }, 800);
+        }
+    </script>
+</body>
+</html>
