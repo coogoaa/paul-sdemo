@@ -172,7 +172,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold py-4 rounded-xl shadow-lg shadow-green-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-[15px]">
+                <button id="submitBtn" type="submit" class="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold py-4 rounded-xl shadow-lg shadow-green-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-[15px] opacity-60 cursor-not-allowed" disabled>
                     Submit Feedback
                 </button>
             </form>
@@ -184,11 +184,16 @@
         lucide.createIcons();
 
         // Q1 Logic (Contact Question Gatekeeper)
+        let q1Answer = null;
+        let q2Answer = null;
+
         function handleQ1(answer, btn) {
             // UI Selection
             const group = document.getElementById('q1-group');
             group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
+
+            q1Answer = answer;
 
             const conditionalSection = document.getElementById('conditional-questions');
             const reminderMsg = document.getElementById('reminder-msg');
@@ -203,7 +208,10 @@
             } else {
                 conditionalSection.classList.add('hidden');
                 reminderMsg.classList.remove('hidden');
+                q2Answer = null;
             }
+
+            updateSubmitState();
         }
 
         // Generic Option Selection
@@ -213,6 +221,30 @@
             const siblings = container.querySelectorAll('.option-btn');
             siblings.forEach(s => s.classList.remove('selected'));
             btn.classList.add('selected');
+
+            if (groupId === 'q2-group') {
+                q2Answer = true;
+            }
+
+            updateSubmitState();
+        }
+
+        function updateSubmitState() {
+            const submitBtn = document.getElementById('submitBtn');
+            const conditionalSection = document.getElementById('conditional-questions');
+
+            const q1Done = !!q1Answer;
+            const q2Required = !conditionalSection.classList.contains('hidden');
+            const q2Done = q2Required ? !!q2Answer : true;
+
+            const canSubmit = q1Done && q2Done;
+
+            submitBtn.disabled = !canSubmit;
+            if (canSubmit) {
+                submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+            } else {
+                submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
         }
 
         // Submit Logic
