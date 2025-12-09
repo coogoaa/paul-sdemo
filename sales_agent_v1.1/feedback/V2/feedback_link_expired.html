@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#22C55E">
-    <title>Thank You - Emily's Smart Quote</title>
+    <title>Link Expired - Emily's Smart Quote</title>
     <link id="interCss" href="../../vendor/inter/inter.css" rel="stylesheet" onerror="this.onerror=null; this.href='https://rsms.me/inter/inter.css'">
     <script src="../../vendor/tailwind/tailwind.cdn.min.js"></script>
     <script>
@@ -29,30 +29,36 @@
 <body class="text-gray-800 min-h-screen font-sans flex flex-col items-center justify-center" style="font-family: 'InterVariable', 'Inter', sans-serif;">
 
     <div class="responsive-container w-full max-w-md p-6 fade-in text-center space-y-6">
-        <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto shadow-sm ring-8 ring-green-50">
-            <i data-lucide="check" class="w-12 h-12 text-green-600"></i>
+        <!-- Icon -->
+        <div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto shadow-sm ring-8 ring-amber-50">
+            <i data-lucide="alert-triangle" class="w-12 h-12 text-amber-500"></i>
         </div>
         
+        <!-- Message -->
         <div class="space-y-2">
-            <h2 class="text-2xl font-bold text-gray-900">Thank You!</h2>
-            <p class="text-gray-600 leading-relaxed px-4">
-                Your feedback has been received.<br>
-                It helps us ensure you get the best possible solar experience.
+            <h2 class="text-2xl font-bold text-gray-900">This Link Has Expired</h2>
+            <p class="text-gray-600 leading-relaxed px-4 text-sm">
+                The feedback link you opened is no longer active.<br>
+                It may have already been used or has passed its valid time window.
+            </p>
+            <p class="text-gray-500 text-xs px-6">
+                Click the button below to get a new solar plan tailored for your home.
             </p>
         </div>
 
-        <!-- CTA Button -->
+        <!-- CTA -->
         <div class="pt-2">
             <a href="https://salesagent.greensketch.ai/sq/greensketch" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#22C55E] hover:bg-[#16A34A] text-white text-sm font-semibold shadow-md shadow-green-200 transition">
                 <i data-lucide="external-link" class="w-4 h-4"></i>
-                Recheck My Solar Plan
+                Open Emily's Smart Quote
             </a>
         </div>
-
-        <div class="mt-8 pt-4 space-y-2">
+        
+        <!-- Emily Brand -->
+        <div class="mt-6 pt-4 border-t border-gray-100 space-y-2">
              <img src="../pic/emily_logo.png" alt="Emily Logo" class="h-9 w-9 rounded-xl object-contain bg-white border border-green-100 p-1 mx-auto">
              <div class="mt-1 space-y-0.5">
-                 <a href="https://salesagent.greensketch.ai/sq/greensketch" class="text-[11px] font-semibold text-blue-600 underline-offset-2 hover:underline">Emily's Smart Quote</a>
+                 <a href="https://salesagent.greensketch.ai/sq/greensketch" class="block text-[11px] font-semibold text-blue-600 underline-offset-2 hover:underline">Emily's Smart Quote</a>
                  <div class="text-[10px] text-gray-500">The AI-powered solar proposal tailored just for you.</div>
              </div>
         </div>

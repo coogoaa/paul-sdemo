@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#22C55E">
+    <title>Battery Expansion Flow | Demo</title>
+
+    <!-- TailwindCSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: { DEFAULT: '#22C55E' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#FAFFFE] text-gray-800 min-h-screen">
+    <div class="mx-auto max-w-md min-h-screen flex flex-col">
+        <!-- Top Bar -->
+        <div class="sticky top-0 z-50 backdrop-blur bg-white/90 border-b border-green-100">
+            <div class="px-4 py-3">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="h-9 w-9 rounded-xl bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+                        <span class="text-[15px] font-semibold text-[#22C55E]">S</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-[16px] font-semibold text-gray-800">Battery Expansion Flow</div>
+                        <div class="text-[12px] text-gray-600">New Step 4.5 Logic Demo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <main class="flex-1 px-3 pb-12">
+            <div id="chat" class="space-y-4 mt-4">
+
+                <!-- Bot Message -->
+                <div class="flex items-start gap-2.5">
+                    <div class="shrink-0 h-8 w-8 rounded-full overflow-hidden ring-1 ring-gray-100">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=solar" alt="bot"
+                            class="h-full w-full object-cover bg-gray-100" />
+                    </div>
+                    <div class="flex-1">
+                        <div class="inline-flex items-center gap-1.5 text-[11px] text-gray-700 mb-1">
+                            <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                            <span>AI Agent</span>
+                        </div>
+                        <div class="rounded-2xl px-4 py-3 bg-gray-100 border border-gray-200 shadow-sm rounded-tl-none">
+                            <p class="text-[14px] leading-relaxed text-gray-800">
+                                Great choice on Energy Independence! 🔋<br><br>
+                                To give you the most accurate quote, could you tell me:
+                                <b>Are you looking for a complete new system, or just adding a battery to existing
+                                    panels?</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selection Card (Step 4.5) -->
+                <div id="selectionCard"
+                    class="ml-10 rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden transition-all duration-500">
+                    <div class="p-4">
+                        <h3 class="text-[15px] font-semibold text-gray-800 mb-3">Select your scenario</h3>
+
+                        <div class="space-y-2.5">
+                            <!-- Option A: New System -->
+                            <button onclick="selectOption('new')"
+                                class="w-full group relative flex items-center gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-200 transition-all text-left">
+                                <div
+                                    class="h-10 w-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center group-hover:border-emerald-200 transition-colors">
+                                    <i data-lucide="sun" class="w-5 h-5 text-amber-500"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-[14px] font-medium text-gray-900">Complete New System</div>
+                                    <div class="text-[12px] text-gray-500 mt-0.5">Panels + Battery + Inverter</div>
+                                </div>
+                                <i data-lucide="chevron-right"
+                                    class="w-4 h-4 text-gray-400 group-hover:text-emerald-500"></i>
+                            </button>
+
+                            <!-- Option B: Battery Only -->
+                            <button onclick="selectOption('battery')"
+                                class="w-full group relative flex items-center gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-200 transition-all text-left">
+                                <div
+                                    class="h-10 w-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center group-hover:border-emerald-200 transition-colors">
+                                    <i data-lucide="battery-charging" class="w-5 h-5 text-emerald-500"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-[14px] font-medium text-gray-900">Battery Add-on</div>
+                                    <div class="text-[12px] text-gray-500 mt-0.5">I already have solar panels</div>
+                                </div>
+                                <i data-lucide="chevron-right"
+                                    class="w-4 h-4 text-gray-400 group-hover:text-emerald-500"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Response (Hidden initially) -->
+                <div id="userResponse" class="hidden flex items-start gap-2.5 justify-end">
+                    <div class="flex-1"></div>
+                    <div class="text-right">
+                        <div
+                            class="inline-block rounded-2xl px-4 py-3 bg-[#22C55E] text-white shadow-md rounded-tr-none">
+                            <p id="userResponseText" class="text-[14px] leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Card (Compressed Version) -->
+                <div id="resultCard"
+                    class="hidden ml-10 rounded-2xl bg-white border border-green-200 shadow-lg shadow-green-100/50 overflow-hidden transition-all duration-500">
+                    <div class="p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-1.5">
+                                <span id="resultBadge"
+                                    class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-[11px] font-medium">Recommended</span>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600"><i data-lucide="info"
+                                    class="w-4 h-4"></i></button>
+                        </div>
+
+                        <h3 id="resultTitle" class="text-[16px] font-bold text-gray-900 leading-tight mb-3"></h3>
+
+                        <!-- Compressed Financials -->
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <!-- Investment (Highlighted) -->
+                            <div
+                                class="col-span-2 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
+                                <div class="text-[11px] text-gray-500 uppercase tracking-wide font-medium">Estimated Net
+                                    Investment</div>
+                                <div class="flex items-baseline gap-1 mt-1">
+                                    <span id="resInvestment"
+                                        class="text-[24px] font-bold text-emerald-600 tracking-tight"></span>
+                                    <span class="text-[12px] text-gray-500">incl. install</span>
+                                </div>
+                                <div
+                                    class="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 bg-emerald-100/50 px-2 py-1 rounded-lg w-fit">
+                                    <i data-lucide="tag" class="w-3 h-3"></i>
+                                    <span>Includes <span id="resRebate" class="font-bold"></span> rebate</span>
+                                </div>
+                            </div>
+
+                            <!-- Savings -->
+                            <div class="p-2.5 rounded-xl bg-gray-50 border border-gray-100">
+                                <div class="flex items-center gap-1.5 mb-1">
+                                    <div class="p-1 rounded-md bg-white border border-gray-200"><i
+                                            data-lucide="piggy-bank" class="w-3.5 h-3.5 text-amber-500"></i></div>
+                                    <span class="text-[11px] text-gray-600 font-medium">Yearly Savings</span>
+                                </div>
+                                <div id="resSavings" class="text-[15px] font-bold text-gray-900"></div>
+                            </div>
+
+                            <!-- Payback -->
+                            <div class="p-2.5 rounded-xl bg-gray-50 border border-gray-100">
+                                <div class="flex items-center gap-1.5 mb-1">
+                                    <div class="p-1 rounded-md bg-white border border-gray-200"><i data-lucide="timer"
+                                            class="w-3.5 h-3.5 text-blue-500"></i></div>
+                                    <span class="text-[11px] text-gray-600 font-medium">Payback</span>
+                                </div>
+                                <div id="resPayback" class="text-[15px] font-bold text-gray-900"></div>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible Details (Specs) -->
+                        <div class="border-t border-gray-100 pt-2">
+                            <button onclick="toggleDetails()"
+                                class="w-full flex items-center justify-between text-[12px] text-gray-500 py-1 hover:text-gray-700">
+                                <span>System Specifications</span>
+                                <i id="detailIcon" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                            </button>
+                            <div id="detailsArea" class="hidden mt-2 space-y-2 text-[12px]">
+                                <div class="flex justify-between py-1 border-b border-gray-50">
+                                    <span class="text-gray-500">Battery Capacity</span>
+                                    <span id="specBattery" class="font-medium text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-gray-50">
+                                    <span class="text-gray-500">Solar Panels</span>
+                                    <span id="specPanels" class="font-medium text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-gray-50">
+                                    <span class="text-gray-500">Self-Consumption</span>
+                                    <span id="specSelf" class="font-medium text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-gray-500">IRR (Return)</span>
+                                    <span id="specIRR" class="font-medium text-emerald-600"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-3 flex gap-2">
+                            <button
+                                class="flex-1 py-2.5 rounded-xl bg-[#22C55E] text-white text-[13px] font-medium hover:bg-[#16A34A] transition shadow-sm shadow-green-200">
+                                Get Official Quote
+                            </button>
+                            <button
+                                class="px-3 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+                                <i data-lucide="share-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Config Data
+        const DATA = {
+            new: {
+                title: "Energy Independence (Full System)",
+                investment: "$10,500",
+                rebate: "$3,600",
+                savings: "$2,800 /yr",
+                payback: "4.5 Years",
+                battery: "13.5 kWh",
+                panels: "6.6kW (16 Panels)",
+                self: "85%",
+                irr: "22%"
+            },
+            battery: {
+                title: "Battery Expansion Add-on",
+                investment: "$6,800",
+                rebate: "$1,200",
+                savings: "$1,400 /yr",
+                payback: "5.2 Years",
+                battery: "10 kWh",
+                panels: "Existing System",
+                self: "90%",
+                irr: "18%"
+            }
+        };
+
+        function selectOption(type) {
+            // 1. Disable selection
+            const selCard = document.getElementById('selectionCard');
+            selCard.classList.add('opacity-50', 'pointer-events-none');
+
+            // 2. Show User Response
+            const userRes = document.getElementById('userResponse');
+            const userText = document.getElementById('userResponseText');
+            userRes.classList.remove('hidden');
+            userText.textContent = type === 'new' ? "I'd like a complete new system." : "Just adding a battery to my panels.";
+
+            // 3. Update & Show Result Card
+            setTimeout(() => {
+                const data = DATA[type];
+                document.getElementById('resultTitle').textContent = data.title;
+                document.getElementById('resInvestment').textContent = data.investment;
+                document.getElementById('resRebate').textContent = data.rebate;
+                document.getElementById('resSavings').textContent = data.savings;
+                document.getElementById('resPayback').textContent = data.payback;
+
+                document.getElementById('specBattery').textContent = data.battery;
+                document.getElementById('specPanels').textContent = data.panels;
+                document.getElementById('specSelf').textContent = data.self;
+                document.getElementById('specIRR').textContent = data.irr;
+
+                const resCard = document.getElementById('resultCard');
+                resCard.classList.remove('hidden');
+                resCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                lucide.createIcons();
+            }, 600);
+        }
+
+        function toggleDetails() {
+            const area = document.getElementById('detailsArea');
+            const icon = document.getElementById('detailIcon');
+            area.classList.toggle('hidden');
+            icon.style.transform = area.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        // Init Icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

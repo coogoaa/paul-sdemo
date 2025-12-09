@@ -75,6 +75,16 @@
                     <div class="flex items-start gap-3">
                          <div class="flex-1 space-y-1">
                             <h2 class="text-[15px] font-bold text-gray-900 leading-tight">65 Astoria Blvd, Hilbert WA 6112</h2>
+                            <div class="flex items-center gap-2 pt-1">
+                                <span class="px-2 py-0.5 rounded-md bg-green-100 text-green-700 text-[11px] font-medium">The Smart Starter</span>
+                            </div>
+                            <div class="pt-2">
+                                <div class="text-[11px] text-gray-500 uppercase tracking-wide">Est. Investment</div>
+                                <div class="text-[16px] font-bold text-emerald-600">$14,520 - $16,048</div>
+                                <div class="text-[10px] text-gray-400 leading-tight mt-0.5 max-w-[90%]">
+                                    Includes an estimated <span class="font-bold text-red-500">$9,009</span> in Government & Installer Rebates. Subject to eligibility.
+                                </div>
+                            </div>
                          </div>
                     </div>
                 </div>
@@ -125,7 +135,33 @@
                 </div>
 
                 <!-- Conditional Group: Q2 Quote Comparison -->
-                
+                <div id="conditional-questions" class="hidden space-y-5 fade-in">
+                    <div class="bg-white rounded-2xl border border-green-200 shadow-sm overflow-hidden">
+                        <div class="p-5 space-y-4">
+                            <div class="font-medium text-gray-900 leading-snug">
+                                How did the installer's final quote compare to Emily's AI estimate ($14,520 - $16,048)?
+                            </div>
+                            <div class="flex flex-col gap-2" id="q2-group">
+                                <button type="button" class="option-btn w-full text-left px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                    <span class="text-sm font-medium">Cheaper than Emily</span>
+                                    <i data-lucide="arrow-down-circle" class="w-5 h-5 text-gray-400 group-hover:text-green-600 transition"></i>
+                                </button>
+                                <button type="button" class="option-btn w-full text-left px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                    <span class="text-sm font-medium">Similar to Emily</span>
+                                    <i data-lucide="minus-circle" class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition"></i>
+                                </button>
+                                <button type="button" class="option-btn w-full text-left px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                    <span class="text-sm font-medium">More expensive</span>
+                                    <i data-lucide="arrow-up-circle" class="w-5 h-5 text-gray-400 group-hover:text-red-500 transition"></i>
+                                </button>
+                                <button type="button" class="option-btn w-full text-left px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between group" onclick="selectOption(this, 'q2-group')">
+                                    <span class="text-sm font-medium">Haven't received the final quote yet</span>
+                                    <i data-lucide="clock" class="w-5 h-5 text-gray-400 group-hover:text-amber-500 transition"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Q3 Open Feedback (Always Visible) -->
                 <div class="bg-white rounded-2xl border border-green-200 shadow-sm overflow-hidden" id="q3-container">
@@ -149,6 +185,7 @@
 
         // Q1 Logic (Contact Question Gatekeeper)
         let q1Answer = null;
+        let q2Answer = null;
 
         function handleQ1(answer, btn) {
             // UI Selection
@@ -158,12 +195,20 @@
 
             q1Answer = answer;
 
+            const conditionalSection = document.getElementById('conditional-questions');
             const reminderMsg = document.getElementById('reminder-msg');
 
             if (answer === 'yes') {
+                conditionalSection.classList.remove('hidden');
                 reminderMsg.classList.add('hidden');
+                // Scroll to Q2 smoothly
+                setTimeout(() => {
+                    conditionalSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             } else {
+                conditionalSection.classList.add('hidden');
                 reminderMsg.classList.remove('hidden');
+                q2Answer = null;
             }
 
             updateSubmitState();
@@ -177,13 +222,22 @@
             siblings.forEach(s => s.classList.remove('selected'));
             btn.classList.add('selected');
 
+            if (groupId === 'q2-group') {
+                q2Answer = true;
+            }
+
             updateSubmitState();
         }
 
         function updateSubmitState() {
             const submitBtn = document.getElementById('submitBtn');
+            const conditionalSection = document.getElementById('conditional-questions');
+
             const q1Done = !!q1Answer;
-            const canSubmit = q1Done;
+            const q2Required = !conditionalSection.classList.contains('hidden');
+            const q2Done = q2Required ? !!q2Answer : true;
+
+            const canSubmit = q1Done && q2Done;
 
             submitBtn.disabled = !canSubmit;
             if (canSubmit) {

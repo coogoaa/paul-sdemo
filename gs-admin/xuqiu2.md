@@ -243,7 +243,16 @@ grid_buy_rate 等参数前面增加一个合适的小标题描述，单独有恢
 8. 兜底参数
 每个部分单独有，单独有恢复默认配置、保存配置按钮。
 
+---
+线索类型的筛选， new 和 battery 合并为一个叫做正常流程（Normal Flow）
+NonAU
+Large Roof
+Get Help
+Fallback
 
+列表表头：
+
+IRR (%)、Self Consumption Max (%)	Self Consumption Min (%)	Self Consumption (%) 都不要百分号。
 
 
 

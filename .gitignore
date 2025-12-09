@@ -1,4 +1,4 @@
-# Python
+# Python env & build
 .venv/
 __pycache__/
 *.pyc
@@ -49,14 +49,11 @@ outputs/
 # CSV data files
 *.csv
 
-# Python files (not needed for static site)
-*.py
-*.pyc
-*.pyo
-*.pyd
-
 # Documentation and notes (keep only essential docs)
 prd/
 docs/proposal_logic.md
 docs/jilu.md
 docs/xu.md
+
+# Local analysis data (do not track)
+analysis/data_local/
