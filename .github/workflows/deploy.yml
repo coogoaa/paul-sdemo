@@ -37,6 +37,7 @@ jobs:
           [ -d installer_page ] && cp -R installer_page site/installer_page
           [ -d sales_agent_v1.1 ] && cp -R "sales_agent_v1.1" "site/sales_agent_v1.1"
           [ -d roof_rush ] && cp -R roof_rush site/roof_rush
+          [ -d ground_solar ] && cp -R ground_solar site/ground_solar
           [ -d Payback ] && cp -R Payback site/Payback
           [ -d Review_page ] && cp -R Review_page site/Review_page
         
