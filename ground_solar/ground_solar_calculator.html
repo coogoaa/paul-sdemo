@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空地光伏评估计算器</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px 0; background-color: #f8f9fa; }
+        .config-section { border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; background-color: white; }
+        .sticky-top-custom { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; }
+        .result-card { border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px; background-color: white; }
+        .detail-table { font-size: 0.85rem; }
+        .detail-table th { background-color: #f8f9fa; }
+        #leftPanel { font-size: 0.9rem; }
+        .calculation-step { border-left: 3px solid #007bff; padding-left: 15px; margin-bottom: 20px; }
+        .formula-box { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; font-family: 'Courier New', monospace; margin: 10px 0; }
+        .highlight-value { color: #0d6efd; font-weight: bold; }
+        .section-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .key-metric { text-align: center; padding: 15px; border: 2px solid #dee2e6; border-radius: 8px; margin-bottom: 10px; }
+        .key-metric .value { font-size: 1.8rem; font-weight: bold; color: #0d6efd; }
+        .key-metric .label { font-size: 0.9rem; color: #6c757d; }
+        .step-number { display: inline-block; width: 30px; height: 30px; background-color: #0d6efd; color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px; font-weight: bold; }
+        .sub-step { margin-left: 40px; margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
+        .badge-scenario { font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 左侧输入面板 -->
+            <div id="leftPanel" class="col-md-3 sticky-top-custom">
+                <h4 class="mb-3">📊 输入参数</h4>
+                
+                <!-- 项目基本信息 -->
+                <div class="config-section">
+                    <h6>🏗️ 项目基本信息</h6>
+                    <div class="mb-2">
+                        <label class="small">地块面积 (m²)</label>
+                        <input type="number" id="area" class="form-control form-control-sm" value="86226.88" step="0.01">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">项目地址</label>
+                        <input type="text" id="address" class="form-control form-control-sm" value="Kyeemagh, NSW 2216" placeholder="可选">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">纬度 (°)</label>
+                        <input type="number" id="latitude" class="form-control form-control-sm" value="-33.9492" step="0.0001">
+                        <small class="text-muted">南纬为负值</small>
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">经度 (°)</label>
+                        <input type="number" id="longitude" class="form-control form-control-sm" value="151.1607" step="0.0001">
+                    </div>
+                </div>
+
+                <!-- 组件参数 -->
+                <div class="config-section">
+                    <h6>⚡ PV 组件参数</h6>
+                    <div class="mb-2">
+                        <label class="small">组件长度 (m)</label>
+                        <input type="number" id="module_length" class="form-control form-control-sm" value="1.762" step="0.001">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">组件宽度 (m)</label>
+                        <input type="number" id="module_width" class="form-control form-control-sm" value="1.134" step="0.001">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">单块功率 (W)</label>
+                        <input type="number" id="module_power" class="form-control form-control-sm" value="440" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">行间距 (mm)</label>
+                        <input type="number" id="row_spacing" class="form-control form-control-sm" value="20" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">列间距 (mm)</label>
+                        <input type="number" id="col_spacing" class="form-control form-control-sm" value="20" step="1">
+                    </div>
+                </div>
+
+                <!-- 倾角与遮挡 -->
+                <div class="config-section">
+                    <h6>📐 倾角与遮挡</h6>
+                    <div class="mb-2">
+                        <label class="small">倾角 (°)</label>
+                        <input type="number" id="tilt_angle" class="form-control form-control-sm" value="28" step="1">
+                        <small class="text-muted">留空自动计算</small>
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">太阳高度角 (°)</label>
+                        <input type="number" id="sun_altitude" class="form-control form-control-sm" value="35" step="1">
+                        <small class="text-muted">用于计算遮挡</small>
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">场地利用系数</label>
+                        <input type="number" id="land_use_factor" class="form-control form-control-sm" value="0.70" step="0.01">
+                    </div>
+                </div>
+
+                <!-- 成本参数 -->
+                <div class="config-section">
+                    <h6>💰 成本参数</h6>
+                    <div class="mb-2">
+                        <label class="small">面板单价 (AUD/kW)</label>
+                        <input type="number" id="panel_price" class="form-control form-control-sm" value="540" step="10">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">逆变器单价 (AUD/kW)</label>
+                        <input type="number" id="inverter_price" class="form-control form-control-sm" value="280" step="10">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">支架系统 (%设备成本)</label>
+                        <input type="number" id="mounting_ratio" class="form-control form-control-sm" value="20" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">电缆配电 (%设备成本)</label>
+                        <input type="number" id="electrical_ratio" class="form-control form-control-sm" value="10" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">土建工程 (%设备成本)</label>
+                        <input type="number" id="civil_ratio" class="form-control form-control-sm" value="15" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">升压变压器 (%设备成本)</label>
+                        <input type="number" id="transformer_ratio" class="form-control form-control-sm" value="8" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">并网接入 (%设备成本)</label>
+                        <input type="number" id="grid_ratio" class="form-control form-control-sm" value="7" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">设计施工 (%设备成本)</label>
+                        <input type="number" id="epc_ratio" class="form-control form-control-sm" value="15" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">其他费用 (%设备成本)</label>
+                        <input type="number" id="other_ratio" class="form-control form-control-sm" value="10" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">GST 税率 (%)</label>
+                        <input type="number" id="gst_rate" class="form-control form-control-sm" value="10" step="0.1">
+                    </div>
+                </div>
+
+                <!-- 投资回报参数 -->
+                <div class="config-section">
+                    <h6>📈 投资回报参数</h6>
+                    <div class="mb-2">
+                        <label class="small">售电价格 (AUD/kWh)</label>
+                        <input type="number" id="electricity_price" class="form-control form-control-sm" value="0.12" step="0.01">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">绿证价格 (AUD/MWh)</label>
+                        <input type="number" id="lgc_price" class="form-control form-control-sm" value="35" step="1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">电价年通胀率 (%)</label>
+                        <input type="number" id="inflation_rate" class="form-control form-control-sm" value="2.5" step="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">首年衰减率 (%)</label>
+                        <input type="number" id="degradation_year1" class="form-control form-control-sm" value="2" step="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">后续年衰减率 (%)</label>
+                        <input type="number" id="degradation_annual" class="form-control form-control-sm" value="0.5" step="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">运维成本 (%投资额/年)</label>
+                        <input type="number" id="opex_rate" class="form-control form-control-sm" value="1.5" step="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">保险费用 (%投资额/年)</label>
+                        <input type="number" id="insurance_rate" class="form-control form-control-sm" value="0.5" step="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small">贴现率 (%)</label>
+                        <input type="number" id="discount_rate" class="form-control form-control-sm" value="6" step="0.1">
+                    </div>
+                </div>
+
+                <button id="calculateBtn" class="btn btn-primary w-100 mb-3">🚀 开始计算</button>
+                
+                <div class="alert alert-info small">
+                    <strong>💡 提示：</strong>修改参数后点击"开始计算"查看结果
+                </div>
+            </div>
+
+            <!-- 右侧结果面板 -->
+            <div class="col-md-9">
+                <div class="section-header">
+                    <h3 class="mb-0">🌞 空地光伏完整评估报告</h3>
+                    <small>Ground Solar Farm Complete Analysis</small>
+                </div>
+
+                <!-- 关键指标卡片 -->
+                <div id="keyMetrics" class="result-card">
+                    <h5 class="mb-3">📊 关键指标</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="key-metric">
+                                <div class="value" id="metric_capacity">-</div>
+                                <div class="label">装机容量 (MW)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="key-metric">
+                                <div class="value" id="metric_investment">-</div>
+                                <div class="label">总投资 (M AUD)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="key-metric">
+                                <div class="value" id="metric_irr">-</div>
+                                <div class="label">IRR (%)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="key-metric">
+                                <div class="value" id="metric_payback">-</div>
+                                <div class="label">回本期 (年)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 详细计算步骤 -->
+                <div id="detailedSteps" class="result-card">
+                    <h5 class="mb-3">📝 详细推导步骤</h5>
+                    <div id="stepsContent">
+                        <div class="alert alert-secondary">
+                            点击"开始计算"查看详细推导过程
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 投资回报分析 -->
+                <div id="roiAnalysis" class="result-card" style="display:none;">
+                    <h5 class="mb-3">💹 投资回报分析</h5>
+                    <div id="roiContent"></div>
+                </div>
+
+                <!-- 现金流表 -->
+                <div id="cashflowTable" class="result-card" style="display:none;">
+                    <h5 class="mb-3">💰 20年现金流明细</h5>
+                    <div id="cashflowContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 计算推荐倾角
+        function calculateOptimalTilt(latitude) {
+            const latAbs = Math.abs(latitude);
+            let tilt = latAbs - 5;
+            tilt = Math.max(10, Math.min(30, tilt));
+            return Math.round(tilt);
+        }
+
+        // 计算行距
+        function calculateRowPitch(tiltAngle, moduleLength, sunAltitude) {
+            const tiltRad = tiltAngle * Math.PI / 180;
+            const sunRad = sunAltitude * Math.PI / 180;
+            
+            const height = moduleLength * Math.sin(tiltRad);
+            const projection = moduleLength * Math.cos(tiltRad);
+            const spacing = height / Math.tan(sunRad);
+            
+            return projection + spacing;
+        }
+
+        // 估算年发电量
+        function estimateAnnualGeneration(systemSizeKw, latitude, tiltAngle) {
+            const latAbs = Math.abs(latitude);
+            let baseHours = latAbs < 30 ? 1600 : (latAbs < 35 ? 1500 : 1400);
+            
+            const tiltOptimal = latAbs;
+            const tiltDiff = Math.abs(tiltAngle - tiltOptimal);
+            const tiltFactor = 1.0 - (tiltDiff / 100);
+            
+            const annualHours = baseHours * tiltFactor;
+            return systemSizeKw * annualHours;
+        }
+
+        // 计算 IRR
+        function calculateIRR(cashflows) {
+            let irr = 0.1;
+            const maxIterations = 100;
+            const tolerance = 1e-6;
+            
+            for (let i = 0; i < maxIterations; i++) {
+                let npv = 0;
+                let npvDerivative = 0;
+                
+                for (let j = 0; j < cashflows.length; j++) {
+                    npv += cashflows[j] / Math.pow(1 + irr, j);
+                    npvDerivative += -j * cashflows[j] / Math.pow(1 + irr, j + 1);
+                }
+                
+                if (Math.abs(npv) < tolerance) break;
+                if (Math.abs(npvDerivative) < 1e-10) break;
+                
+                irr = irr - npv / npvDerivative;
+            }
+            
+            return irr;
+        }
+
+        // 主计算函数
+        function calculate() {
+            // 获取输入参数
+            const area = parseFloat(document.getElementById('area').value);
+            const latitude = parseFloat(document.getElementById('latitude').value);
+            const longitude = parseFloat(document.getElementById('longitude').value);
+            const address = document.getElementById('address').value;
+            
+            const moduleLength = parseFloat(document.getElementById('module_length').value);
+            const moduleWidth = parseFloat(document.getElementById('module_width').value);
+            const modulePower = parseFloat(document.getElementById('module_power').value) / 1000; // 转为 kW
+            const rowSpacing = parseFloat(document.getElementById('row_spacing').value) / 1000; // 转为 m
+            const colSpacing = parseFloat(document.getElementById('col_spacing').value) / 1000; // 转为 m
+            
+            let tiltAngle = parseFloat(document.getElementById('tilt_angle').value);
+            if (!tiltAngle || tiltAngle === 0) {
+                tiltAngle = calculateOptimalTilt(latitude);
+                document.getElementById('tilt_angle').value = tiltAngle;
+            }
+            
+            const sunAltitude = parseFloat(document.getElementById('sun_altitude').value);
+            const landUseFactor = parseFloat(document.getElementById('land_use_factor').value);
+            
+            const panelPrice = parseFloat(document.getElementById('panel_price').value);
+            const inverterPrice = parseFloat(document.getElementById('inverter_price').value);
+            const gstRate = parseFloat(document.getElementById('gst_rate').value) / 100;
+            
+            const mountingRatio = parseFloat(document.getElementById('mounting_ratio').value) / 100;
+            const electricalRatio = parseFloat(document.getElementById('electrical_ratio').value) / 100;
+            const civilRatio = parseFloat(document.getElementById('civil_ratio').value) / 100;
+            const transformerRatio = parseFloat(document.getElementById('transformer_ratio').value) / 100;
+            const gridRatio = parseFloat(document.getElementById('grid_ratio').value) / 100;
+            const epcRatio = parseFloat(document.getElementById('epc_ratio').value) / 100;
+            const otherRatio = parseFloat(document.getElementById('other_ratio').value) / 100;
+            
+            const electricityPrice = parseFloat(document.getElementById('electricity_price').value);
+            const lgcPrice = parseFloat(document.getElementById('lgc_price').value);
+            const inflationRate = parseFloat(document.getElementById('inflation_rate').value) / 100;
+            const degradationYear1 = parseFloat(document.getElementById('degradation_year1').value) / 100;
+            const degradationAnnual = parseFloat(document.getElementById('degradation_annual').value) / 100;
+            const opexRate = parseFloat(document.getElementById('opex_rate').value) / 100;
+            const insuranceRate = parseFloat(document.getElementById('insurance_rate').value) / 100;
+            const discountRate = parseFloat(document.getElementById('discount_rate').value) / 100;
+            
+            // 步骤1：计算行距
+            const rowPitch = calculateRowPitch(tiltAngle, moduleLength, sunAltitude);
+            const moduleArea = (moduleWidth + colSpacing) * (rowPitch + rowSpacing);
+            
+            // 步骤2：计算组件数量
+            const theoreticalModules = Math.floor(area / moduleArea);
+            const actualModules = Math.floor(theoreticalModules * landUseFactor);
+            const systemSizeKw = actualModules * modulePower;
+            const systemSizeMw = systemSizeKw / 1000;
+            
+            // 步骤3：计算投资
+            const equipmentCost = systemSizeKw * (panelPrice + inverterPrice);
+            const equipmentCostGst = equipmentCost * (1 + gstRate);
+            
+            const mountingCost = equipmentCostGst * mountingRatio;
+            const electricalCost = equipmentCostGst * electricalRatio;
+            const civilCost = equipmentCostGst * civilRatio;
+            const transformerCost = equipmentCostGst * transformerRatio;
+            const gridCost = equipmentCostGst * gridRatio;
+            const epcCost = equipmentCostGst * epcRatio;
+            const otherCost = equipmentCostGst * otherRatio;
+            
+            const totalInvestment = equipmentCostGst + mountingCost + electricalCost + 
+                                   civilCost + transformerCost + gridCost + epcCost + otherCost;
+            
+            // 步骤4：计算发电量和收益
+            const year1Generation = estimateAnnualGeneration(systemSizeKw, latitude, tiltAngle);
+            
+            // 计算20年现金流
+            const cashflows = [-totalInvestment];
+            let cumulativeCashflow = -totalInvestment;
+            let paybackPeriod = null;
+            
+            const cashflowDetails = [];
+            
+            for (let year = 1; year <= 20; year++) {
+                // 考虑衰减
+                let degradationFactor;
+                if (year === 1) {
+                    degradationFactor = 1.0 - degradationYear1;
+                } else {
+                    degradationFactor = (1.0 - degradationYear1) * Math.pow(1.0 - degradationAnnual, year - 1);
+                }
+                
+                const generation = year1Generation * degradationFactor;
+                
+                // 考虑电价通胀
+                const electricityPriceYear = electricityPrice * Math.pow(1 + inflationRate, year - 1);
+                
+                // 收益
+                const electricityRevenue = generation * electricityPriceYear;
+                const lgcRevenue = (generation / 1000) * lgcPrice;
+                const totalRevenue = electricityRevenue + lgcRevenue;
+                
+                // 成本
+                const opex = totalInvestment * opexRate;
+                const insurance = totalInvestment * insuranceRate;
+                const totalCosts = opex + insurance;
+                
+                // 净现金流
+                const netCashflow = totalRevenue - totalCosts;
+                cashflows.push(netCashflow);
+                
+                cumulativeCashflow += netCashflow;
+                
+                if (paybackPeriod === null && cumulativeCashflow >= 0) {
+                    const prevCumulative = cumulativeCashflow - netCashflow;
+                    const fraction = Math.abs(prevCumulative) / netCashflow;
+                    paybackPeriod = year - 1 + fraction;
+                }
+                
+                cashflowDetails.push({
+                    year,
+                    generation,
+                    revenue: totalRevenue,
+                    costs: totalCosts,
+                    netCashflow,
+                    cumulativeCashflow
+                });
+            }
+            
+            // 计算 IRR
+            const irr = calculateIRR(cashflows);
+            
+            // 计算 NPV
+            let npv = 0;
+            for (let i = 0; i < cashflows.length; i++) {
+                npv += cashflows[i] / Math.pow(1 + discountRate, i);
+            }
+            
+            // 更新关键指标
+            document.getElementById('metric_capacity').textContent = systemSizeMw.toFixed(2);
+            document.getElementById('metric_investment').textContent = (totalInvestment / 1000000).toFixed(2);
+            document.getElementById('metric_irr').textContent = (irr * 100).toFixed(2);
+            document.getElementById('metric_payback').textContent = paybackPeriod ? paybackPeriod.toFixed(1) : 'N/A';
+            
+            // 生成详细步骤
+            generateDetailedSteps({
+                area, latitude, longitude, address, tiltAngle, sunAltitude,
+                moduleLength, moduleWidth, modulePower, rowSpacing, colSpacing,
+                rowPitch, moduleArea, theoreticalModules, actualModules,
+                systemSizeKw, systemSizeMw, landUseFactor,
+                equipmentCost, equipmentCostGst, mountingCost, electricalCost,
+                civilCost, transformerCost, gridCost, epcCost, otherCost,
+                totalInvestment, year1Generation, irr, paybackPeriod, npv,
+                panelPrice, inverterPrice, gstRate
+            });
+            
+            // 生成投资回报分析
+            generateROIAnalysis({
+                year1Generation, totalInvestment, irr, paybackPeriod, npv,
+                cashflowDetails
+            });
+            
+            // 生成现金流表
+            generateCashflowTable(cashflowDetails, totalInvestment);
+            
+            // 显示结果区域
+            document.getElementById('roiAnalysis').style.display = 'block';
+            document.getElementById('cashflowTable').style.display = 'block';
+        }
+
+        function generateDetailedSteps(data) {
+            const html = `
+                <div class="calculation-step">
+                    <h6><span class="step-number">1</span>项目基本信息</h6>
+                    <div class="sub-step">
+                        <p><strong>地块面积：</strong>${data.area.toLocaleString()} m² (${(data.area/10000).toFixed(2)} 公顷)</p>
+                        <p><strong>项目地址：</strong>${data.address || '未提供'}</p>
+                        <p><strong>坐标：</strong>纬度 ${data.latitude.toFixed(4)}°, 经度 ${data.longitude.toFixed(4)}°</p>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">2</span>倾角设计</h6>
+                    <div class="sub-step">
+                        <p>基于项目纬度 <span class="highlight-value">${Math.abs(data.latitude).toFixed(2)}°</span>，推荐倾角：<span class="highlight-value">${data.tiltAngle}°</span></p>
+                        <div class="formula-box">
+                            推荐倾角 = |纬度| - 5° = ${Math.abs(data.latitude).toFixed(2)}° - 5° = ${data.tiltAngle}°<br>
+                            (限制在 10-30° 之间以平衡发电量与土地利用率)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">3</span>行距计算（避免遮挡）</h6>
+                    <div class="sub-step">
+                        <p><strong>组件参数：</strong></p>
+                        <ul>
+                            <li>长度 L = ${data.moduleLength} m</li>
+                            <li>宽度 W = ${data.moduleWidth} m</li>
+                            <li>倾角 β = ${data.tiltAngle}°</li>
+                            <li>太阳高度角 α = ${data.sunAltitude}°</li>
+                        </ul>
+                        <div class="formula-box">
+                            组件后沿高度 H = L × sin(β) = ${data.moduleLength} × sin(${data.tiltAngle}°) = ${(data.moduleLength * Math.sin(data.tiltAngle * Math.PI / 180)).toFixed(3)} m<br><br>
+                            组件地面投影 D = L × cos(β) = ${data.moduleLength} × cos(${data.tiltAngle}°) = ${(data.moduleLength * Math.cos(data.tiltAngle * Math.PI / 180)).toFixed(3)} m<br><br>
+                            避免遮挡间距 S = H / tan(α) = ${(data.moduleLength * Math.sin(data.tiltAngle * Math.PI / 180)).toFixed(3)} / tan(${data.sunAltitude}°) = ${(data.moduleLength * Math.sin(data.tiltAngle * Math.PI / 180) / Math.tan(data.sunAltitude * Math.PI / 180)).toFixed(3)} m<br><br>
+                            <strong>总行距 Pitch = D + S = ${data.rowPitch.toFixed(3)} m</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">4</span>单块组件占地面积</h6>
+                    <div class="sub-step">
+                        <div class="formula-box">
+                            A_module = (W + g_col) × (Pitch + g_row)<br>
+                            = (${data.moduleWidth} + ${data.colSpacing}) × (${data.rowPitch.toFixed(3)} + ${data.rowSpacing})<br>
+                            = ${(data.moduleWidth + data.colSpacing).toFixed(3)} × ${(data.rowPitch + data.rowSpacing).toFixed(3)}<br>
+                            = <strong>${data.moduleArea.toFixed(3)} m²/块</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">5</span>组件数量估算</h6>
+                    <div class="sub-step">
+                        <p><strong>理论可铺块数（不考虑通道等）：</strong></p>
+                        <div class="formula-box">
+                            N0 = floor(面积 / A_module)<br>
+                            = floor(${data.area.toLocaleString()} / ${data.moduleArea.toFixed(3)})<br>
+                            = <strong>${data.theoreticalModules.toLocaleString()} 块</strong>
+                        </div>
+                        
+                        <p class="mt-3"><strong>考虑场地利用系数 η = ${data.landUseFactor}：</strong></p>
+                        <div class="formula-box">
+                            N = floor(N0 × η)<br>
+                            = floor(${data.theoreticalModules.toLocaleString()} × ${data.landUseFactor})<br>
+                            = <strong>${data.actualModules.toLocaleString()} 块</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">6</span>装机容量</h6>
+                    <div class="sub-step">
+                        <div class="formula-box">
+                            systemSize = N × P_module<br>
+                            = ${data.actualModules.toLocaleString()} × ${(data.modulePower * 1000).toFixed(0)} W<br>
+                            = ${data.systemSizeKw.toLocaleString('en-US', {maximumFractionDigits: 2})} kW<br>
+                            = <strong>${data.systemSizeMw.toFixed(2)} MW</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">7</span>投资估算</h6>
+                    <div class="sub-step">
+                        <p><strong>设备成本（组件+逆变器）：</strong></p>
+                        <div class="formula-box">
+                            设备成本 = systemSize × (面板单价 + 逆变器单价)<br>
+                            = ${data.systemSizeKw.toFixed(2)} × (${data.panelPrice} + ${data.inverterPrice})<br>
+                            = ${data.equipmentCost.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD<br><br>
+                            含税成本 = 设备成本 × (1 + GST)<br>
+                            = ${data.equipmentCost.toLocaleString('en-US', {maximumFractionDigits: 2})} × ${(1 + data.gstRate).toFixed(2)}<br>
+                            = <strong>${data.equipmentCostGst.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</strong>
+                        </div>
+                        
+                        <p class="mt-3"><strong>其他成本（基于设备成本百分比）：</strong></p>
+                        <table class="table table-sm detail-table">
+                            <thead>
+                                <tr>
+                                    <th>成本项</th>
+                                    <th class="text-end">金额 (AUD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>设备成本（含税）</td><td class="text-end">${data.equipmentCostGst.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>支架系统</td><td class="text-end">${data.mountingCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>电缆配电</td><td class="text-end">${data.electricalCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>土建工程</td><td class="text-end">${data.civilCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>升压变压器</td><td class="text-end">${data.transformerCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>并网接入</td><td class="text-end">${data.gridCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>设计施工</td><td class="text-end">${data.epcCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr><td>其他费用</td><td class="text-end">${data.otherCost.toLocaleString('en-US', {maximumFractionDigits: 2})}</td></tr>
+                                <tr class="table-primary"><td><strong>总投资</strong></td><td class="text-end"><strong>${data.totalInvestment.toLocaleString('en-US', {maximumFractionDigits: 2})}</strong></td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <p><strong>单位投资：</strong>${(data.totalInvestment / data.systemSizeKw).toFixed(2)} AUD/kW</p>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">8</span>发电量估算</h6>
+                    <div class="sub-step">
+                        <p>基于纬度 ${Math.abs(data.latitude).toFixed(2)}° 和倾角 ${data.tiltAngle}°，估算年等效满发小时数</p>
+                        <div class="formula-box">
+                            第一年发电量 = ${data.year1Generation.toLocaleString('en-US', {maximumFractionDigits: 0})} kWh<br>
+                            等效满发小时数 = ${(data.year1Generation / data.systemSizeKw).toFixed(0)} 小时/年
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-step">
+                    <h6><span class="step-number">9</span>投资回报关键指标</h6>
+                    <div class="sub-step">
+                        <table class="table table-sm detail-table">
+                            <tbody>
+                                <tr><td>总投资额</td><td class="text-end"><strong>${data.totalInvestment.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</strong></td></tr>
+                                <tr><td>内部收益率 (IRR)</td><td class="text-end"><strong>${(data.irr * 100).toFixed(2)}%</strong></td></tr>
+                                <tr><td>回本期</td><td class="text-end"><strong>${data.paybackPeriod ? data.paybackPeriod.toFixed(1) : 'N/A'} 年</strong></td></tr>
+                                <tr><td>净现值 (NPV, 6%贴现率)</td><td class="text-end"><strong>${data.npv.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</strong></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('stepsContent').innerHTML = html;
+        }
+
+        function generateROIAnalysis(data) {
+            const total20YearRevenue = data.cashflowDetails.reduce((sum, cf) => sum + cf.revenue, 0);
+            const total20YearCosts = data.cashflowDetails.reduce((sum, cf) => sum + cf.costs, 0);
+            const total20YearNet = total20YearRevenue - total20YearCosts;
+            
+            let assessment, assessmentClass, comment;
+            if (data.irr > 0.12) {
+                assessment = '优秀';
+                assessmentClass = 'success';
+                comment = '项目具有较高的投资回报率，建议推进。';
+            } else if (data.irr > 0.08) {
+                assessment = '良好';
+                assessmentClass = 'info';
+                comment = '项目具有合理的投资回报率，可以考虑推进。';
+            } else if (data.irr > 0.05) {
+                assessment = '一般';
+                assessmentClass = 'warning';
+                comment = '项目回报率偏低，建议优化方案或重新评估。';
+            } else {
+                assessment = '较差';
+                assessmentClass = 'danger';
+                comment = '项目回报率不足，不建议投资。';
+            }
+            
+            const html = `
+                <div class="alert alert-${assessmentClass}">
+                    <h6>项目评级：${assessment}</h6>
+                    <p class="mb-0">${comment}</p>
+                </div>
+                
+                <h6 class="mt-4">第一年数据</h6>
+                <table class="table table-sm detail-table">
+                    <tbody>
+                        <tr><td>发电量</td><td class="text-end">${data.cashflowDetails[0].generation.toLocaleString('en-US', {maximumFractionDigits: 0})} kWh</td></tr>
+                        <tr><td>收益</td><td class="text-end">${data.cashflowDetails[0].revenue.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</td></tr>
+                        <tr><td>运营成本</td><td class="text-end">${data.cashflowDetails[0].costs.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</td></tr>
+                        <tr class="table-primary"><td><strong>净现金流</strong></td><td class="text-end"><strong>${data.cashflowDetails[0].netCashflow.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</strong></td></tr>
+                    </tbody>
+                </table>
+                
+                <h6 class="mt-4">20年累计</h6>
+                <table class="table table-sm detail-table">
+                    <tbody>
+                        <tr><td>总发电量</td><td class="text-end">${data.cashflowDetails.reduce((sum, cf) => sum + cf.generation, 0).toLocaleString('en-US', {maximumFractionDigits: 0})} kWh</td></tr>
+                        <tr><td>总收益</td><td class="text-end">${total20YearRevenue.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</td></tr>
+                        <tr><td>总成本</td><td class="text-end">${total20YearCosts.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</td></tr>
+                        <tr class="table-primary"><td><strong>净收益</strong></td><td class="text-end"><strong>${total20YearNet.toLocaleString('en-US', {maximumFractionDigits: 2})} AUD</strong></td></tr>
+                        <tr><td>投资回报倍数</td><td class="text-end">${(total20YearNet / data.totalInvestment).toFixed(2)}x</td></tr>
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('roiContent').innerHTML = html;
+        }
+
+        function generateCashflowTable(cashflowDetails, totalInvestment) {
+            let html = `
+                <div class="table-responsive">
+                    <table class="table table-sm detail-table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>年份</th>
+                                <th class="text-end">发电量 (kWh)</th>
+                                <th class="text-end">收益 (AUD)</th>
+                                <th class="text-end">成本 (AUD)</th>
+                                <th class="text-end">净现金流 (AUD)</th>
+                                <th class="text-end">累计现金流 (AUD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-warning">
+                                <td>0</td>
+                                <td class="text-end">-</td>
+                                <td class="text-end">-</td>
+                                <td class="text-end">-</td>
+                                <td class="text-end">${(-totalInvestment).toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                                <td class="text-end">${(-totalInvestment).toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                            </tr>
+            `;
+            
+            let cumulative = -totalInvestment;
+            cashflowDetails.forEach((cf, index) => {
+                cumulative += cf.netCashflow;
+                const rowClass = cumulative >= 0 && index > 0 && cashflowDetails[index-1] ? 
+                    (cumulative - cf.netCashflow < 0 ? 'table-success' : '') : '';
+                
+                html += `
+                    <tr class="${rowClass}">
+                        <td>${cf.year}</td>
+                        <td class="text-end">${cf.generation.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                        <td class="text-end">${cf.revenue.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                        <td class="text-end">${cf.costs.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                        <td class="text-end">${cf.netCashflow.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                        <td class="text-end">${cumulative.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small mt-2">
+                    <strong>说明：</strong>绿色高亮行表示累计现金流首次转正（回本点）
+                </p>
+            `;
+            
+            document.getElementById('cashflowContent').innerHTML = html;
+        }
+
+        // 绑定计算按钮
+        document.getElementById('calculateBtn').addEventListener('click', calculate);
+        
+        // 页面加载时自动计算一次
+        window.addEventListener('load', () => {
+            setTimeout(calculate, 100);
+        });
+    </script>
+</body>
+</html>
